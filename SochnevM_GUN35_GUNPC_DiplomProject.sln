@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-firstpass",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniTask.TextMeshPro", "UniTask.TextMeshPro.csproj", "{50F32FA0-5765-0EDA-9066-F299825BBCD0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{76004B30-2620-EB4E-2C28-F31F13166DFD}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor-firstpass", "Assembly-CSharp-Editor-firstpass.csproj", "{4A35D0F1-383C-8F7A-C897-1C06D1F12CE4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zenject-PoolMonitor-Editor", "Zenject-PoolMonitor-Editor.csproj", "{D3529972-E108-DF07-215A-821A88A115EA}"
@@ -87,6 +89,10 @@ Global
 		{50F32FA0-5765-0EDA-9066-F299825BBCD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50F32FA0-5765-0EDA-9066-F299825BBCD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50F32FA0-5765-0EDA-9066-F299825BBCD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76004B30-2620-EB4E-2C28-F31F13166DFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76004B30-2620-EB4E-2C28-F31F13166DFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76004B30-2620-EB4E-2C28-F31F13166DFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76004B30-2620-EB4E-2C28-F31F13166DFD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4A35D0F1-383C-8F7A-C897-1C06D1F12CE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4A35D0F1-383C-8F7A-C897-1C06D1F12CE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A35D0F1-383C-8F7A-C897-1C06D1F12CE4}.Release|Any CPU.ActiveCfg = Release|Any CPU

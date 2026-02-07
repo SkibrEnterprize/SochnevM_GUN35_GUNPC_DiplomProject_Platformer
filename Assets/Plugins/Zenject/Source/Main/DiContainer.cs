@@ -3559,6 +3559,11 @@ namespace Zenject
                 .FromInstance(ValuePair.New(type, order)).WhenInjectedInto<PoolableManager>();
         }
 
+        public object BindInstance(object transform)
+        {
+            throw new NotImplementedException();
+        }
+
         class ProviderInfo
         {
             public ProviderInfo(
