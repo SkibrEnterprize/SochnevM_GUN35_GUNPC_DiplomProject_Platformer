@@ -22,11 +22,11 @@ namespace Player
             Container.Bind<Controls>().FromInstance(controls).AsSingle();
 
             // 3. Создаём JumpComponent через конструктор и сразу создаём его
-            Container.BindInterfacesAndSelfTo<JumpComponent>()
+            Container.BindInterfacesAndSelfTo<MovementComponent>()
                 .FromMethod(ctx =>
                 {
                     var container = ctx.Container;
-                    return new JumpComponent(
+                    return new MovementComponent(
                         rigidbody,
                         feetPos,
                         groundLayer,
