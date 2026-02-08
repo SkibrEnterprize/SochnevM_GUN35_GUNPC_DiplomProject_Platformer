@@ -6,14 +6,11 @@ namespace Player
     public sealed class PlayerInstaller : MonoInstaller
     {
         [SerializeField] private GameObject _player;
-        [SerializeField] private LayerMask _groundLayer;
         [SerializeField] private PlayerConfig _playerConfig;
 
         public override void InstallBindings()
         {
-            var rigidbody = _player.GetComponent<Rigidbody>();
-            var feetPos = _player.transform.Find("FeetPosition");   // или любой другой Transform
-            var groundLayer = _groundLayer;
+            var character = _player.GetComponent<CharacterController>();
             var playerConfig = _playerConfig;
 
             // 2. Биндим Controls один раз (если нужен глобально)
@@ -27,9 +24,7 @@ namespace Player
                 {
                     var container = ctx.Container;
                     return new MovementComponent(
-                        rigidbody,
-                        feetPos,
-                        groundLayer,
+                        character,
                         controls,
                         playerConfig);
 

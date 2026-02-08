@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -7,43 +8,31 @@ namespace Player
 {
     public sealed class MovementComponent : IInitializable, IFixedTickable, IDisposable
     {
-        private readonly Rigidbody _rigidbody;
-        private readonly Transform _feetPosition;
-        private readonly LayerMask _groundLayer;
-        private readonly Controls _controls;      // Input Actions
+        private readonly CharacterController _controller;
+        private readonly Controls _controls;
 
         private readonly PlayerConfig _playerConfig;
 
         private int _jumpCount;
-        private float _moveSpeedGround;
-        private float _moveSpeedAir;
+        private Vector2 _moveInput = Vector2.zero;          // направление
 
-        private Vector2 _moveInput = Vector2.zero; // знать куда смотрит игрок
-
-        public MovementComponent(Rigidbody rigidbody,
-                         Transform feetPosition,
-                         LayerMask groundLayer,
-                         Controls controls,
-                         PlayerConfig playerConfig)
+        public MovementComponent(
+            CharacterController controller,
+            Controls controls,
+            PlayerConfig playerConfig)
         {
-            _rigidbody = rigidbody;
-            _feetPosition = feetPosition;
-            _groundLayer = groundLayer;
+            _controller = controller;
             _controls = controls;
             _playerConfig = playerConfig;
         }
 
         public void Initialize()
-        {
+        {           
             _controls.Player.Jump.performed += OnJumpPerformed;
-            _controls.Player.Move.performed += OnMoveStarted;
             _controls.Player.Move.started += OnMoveStarted;
+            _controls.Player.Move.performed += OnMoveStarted;
             _controls.Player.Move.canceled += OnMoveCanceled;
-            _moveSpeedGround = _playerConfig.MoveSpeedGround;
-            _moveSpeedAir = _playerConfig.MoveSpeedAir;
-
         }
-
 
         public void Dispose()
         {
@@ -51,10 +40,10 @@ namespace Player
             _controls.Player.Move.started -= OnMoveStarted;
             _controls.Player.Move.canceled -= OnMoveCanceled;
         }
+
         private void OnJumpPerformed(InputAction.CallbackContext context)
         {
             if (!CanJump()) return;
-
             Jump();
         }
 
@@ -62,62 +51,85 @@ namespace Player
         {
             _moveInput = context.ReadValue<Vector2>();
         }
+
         private void OnMoveCanceled(InputAction.CallbackContext context)
         {
-            _moveInput = context.ReadValue<Vector2>(); 
+            _moveInput = Vector2.zero;          // можно просто сбросить
         }
+
+
         private bool CanJump()
         {
             if (IsGrounded())
             {
-                _jumpCount = 0;
+                //_jumpCount = 0;
                 return true;
             }
-            return _jumpCount < 2;            // в воздухе – только один двойной прыжок
+            
+            return _jumpCount < _playerConfig.JumpCountInAir;
         }
 
         private void Jump()
         {
-            var vel = _rigidbody.velocity;
-            vel.y = 0;
-            _rigidbody.velocity = vel;
-            _rigidbody.AddForce(Vector3.up * _playerConfig.JumpForce, ForceMode.Force);
-            _jumpCount++;          
+           
+            var velocity = _controller.velocity;
+            if (!IsGrounded()) velocity.y = 0f;   // обнуляем, если в воздухе
+            velocity.y += Mathf.Sqrt(2 * _playerConfig.JumpForce);
+            _controller.Move(velocity * Time.fixedDeltaTime); 
+
+            _jumpCount++;
         }
 
-        private bool IsGrounded()
+              private bool IsGrounded()
         {
-            return Physics.Raycast(_feetPosition.position,
-                                   Vector3.down,
-                                   _playerConfig.GroundCheckDistance,
-                                   _groundLayer);
+            // Можно использовать готовый флаг
+            if (_controller.isGrounded)
+            {
+                _jumpCount = 0;
+                return true;
+            }
+            return false;
         }
-       
+
         public void FixedTick()
         {
             ApplyMovement();
+            Debug.Log($" _jumpCount = {_jumpCount}");
         }
 
         private void ApplyMovement()
         {
-            if (_moveInput != Vector2.zero)
-            {               
-                float speed = IsGrounded() ? _playerConfig.MoveSpeedGround
-                                           : _playerConfig.MoveSpeedAir;
-                float desiredX = _moveInput.x * speed;
-                Vector3 deltaV = new Vector3(desiredX - _rigidbody.velocity.x, 0f, 0f);
-                Vector3 acceleration = deltaV / Time.fixedDeltaTime;
-                _rigidbody.AddForce(acceleration, ForceMode.Acceleration);
-               
+            float speed = IsGrounded()
+                ? _playerConfig.MoveSpeedGround
+                : _playerConfig.MoveSpeedAir;
+
+            var velocity = _controller.velocity;
+
+            if (_moveInput == Vector2.zero && !IsGrounded())
+            {
+                // Плавное торможение во время полёта
+                velocity.x = Mathf.Lerp(velocity.x, 0f, _playerConfig.DampAir);
+            }
+            else if (_moveInput == Vector2.zero && IsGrounded())
+            {
+                // Плавное торможение на земле
+                velocity.x = Mathf.Lerp(velocity.x, 0f, _playerConfig.DampGround);
             }
             else
             {
-                // при отпускании клавиши – мягко тормоpзимм (не обнуляем сразу)
-                var vel = _rigidbody.velocity;
-                vel.x = Mathf.Lerp(vel.x, 0f, 0.1f);   // можно настроить коэффициент
-                _rigidbody.velocity = vel;
+                velocity.x = _moveInput.x * speed;
             }
-           
+
+            // Гравитация (если не grounded)
+            if (!IsGrounded())
+                velocity.y -= _playerConfig.Gravity * Time.fixedDeltaTime;
+
+            _controller.Move(velocity * Time.fixedDeltaTime);
+
+            //ограничение движения по оси Z заменил коллайдерами
+            //Vector3 pos = _controller.transform.position;
+            //pos.z = 0;
+            //_controller.transform.position = pos;
         }
     }
 }
