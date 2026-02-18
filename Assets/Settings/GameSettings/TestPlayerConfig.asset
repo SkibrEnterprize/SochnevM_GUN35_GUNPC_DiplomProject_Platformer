@@ -12,10 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a1d32759ff857e45869cabf0981e4c0, type: 3}
   m_Name: TestPlayerConfig
   m_EditorClassIdentifier: 
-  MoveSpeedGround: 10
-  MoveSpeedAir: 5
-  Damp: -1
-  Gravity: 60
-  JumpCountInAir: 2
+  MoveSpeedGround: 6
+  MoveSpeedAir: 4
+  DampAir: 0.1
+  DampGround: 0.082
+  Gravity: 50
+  SlowClingFallSpeed: 0.5
   JumpForce: 1
+  WallJumpForce: 1
+  WallHorizontalPush: 2
+  JumpCountInAir: 2
   GroundCheckDistance: 0.1
