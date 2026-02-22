@@ -37,7 +37,7 @@ public class PlayerConfig : ScriptableObject
     public int MaxHealth = 100;               // максимальное здоровье
 
     [Header("Damage")]
-    public float DamageofFall = 10f; // сколько урона при падении
+    public int DamageOfFall = 10; // сколько урона при падении
     public float MinHeightForDamage = 5f;   // ниже этой скорости не будет уронов
 
 }

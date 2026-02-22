@@ -1,4 +1,5 @@
 ﻿
+using Player.Signals;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,6 +13,7 @@ namespace Player
         private readonly CharacterController _controller;
         private readonly Controls _controls;
         private readonly PlayerConfig _playerConfig;
+        private readonly SignalBus _signalBus;
         private int _jumpCount;
         private Vector2 _moveInput = Vector2.zero;
         private float _rayDistance = 0.6f;
@@ -25,11 +27,13 @@ namespace Player
         public MovementComponent(
             CharacterController controller,
             Controls controls,
-            PlayerConfig playerConfig)
+            PlayerConfig playerConfig,
+            SignalBus signalBus)
         {
             _controller = controller;
             _controls = controls;
             _playerConfig = playerConfig;
+            _signalBus = signalBus;
         }
 
         public void Initialize()
@@ -207,6 +211,7 @@ namespace Player
             {
                 _isFalling = false;
                 _fallDistance = Mathf.Abs(_fallStartY - _controller.transform.position.y);
+                _signalBus.Fire(new FallDistanceSignal(_fallDistance));
             }
         }
     }
