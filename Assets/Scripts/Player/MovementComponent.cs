@@ -7,7 +7,7 @@ using Zenject;
 namespace Player
 {
 
-    public sealed class MovementComponent : Zenject.IInitializable, IFixedTickable, IDisposable
+    public sealed class MovementComponent : IInitializable, IFixedTickable, IDisposable
     {
         private readonly CharacterController _controller;
         private readonly Controls _controls;
@@ -17,6 +17,10 @@ namespace Player
         private float _rayDistance = 0.6f;
         private Vector3 _velocity = Vector3.zero;
         private Vector3 _velocitySmoothRef = Vector3.zero;
+
+        private float _fallStartY;   // «null» — значит падение ещё не началось
+        private bool _isFalling;
+        private float _fallDistance;
 
         public MovementComponent(
             CharacterController controller,
@@ -44,6 +48,11 @@ namespace Player
 
             _controls.Player.Move.started -= OnMoveStarted;
             _controls.Player.Move.canceled -= OnMoveCanceled;
+        }
+        public void FixedTick()
+        {
+            ApplyMovement();
+            UpdateFallState();
         }
 
         private void OnJumpStarted(InputAction.CallbackContext context)
@@ -144,11 +153,6 @@ namespace Player
             return wallLeft || wallRight;
         }
 
-        public void FixedTick()
-        {
-            ApplyMovement();
-        }
-
         private void ApplyMovement()
         {
             float speed = IsGrounded()
@@ -187,6 +191,23 @@ namespace Player
 
             if (_controller.isGrounded && _velocity.y < 0)
                 _velocity.y = 0f;
+        }
+
+        private void UpdateFallState()
+        {
+            if (IsWallClinging()) _isFalling = false;
+
+            if (!_controller.isGrounded && !_isFalling)
+            {
+                _isFalling = true;
+                _fallStartY = _controller.transform.position.y;
+            }
+
+            if (_controller.isGrounded && _isFalling)
+            {
+                _isFalling = false;
+                _fallDistance = Mathf.Abs(_fallStartY - _controller.transform.position.y);
+            }
         }
     }
 }

@@ -33,6 +33,11 @@ public class PlayerConfig : ScriptableObject
 
     public int JumpCountInAir = 2;
 
+    [Header("Health")]
+    public int MaxHealth = 100;               // максимальное здоровье
 
-    public float GroundCheckDistance = 0.1f;
+    [Header("Damage")]
+    public float DamageofFall = 10f; // сколько урона при падении
+    public float MinHeightForDamage = 5f;   // ниже этой скорости не будет уронов
+
 }

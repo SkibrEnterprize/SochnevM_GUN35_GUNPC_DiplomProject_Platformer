@@ -18,7 +18,7 @@ namespace Player
             controls.Enable();                     // включаем все action‑maps
             Container.Bind<Controls>().FromInstance(controls).AsSingle();
 
-            // 3. Создаём JumpComponent через конструктор и сразу создаём его
+            // 3. Создаём MovementComponent через конструктор и сразу создаём его
             Container.BindInterfacesAndSelfTo<MovementComponent>()
                 .FromMethod(ctx =>
                 {
