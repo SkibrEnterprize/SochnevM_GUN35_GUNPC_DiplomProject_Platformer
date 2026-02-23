@@ -15,8 +15,11 @@ namespace Player
         private readonly PlayerConfig _playerConfig;
         private readonly SignalBus _signalBus;
         private int _jumpCount;
+        private bool _flyPressed;
         private Vector2 _moveInput = Vector2.zero;
-        private float _rayDistance = 0.6f;
+        private float _rayDistanceAtWall = 0.6f;
+        private float _rayDistanceAtHead = 0.1f;
+
         private Vector3 _velocity = Vector3.zero;
         private Vector3 _velocitySmoothRef = Vector3.zero;
 
@@ -38,21 +41,40 @@ namespace Player
 
         public void Initialize()
         {
+            _controls.Player.Move.started += OnMoveStarted;
+            _controls.Player.Move.canceled += OnMoveCanceled;
+
             _controls.Player.Jump.started += OnJumpStarted;
             _controls.Player.Jump.canceled += OnJumpCanceled;
 
-            _controls.Player.Move.started += OnMoveStarted;
-            _controls.Player.Move.canceled += OnMoveCanceled;
+            _controls.Player.Fly.started += OnFlyStarted;
+            _controls.Player.Fly.canceled += OnFlyCanceled;
+
         }
 
         public void Dispose()
         {
+            _controls.Player.Move.started -= OnMoveStarted;
+            _controls.Player.Move.canceled -= OnMoveCanceled;
+
             _controls.Player.Jump.started -= OnJumpStarted;
             _controls.Player.Jump.canceled -= OnJumpCanceled;
 
-            _controls.Player.Move.started -= OnMoveStarted;
-            _controls.Player.Move.canceled -= OnMoveCanceled;
+            _controls.Player.Fly.started -= OnFlyStarted;
+            _controls.Player.Fly.canceled -= OnFlyCanceled;
+
         }
+        private void OnFlyStarted(InputAction.CallbackContext context)
+        {
+            _flyPressed = true;
+        }
+
+        private void OnFlyCanceled(InputAction.CallbackContext context)
+        {
+            _flyPressed = false;
+        }
+
+
         public void FixedTick()
         {
             ApplyMovement();
@@ -85,6 +107,8 @@ namespace Player
         {
             _moveInput = Vector2.zero;
         }
+
+
 
         private bool CanJump()
         {
@@ -139,10 +163,16 @@ namespace Player
         // Проверяем наличие стены слева и справа возле персонажа
         private bool IsWallAtSide(float directionX)
         {
-            Vector3 origin = _controller.transform.position + Vector3.up * 0.5f;
+            Vector3 origin = _controller.transform.position + Vector3.up * (_controller.height / 2f);
             Vector3 dir = _controller.transform.right * directionX;
 
-            return Physics.Raycast(origin, dir, _rayDistance);
+            return Physics.Raycast(origin, dir, _rayDistanceAtWall);
+        }
+
+        private bool IsWallAtHead()
+        {
+            Vector3 origin = _controller.transform.position + Vector3.up * (_controller.height / 2f);
+            return Physics.Raycast(origin, Vector3.up, _rayDistanceAtHead);
         }
 
         // Определяем, облокотился ли персонаж на стену (стена слева или справа + не на земле)
@@ -168,7 +198,6 @@ namespace Player
             bool wallLeft = IsWallAtSide(-1);
             bool wallRight = IsWallAtSide(1);
 
-            // Блокировка горизонтального движения в сторону стены
             if (wallLeft && inputDirection.x < 0)
                 inputDirection.x = 0;
 
@@ -178,23 +207,29 @@ namespace Player
             float targetSpeed = inputDirection.x * speed;
             _velocity.x = Mathf.SmoothDamp(_velocity.x, targetSpeed, ref _velocitySmoothRef.x, 0.1f);
 
-            // Если персонаж облокотился на стену и не на земле — плавный спад по стене
+            // Плавное скольжение по стене
             if (IsWallClinging() && _velocity.y < _playerConfig.WallSlideSpeed)
             {
-                // Спускаемся по стене плавно с максимально заданной скоростью
                 _velocity.y = Mathf.Lerp(_velocity.y, _playerConfig.WallSlideSpeed, _playerConfig.SlowClingFallSpeed);
             }
             else
             {
-                // Если не на стене — применяем обычную гравитацию
-                _velocity.y -= _playerConfig.Gravity * Time.fixedDeltaTime;
+                // Если удерживается кнопка прыжка и персонаж в воздухе с падением вниз — плавное снижение скорости падения
+                if (_flyPressed && _velocity.y < 0)
+                {
+                    _velocity.y = Mathf.Lerp(_velocity.y, -_playerConfig.JumpHoldFallAirSpeed, _playerConfig.SlowFallAirSpeed);
+                }
+                else
+                {
+                    _velocity.y -= _playerConfig.Gravity * Time.fixedDeltaTime;
+                }
             }
 
             Vector3 move = new Vector3(_velocity.x, _velocity.y, 0) * Time.fixedDeltaTime;
             _controller.Move(move);
 
-            if (_controller.isGrounded && _velocity.y < 0)
-                _velocity.y = 0f;
+            if (_controller.isGrounded && _velocity.y < 0 || IsWallAtHead()) _velocity.y = 0f;
+            
         }
 
         private void UpdateFallState()

@@ -20,12 +20,14 @@ MonoBehaviour:
   DampGround: 0.082
   Gravity: 40
   SlowClingFallSpeed: 0.5
-  JumpForce: 200
+  JumpForce: 133
   WallJumpForceX: 60
   WallJumpForceY: 15
   WallHorizontalPush: 50
   WallSlideSpeed: -2
   JumpCountInAir: 2
+  SlowFallAirSpeed: 0.5
+  JumpHoldFallAirSpeed: 2.51
   MaxHealth: 100
   DamageOfFall: 10
   MinHeightForDamage: 5
