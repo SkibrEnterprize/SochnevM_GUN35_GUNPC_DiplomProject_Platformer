@@ -8,7 +8,7 @@ using Zenject;
 namespace Player
 {
 
-    public sealed class MovementComponent : IInitializable, IFixedTickable, IDisposable
+    public sealed class MovementComponent : IInitializable, IFixedTickable, IDisposable, IFlyingZoneHandler
     {
         private readonly CharacterController _controller;
         private readonly Controls _controls;
@@ -16,6 +16,7 @@ namespace Player
         private readonly SignalBus _signalBus;
         private int _jumpCount;
         private bool _flyPressed;
+        private float _flyAdvancedSpeed;
         private Vector2 _moveInput = Vector2.zero;
         private float _rayDistanceAtWall = 0.6f;
         private float _rayDistanceAtHead = 0.1f;
@@ -166,7 +167,7 @@ namespace Player
             Vector3 origin = _controller.transform.position + Vector3.up * (_controller.height / 2f);
             Vector3 dir = _controller.transform.right * directionX;
 
-            return Physics.Raycast(origin, dir, _rayDistanceAtWall);
+            return Physics.Raycast(origin, dir, _rayDistanceAtWall, _playerConfig.LayerMaskForWall);
         }
 
         private bool IsWallAtHead()
@@ -217,7 +218,7 @@ namespace Player
                 // Если удерживается кнопка прыжка и персонаж в воздухе с падением вниз — плавное снижение скорости падения
                 if (_flyPressed && _velocity.y < 0)
                 {
-                    _velocity.y = Mathf.Lerp(_velocity.y, -_playerConfig.JumpHoldFallAirSpeed, _playerConfig.SlowFallAirSpeed);
+                    _velocity.y = Mathf.Lerp(_velocity.y + _flyAdvancedSpeed, -_playerConfig.JumpHoldFallAirSpeed, _playerConfig.SlowFallAirSpeed);
                 }
                 else
                 {
@@ -248,6 +249,15 @@ namespace Player
                 _fallDistance = Mathf.Abs(_fallStartY - _controller.transform.position.y);
                 _signalBus.Fire(new FallDistanceSignal(_fallDistance));
             }
+        }
+
+        public void AddForceFlyingByTrigger()
+        {
+            _flyAdvancedSpeed += _playerConfig.ForceAtFlyByTrigger;
+        }
+        public void RemoveForceFlyingByTrigger()
+        {
+            _flyAdvancedSpeed -= _playerConfig.ForceAtFlyByTrigger;
         }
     }
 }

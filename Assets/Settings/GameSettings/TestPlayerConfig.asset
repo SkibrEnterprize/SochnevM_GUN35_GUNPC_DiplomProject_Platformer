@@ -25,9 +25,13 @@ MonoBehaviour:
   WallJumpForceY: 15
   WallHorizontalPush: 50
   WallSlideSpeed: -2
+  LayerMaskForWall:
+    serializedVersion: 2
+    m_Bits: 512
   JumpCountInAir: 2
   SlowFallAirSpeed: 0.5
   JumpHoldFallAirSpeed: 2.51
+  ForceAtFlyByTrigger: 16.5
   MaxHealth: 100
   DamageOfFall: 10
   MinHeightForDamage: 5

@@ -30,11 +30,13 @@ public class PlayerConfig : ScriptableObject
     public float WallJumpForceY = 0.5f;
     public float WallHorizontalPush = 2f;
     public float WallSlideSpeed = 2f;
+    public LayerMask LayerMaskForWall;
 
     public int JumpCountInAir = 2;
     [field: SerializeField, Range(0, 1)]
     public float SlowFallAirSpeed = 0.5f;
     public float JumpHoldFallAirSpeed = 2f;
+    public float ForceAtFlyByTrigger = 2f;
 
     [Header("Health")]
     public int MaxHealth = 100;               // максимальное здоровье
