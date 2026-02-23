@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a1d32759ff857e45869cabf0981e4c0, type: 3}
   m_Name: TestPlayerConfig
   m_EditorClassIdentifier: 
-  MoveSpeed: 7.42
+  MoveSpeed: 8
   MoveSpeedGround: 8
   MoveSpeedAir: 6
   SmoothTime: 0.5
@@ -26,4 +26,6 @@ MonoBehaviour:
   WallHorizontalPush: 50
   WallSlideSpeed: -2
   JumpCountInAir: 2
-  GroundCheckDistance: 0.1
+  MaxHealth: 100
+  DamageOfFall: 10
+  MinHeightForDamage: 5

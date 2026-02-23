@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Player
 {
-    public sealed class HealthComponent : IInitializable, IDisposable
+    public sealed class HealthComponent : IInitializable, IDisposable, IDamageZoneHandler
     {
         private readonly SignalBus _signalBus;
         private PlayerConfig _playerConfig;
@@ -31,16 +31,22 @@ namespace Player
 
         private void OnFallDistanceReceived(FallDistanceSignal signal)
         {
-            TakeDamage(signal.FallDistance);
+            TakeFallDamage(signal.FallDistance);
         }
 
-        private void TakeDamage(float fallDistance)
+        private void TakeFallDamage(float fallDistance)
         {
             if (fallDistance > _playerConfig.MinHeightForDamage)
             {
                 _health -= _playerConfig.DamageOfFall;
                 Debug.Log($"Health = {_health} because of FallDistance is {fallDistance}");
             }
+        }
+
+        public void TakeDamageByTrigger(int damage)
+        {
+           _health -= damage;
+            Debug.Log($"Damage by Trigger - {damage}, Total Health = {_health}");
         }
     }
 }

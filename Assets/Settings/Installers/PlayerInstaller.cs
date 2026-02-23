@@ -52,6 +52,7 @@ namespace Player
                 })
                 .AsSingle()
                 .NonLazy();
+                       
         }
     }
 }
