@@ -20,7 +20,7 @@ MonoBehaviour:
   DampGround: 0.082
   Gravity: 40
   SlowClingFallSpeed: 0.5
-  JumpForce: 133
+  JumpForce: 140
   WallJumpForceX: 60
   WallJumpForceY: 15
   WallHorizontalPush: 50
@@ -28,7 +28,7 @@ MonoBehaviour:
   LayerMaskForWall:
     serializedVersion: 2
     m_Bits: 512
-  JumpCountInAir: 2
+  JumpCountInAir: 1
   SlowFallAirSpeed: 0.5
   JumpHoldFallAirSpeed: 2.51
   ForceAtFlyByTrigger: 16.5
