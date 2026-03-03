@@ -7,11 +7,12 @@ namespace Player
     {
         [SerializeField] private GameObject _player;
         [SerializeField] private PlayerConfig _playerConfig;
+        [SerializeField] private LevelFinishConfig _levelFinishConfig;
 
         public override void InstallBindings()
         {
             var character = _player.GetComponent<CharacterController>();
-            var playerConfig = _playerConfig;
+            //var playerConfig = _playerConfig;
 
             // 2. Биндим Управление
             var controls = new Controls();
@@ -27,11 +28,11 @@ namespace Player
                 {
                     var container = ctx.Container;
                     var signalBus = container.Resolve<SignalBus>();
-                    var playerConfig = container.Resolve<PlayerConfig>();
+                    //var playerConfig = container.Resolve<PlayerConfig>();
                     return new MovementComponent(
                         character,
                         controls,
-                        playerConfig,
+                        _playerConfig,
                         signalBus);
 
                 })
@@ -44,15 +45,27 @@ namespace Player
                 {
                     var container = ctx.Container;
                     var signalBus = container.Resolve<SignalBus>();
-                    var playerConfig = container.Resolve<PlayerConfig>();
-                    return new HealthComponent(                       
-                        playerConfig,
+                    //var playerConfig = container.Resolve<PlayerConfig>();
+                    return new HealthComponent(
+                        _playerConfig,
                         signalBus);
 
                 })
                 .AsSingle()
                 .NonLazy();
-                       
+            // 5. Создаем LevelFinishObserver
+            Container.BindInterfacesAndSelfTo<LevelFinishObserver>()
+                .FromMethod(ctx=>
+                {
+                    var container = ctx.Container;
+                    var signalBus = container.Resolve<SignalBus>();
+                    //var levelFinishConfig = container.Resolve<LevelFinishConfig>();
+                    return new LevelFinishObserver(
+                        signalBus,
+                        _levelFinishConfig);
+                })
+                .AsSingle()
+                .NonLazy();
         }
     }
 }

@@ -6,6 +6,7 @@ public class SceneInstaller : MonoInstaller
     {     
         SignalBusInstaller.Install(Container);
         Container.DeclareSignal<Player.Signals.FallDistanceSignal>();
+        Container.DeclareSignal<Player.Signals.LevelFinishCollectSignal>();
     }
 }
 
