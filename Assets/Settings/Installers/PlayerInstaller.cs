@@ -53,6 +53,7 @@ namespace Player
                 })
                 .AsSingle()
                 .NonLazy();
+
             // 5. Создаем LevelFinishObserver
             Container.BindInterfacesAndSelfTo<LevelFinishObserver>()
                 .FromMethod(ctx=>
@@ -61,6 +62,19 @@ namespace Player
                     var signalBus = container.Resolve<SignalBus>();
                     //var levelFinishConfig = container.Resolve<LevelFinishConfig>();
                     return new LevelFinishObserver(
+                        signalBus,
+                        _levelFinishConfig);
+                })
+                .AsSingle()
+                .NonLazy();
+
+            // 6. Создаем CollectItemObserver
+            Container.BindInterfacesAndSelfTo<CollectItemObserver>()
+                .FromMethod(ctx =>
+                {
+                    var container = ctx.Container;
+                    var signalBus = container.Resolve<SignalBus>();
+                    return new CollectItemObserver(
                         signalBus,
                         _levelFinishConfig);
                 })
