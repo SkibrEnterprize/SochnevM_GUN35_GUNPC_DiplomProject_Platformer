@@ -56,7 +56,7 @@ namespace Player
 
             // 5. Создаем LevelFinishObserver
             Container.BindInterfacesAndSelfTo<LevelFinishObserver>()
-                .FromMethod(ctx=>
+                .FromMethod(ctx =>
                 {
                     var container = ctx.Container;
                     var signalBus = container.Resolve<SignalBus>();
@@ -77,6 +77,32 @@ namespace Player
                     return new CollectItemObserver(
                         signalBus,
                         _levelFinishConfig);
+                })
+                .AsSingle()
+                .NonLazy();
+
+            // 7. Создаем CheckPointHandler
+            Container.BindInterfacesAndSelfTo<CheckPointHolder>()
+                .FromMethod(ctx =>
+                {
+                    return new CheckPointHolder(
+                        _player.transform.position,
+                        _player.transform.rotation);
+                })
+                .AsSingle()
+                .NonLazy();
+
+            // 7. Создаем PlayerDeathHandler
+            Container.BindInterfacesAndSelfTo<PlayerDeathHandler>()
+                .FromMethod(ctx =>
+                {
+                    var container = ctx.Container;
+                    var checkPointHolder = container.Resolve<CheckPointHolder>();
+                    var signalBus = container.Resolve<SignalBus>();
+                    return new PlayerDeathHandler(
+                        checkPointHolder,
+                        _player.transform,
+                        signalBus);
                 })
                 .AsSingle()
                 .NonLazy();

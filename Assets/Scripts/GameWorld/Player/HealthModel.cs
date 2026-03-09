@@ -11,7 +11,7 @@ namespace Player
         private PlayerConfig _playerConfig;
         private int _health;
 
-        
+
         public event Action<int> OnHealthChanged;
         public int Health
         {
@@ -62,6 +62,12 @@ namespace Player
         {
             Health += value;
             Debug.Log($"Value by Trigger - {value}, Total Health = {_health}");
+            CheckHealthValue();
+        }
+
+        private void CheckHealthValue()
+        {
+            if (_health <= 0) _signalBus.Fire(new HealthIsOverSignal());
         }
     }
 }
