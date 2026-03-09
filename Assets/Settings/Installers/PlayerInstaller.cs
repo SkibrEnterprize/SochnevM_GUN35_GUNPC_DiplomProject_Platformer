@@ -40,13 +40,13 @@ namespace Player
                 .NonLazy();
 
             // 4. Создаём HealthComponent
-            Container.BindInterfacesAndSelfTo<HealthComponent>()
+            Container.BindInterfacesAndSelfTo<HealthModel>()
                 .FromMethod(ctx =>
                 {
                     var container = ctx.Container;
                     var signalBus = container.Resolve<SignalBus>();
                     //var playerConfig = container.Resolve<PlayerConfig>();
-                    return new HealthComponent(
+                    return new HealthModel(
                         _playerConfig,
                         signalBus);
 
