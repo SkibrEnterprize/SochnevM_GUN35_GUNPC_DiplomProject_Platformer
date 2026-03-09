@@ -21,8 +21,8 @@ public class HealthView : MonoBehaviour
         healthSlider.fillRect.GetComponent<Image>().color = color;
     }
     [ContextMenu("Do Something")]
-    public void DisableFillArea()
+    public void EnableFillArea(bool flag)
     {
-        healthSlider.fillRect.GetComponent<Image>().enabled = false;
+        healthSlider.fillRect.GetComponent<Image>().enabled = flag;
     }
 }

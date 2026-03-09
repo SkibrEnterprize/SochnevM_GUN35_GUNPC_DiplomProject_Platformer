@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Player
 {
-    public sealed class HealthModel : IInitializable, IDisposable, IDamageZoneHandler
+    public sealed class HealthModel : IInitializable, IDisposable, ITakeChangeByTrigger
     {
         private readonly SignalBus _signalBus;
         private PlayerConfig _playerConfig;
@@ -20,7 +20,7 @@ namespace Player
             {
                 if (_health != value)
                 {
-                    _health = Mathf.Clamp(value, 0, 100);
+                    _health = Mathf.Clamp(value, 0, _playerConfig.MaxHealth);
                     OnHealthChanged?.Invoke(_health);
                     Debug.Log("Health Update ON Envoke");
                 }
@@ -58,10 +58,10 @@ namespace Player
             }
         }
 
-        public void TakeDamageByTrigger(int damage)
+        public void TakeChangeByTrigger(int value)
         {
-            Health -= damage;
-            Debug.Log($"Damage by Trigger - {damage}, Total Health = {_health}");
+            Health += value;
+            Debug.Log($"Value by Trigger - {value}, Total Health = {_health}");
         }
     }
 }

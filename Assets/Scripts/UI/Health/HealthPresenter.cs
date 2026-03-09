@@ -22,23 +22,16 @@ public class HealthPresenter
     private void UpdateView(int health)
     {
         _view.UpdateHealth(health);
-        if (health <= 0)
-        {
-            _view.DisableFillArea();         
-        }
-        else if (health < 20)
-        {
-            _view.SetFillColor(_criticalColor);
-        }
-        else
+        
+        if (health > 20)
         {
             _view.SetFillColor(_normalColor);
         }
-        Debug.Log("!!!!!!!!!!");
-    }
-
-    //public void ChangeHealth(int delta)
-    //{
-    //    _model.Health += delta;
-    //}
+        else
+        {
+            _view.SetFillColor(_criticalColor);
+        }
+        if (health > 0) _view.EnableFillArea(true);
+        if (health <=0) _view.EnableFillArea(false);
+    }    
 }
