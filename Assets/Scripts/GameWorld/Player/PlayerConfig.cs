@@ -40,6 +40,7 @@ public class PlayerConfig : ScriptableObject
 
     [Header("Health")]
     public int MaxHealth = 100;               // максимальное здоровье
+    public int CriticalHealth = 20;
 
     [Header("Damage")]
     public int DamageOfFall = 10; // сколько урона при падении
