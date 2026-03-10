@@ -33,5 +33,6 @@ MonoBehaviour:
   JumpHoldFallAirSpeed: 2.51
   ForceAtFlyByTrigger: 16.5
   MaxHealth: 100
+  CriticalHealth: 20
   DamageOfFall: 10
   MinHeightForDamage: 5

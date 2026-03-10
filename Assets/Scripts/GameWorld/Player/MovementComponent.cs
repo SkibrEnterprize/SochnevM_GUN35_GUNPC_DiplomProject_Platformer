@@ -8,7 +8,7 @@ using Zenject;
 namespace Player
 {
 
-    public sealed class MovementComponent : IInitializable, IFixedTickable, IDisposable, IFlyingZoneHandler
+    public sealed class MovementComponent : IInitializable, IFixedTickable, IDisposable, IInpactOfMoveHandler
     {
         private readonly CharacterController _controller;
         private readonly Controls _controls;
@@ -17,6 +17,7 @@ namespace Player
         private int _jumpCount;
         private bool _flyPressed;
         private float _flyAdvancedSpeed;
+        private float _moveAdvancedSpeed;
         private Vector2 _moveInput = Vector2.zero;
         private float _rayDistanceAtWall = 0.6f;
         private float _rayDistanceAtHead = 0.1f;
@@ -206,7 +207,7 @@ namespace Player
                 inputDirection.x = 0;
 
             float targetSpeed = inputDirection.x * speed;
-            _velocity.x = Mathf.SmoothDamp(_velocity.x, targetSpeed, ref _velocitySmoothRef.x, 0.1f);
+            _velocity.x = Mathf.SmoothDamp(_velocity.x + _moveAdvancedSpeed, targetSpeed, ref _velocitySmoothRef.x, 0.1f);
 
             // Плавное скольжение по стене
             if (IsWallClinging() && _velocity.y < _playerConfig.WallSlideSpeed)
@@ -251,14 +252,19 @@ namespace Player
             }
         }
 
-        public void AddForceFlyingByTrigger()
+        public void ChangeForceByTrigger(bool isAddForce, float flySpeed, float moveSpeed)
         {
-            _flyAdvancedSpeed += _playerConfig.ForceAtFlyByTrigger;
-        }
-        public void RemoveForceFlyingByTrigger()
-        {
-            _flyAdvancedSpeed -= _playerConfig.ForceAtFlyByTrigger;
-        }
+            if (isAddForce)
+            {
+                _flyAdvancedSpeed += flySpeed;
+                _moveAdvancedSpeed += moveSpeed;
+            }
+            else
+            {
+                _flyAdvancedSpeed -= flySpeed;
+                _moveAdvancedSpeed -= moveSpeed;
+            }
+        }       
     }
 }
 

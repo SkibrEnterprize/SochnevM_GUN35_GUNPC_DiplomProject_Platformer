@@ -31,6 +31,12 @@ public class PlayerDeathHandler : IInitializable, IDisposable
 
     public void OnPlayerDied()
     {
+        MoveToLastCheckPoint();
+        _signalBus.Fire<HealthIsRepairSignal>();
+    }
+
+    private void MoveToLastCheckPoint()
+    {
         Vector3 pos = _checkPointHolder.GetPosition();
         Quaternion rot = _checkPointHolder.GetRotation();
 
@@ -40,6 +46,4 @@ public class PlayerDeathHandler : IInitializable, IDisposable
             _playerTransform.rotation = rot;
         }
     }
-
-
 }

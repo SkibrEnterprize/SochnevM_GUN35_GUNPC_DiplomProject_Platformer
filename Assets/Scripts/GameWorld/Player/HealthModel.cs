@@ -36,12 +36,14 @@ namespace Player
         public void Initialize()
         {
             _signalBus.Subscribe<FallDistanceSignal>(OnFallDistanceReceived);
+            _signalBus.Subscribe<HealthIsRepairSignal>(HealthAllRepair);
             Health = _playerConfig.MaxHealth;
         }
 
         public void Dispose()
         {
             _signalBus.Unsubscribe<FallDistanceSignal>(OnFallDistanceReceived);
+            _signalBus.Unsubscribe<HealthIsRepairSignal>(HealthAllRepair);
         }
 
         private void OnFallDistanceReceived(FallDistanceSignal signal)
@@ -68,6 +70,11 @@ namespace Player
         private void CheckHealthValue()
         {
             if (_health <= 0) _signalBus.Fire(new HealthIsOverSignal());
+        }
+
+        private void HealthAllRepair()
+        {
+            Health = _playerConfig.MaxHealth;
         }
     }
 }

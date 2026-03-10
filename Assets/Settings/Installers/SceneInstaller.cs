@@ -9,6 +9,7 @@ public class SceneInstaller : MonoInstaller
         Container.DeclareSignal<Player.Signals.LevelFinishCollectSignal>();
         Container.DeclareSignal<Player.Signals.CollectItemSignal>();
         Container.DeclareSignal<Player.Signals.HealthIsOverSignal>();
+        Container.DeclareSignal<Player.Signals.HealthIsRepairSignal>();
     }
 }
 
