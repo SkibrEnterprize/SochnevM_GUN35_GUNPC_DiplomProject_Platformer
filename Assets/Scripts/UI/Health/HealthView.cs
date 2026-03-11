@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class HealthView : MonoBehaviour
 {
-    [SerializeField] private Slider healthSlider;
+    [SerializeField] private Slider _healthSlider;
 
     //private void Awake()
     //{
@@ -12,17 +12,17 @@ public class HealthView : MonoBehaviour
 
     public void UpdateHealth(int health)
     {        
-        healthSlider.value = health;
+        _healthSlider.value = health;
         Debug.Log("Update Health view");
     }
 
     public void SetFillColor(Color color)
     {
-        healthSlider.fillRect.GetComponent<Image>().color = color;
+        _healthSlider.fillRect.GetComponent<Image>().color = color;
     }
     [ContextMenu("Do Something")]
     public void EnableFillArea(bool flag)
     {
-        healthSlider.fillRect.GetComponent<Image>().enabled = flag;
+        _healthSlider.fillRect.GetComponent<Image>().enabled = flag;
     }
 }

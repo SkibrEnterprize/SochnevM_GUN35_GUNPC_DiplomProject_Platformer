@@ -68,13 +68,13 @@ namespace Player
                 .AsSingle()
                 .NonLazy();
 
-            // 6. Создаем CollectItemObserver
-            Container.BindInterfacesAndSelfTo<CollectItemObserver>()
+            // 6. Создаем CollectItemModel
+            Container.BindInterfacesAndSelfTo<CollectItemModel>()
                 .FromMethod(ctx =>
                 {
                     var container = ctx.Container;
                     var signalBus = container.Resolve<SignalBus>();
-                    return new CollectItemObserver(
+                    return new CollectItemModel(
                         signalBus,
                         _levelFinishConfig);
                 })
