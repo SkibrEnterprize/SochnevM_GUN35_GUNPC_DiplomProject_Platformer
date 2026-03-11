@@ -15,7 +15,6 @@ public class UiInstaller : MonoInstaller
                 {
                     var container = ctx.Container;
                     var healthModel = container.Resolve<HealthModel>();
-                    //var playerConfig = container.Resolve<PlayerConfig>();
                     return new HealthPresenter(
                         healthModel,
                         _healthView);

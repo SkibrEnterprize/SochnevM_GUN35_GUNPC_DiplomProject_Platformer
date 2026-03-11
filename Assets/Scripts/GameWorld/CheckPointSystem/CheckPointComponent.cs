@@ -9,7 +9,6 @@ public class CheckPointComponent : MonoBehaviour
     public Vector3 Position => transform.position;
     public Quaternion Rotation => transform.rotation;
 
-    // Ссылка на текущий чек?поинт (управляется через сервис)
     [Inject]
     private void Construct(CheckPointHolder checkPointHandler)
     {

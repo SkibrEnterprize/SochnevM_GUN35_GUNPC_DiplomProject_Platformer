@@ -4,11 +4,7 @@ using UnityEngine.UI;
 public class HealthView : MonoBehaviour
 {
     [SerializeField] private Slider _healthSlider;
-
-    //private void Awake()
-    //{
-    //    _fillArea = healthSlider.fillRect.GetComponent<Image>();
-    //}
+        
 
     public void UpdateHealth(int health)
     {        

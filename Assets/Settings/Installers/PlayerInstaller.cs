@@ -22,13 +22,12 @@ namespace Player
             // Биндим конфиг игрока
             Container.Bind<PlayerConfig>().FromInstance(_playerConfig);
 
-            // 3. Создаём MovementComponent через конструктор и сразу создаём его
+            // 3. Создаём MovementComponent 
             Container.BindInterfacesAndSelfTo<MovementComponent>()
                 .FromMethod(ctx =>
                 {
                     var container = ctx.Container;
                     var signalBus = container.Resolve<SignalBus>();
-                    //var playerConfig = container.Resolve<PlayerConfig>();
                     return new MovementComponent(
                         character,
                         controls,
@@ -45,7 +44,6 @@ namespace Player
                 {
                     var container = ctx.Container;
                     var signalBus = container.Resolve<SignalBus>();
-                    //var playerConfig = container.Resolve<PlayerConfig>();
                     return new HealthModel(
                         _playerConfig,
                         signalBus);
@@ -60,7 +58,6 @@ namespace Player
                 {
                     var container = ctx.Container;
                     var signalBus = container.Resolve<SignalBus>();
-                    //var levelFinishConfig = container.Resolve<LevelFinishConfig>();
                     return new LevelFinishObserver(
                         signalBus,
                         _levelFinishConfig);
