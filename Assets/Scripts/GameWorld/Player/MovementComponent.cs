@@ -8,7 +8,7 @@ using Zenject;
 namespace Player
 {
 
-    public sealed class MovementComponent : IInitializable, IFixedTickable, IDisposable, IInpactOfMoveHandler
+    public sealed class MovementComponent : IInitializable, IFixedTickable, IDisposable, IChangeOfForceHandler
     {
         private readonly CharacterController _controller;
         private readonly Controls _controls;
@@ -207,7 +207,7 @@ namespace Player
                 inputDirection.x = 0;
 
             float targetSpeed = inputDirection.x * speed;
-            _velocity.x = Mathf.SmoothDamp(_velocity.x + _moveAdvancedSpeed, targetSpeed, ref _velocitySmoothRef.x, 0.1f);
+            _velocity.x = Mathf.SmoothDamp(_velocity.x, targetSpeed, ref _velocitySmoothRef.x, 0.1f);
 
             // Плавное скольжение по стене
             if (IsWallClinging() && _velocity.y < _playerConfig.WallSlideSpeed)
@@ -219,7 +219,11 @@ namespace Player
                 // Если удерживается кнопка прыжка и персонаж в воздухе с падением вниз — плавное снижение скорости падения
                 if (_flyPressed && _velocity.y < 0)
                 {
-                    _velocity.y = Mathf.Lerp(_velocity.y + _flyAdvancedSpeed, -_playerConfig.JumpHoldFallAirSpeed, _playerConfig.SlowFallAirSpeed);
+                    _velocity.y = Mathf.Lerp(_velocity.y
+                        - _flyAdvancedSpeed,
+                        -_playerConfig.JumpHoldFallAirSpeed,
+                        _playerConfig.SlowFallAirSpeed);
+                    _velocity.x += _moveAdvancedSpeed;
                 }
                 else
                 {
@@ -231,7 +235,7 @@ namespace Player
             _controller.Move(move);
 
             if (_controller.isGrounded && _velocity.y < 0 || IsWallAtHead()) _velocity.y = 0f;
-            
+
         }
 
         private void UpdateFallState()
@@ -264,7 +268,7 @@ namespace Player
                 _flyAdvancedSpeed -= flySpeed;
                 _moveAdvancedSpeed -= moveSpeed;
             }
-        }       
+        }
     }
 }
 
