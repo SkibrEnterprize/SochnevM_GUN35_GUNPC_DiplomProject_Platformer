@@ -10,10 +10,13 @@ namespace Player
 
     public sealed class MovementComponent : IInitializable, IFixedTickable, IDisposable, IChangeOfForceHandler
     {
+        public event Action<float> OnFallDistanceEvent;
+
         private readonly CharacterController _controller;
         private readonly Controls _controls;
         private readonly PlayerConfig _playerConfig;
-        private readonly SignalBus _signalBus;
+        private readonly SoundLibrary _soundLibrary;
+
         private int _jumpCount;
         private bool _flyPressed;
         private float _flyAdvancedSpeed;
@@ -33,12 +36,12 @@ namespace Player
             CharacterController controller,
             Controls controls,
             PlayerConfig playerConfig,
-            SignalBus signalBus)
+            SoundLibrary soundLibrary)
         {
             _controller = controller;
             _controls = controls;
             _playerConfig = playerConfig;
-            _signalBus = signalBus;
+            _soundLibrary = soundLibrary;
         }
 
         public void Initialize()
@@ -130,6 +133,7 @@ namespace Player
 
             _velocity.y += Mathf.Sqrt(2 * _playerConfig.JumpForce);
             _jumpCount++;
+            _soundLibrary.RequestPlay(SoundType.Jump);
         }
 
         // Прыжок от стены — отталкиваемся по диагонали в противоположную сторону от стены
@@ -148,8 +152,8 @@ namespace Player
 
             _jumpCount++; // Замечаем прыжок
 
-            // Можно "отрыв" от стены убрать, чтобы прыжок не считывался как земля
-            // (если надо, например, сбросить к нулю _jumpCount можно добавить сюда)
+            _soundLibrary.RequestPlay(SoundType.SideJump);
+            
         }
 
         private bool IsGrounded()
@@ -252,7 +256,7 @@ namespace Player
             {
                 _isFalling = false;
                 _fallDistance = Mathf.Abs(_fallStartY - _controller.transform.position.y);
-                _signalBus.Fire(new FallDistanceSignal(_fallDistance));
+                OnFallDistanceEvent?.Invoke(_fallDistance);
             }
         }
 

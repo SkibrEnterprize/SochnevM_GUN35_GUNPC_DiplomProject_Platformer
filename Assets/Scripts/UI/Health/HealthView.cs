@@ -9,7 +9,6 @@ public class HealthView : MonoBehaviour
     public void UpdateHealth(int health)
     {        
         _healthSlider.value = health;
-        Debug.Log("Update Health view");
     }
 
     public void SetFillColor(Color color)

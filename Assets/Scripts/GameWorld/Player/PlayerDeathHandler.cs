@@ -3,36 +3,36 @@ using Player.Signals;
 using System;
 using Zenject;
 using UnityEngine;
+using Player;
 
 
-public class PlayerDeathHandler : IInitializable, IDisposable
+public class PlayerDeathHandler : IInitializable, IDisposable, IPlayerDeathHandler
 {
+    public event Action OnHealthRepair;
+
     [SerializeField] private Transform _playerTransform;
     private CheckPointHolder _checkPointHolder;
-    private SignalBus _signalBus;
+    
 
-    public PlayerDeathHandler(CheckPointHolder chechPointHolder, Transform playerTransform,
-        SignalBus signalBus)
+    public PlayerDeathHandler(CheckPointHolder chechPointHolder, Transform playerTransform)
     {
         _checkPointHolder = chechPointHolder;
-        _playerTransform = playerTransform;
-        _signalBus = signalBus;
+        _playerTransform = playerTransform;        
     }
     public void Initialize()
     {
-        _signalBus.Subscribe<HealthIsOverSignal>(OnPlayerDied);
     }
 
     public void Dispose()
     {
-        _signalBus.Unsubscribe<HealthIsOverSignal>(OnPlayerDied);
     }
 
 
-    public void OnPlayerDied()
+    public void PlayerDied()
     {
+        Debug.Log("Plaer Died activate");
         MoveToLastCheckPoint();
-        _signalBus.Fire<HealthIsRepairSignal>();
+        OnHealthRepair?.Invoke();
     }
 
     private void MoveToLastCheckPoint()

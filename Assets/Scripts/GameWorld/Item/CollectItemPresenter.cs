@@ -1,12 +1,7 @@
-using UnityEngine;
-
 public class CollectItemPresenter
-{
-   
-
+{   
     private readonly CollectItemModel _model;
     private readonly ScoreItemView _view;
-
 
     public CollectItemPresenter(CollectItemModel model, ScoreItemView view)
     {

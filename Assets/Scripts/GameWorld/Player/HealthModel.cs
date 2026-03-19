@@ -7,9 +7,13 @@ namespace Player
 {
     public sealed class HealthModel : IInitializable, IDisposable, ITakeChangeByTrigger
     {
-        private readonly SignalBus _signalBus;
+        public event Action OnHealthIsOver;
+
+
+        private readonly MovementComponent _movementComponent;
         private PlayerConfig _playerConfig;
         private int _health;
+        private SoundLibrary _soundLibrary;
 
 
         public event Action<int> OnHealthChanged;
@@ -22,40 +26,38 @@ namespace Player
                 {
                     _health = Mathf.Clamp(value, 0, _playerConfig.MaxHealth);
                     OnHealthChanged?.Invoke(_health);
-                    Debug.Log("Health Update ON Envoke");
                 }
             }
         }
         public HealthModel(PlayerConfig playerConfig,
-            SignalBus signalBus)
+            MovementComponent movementComponent,
+            SoundLibrary soundLibrary)
         {
             _playerConfig = playerConfig;
-            _signalBus = signalBus;
+            _movementComponent = movementComponent;
+            _soundLibrary = soundLibrary;
         }
 
         public void Initialize()
         {
-            _signalBus.Subscribe<FallDistanceSignal>(OnFallDistanceReceived);
-            _signalBus.Subscribe<HealthIsRepairSignal>(HealthAllRepair);
             Health = _playerConfig.MaxHealth;
         }
 
         public void Dispose()
         {
-            _signalBus.Unsubscribe<FallDistanceSignal>(OnFallDistanceReceived);
-            _signalBus.Unsubscribe<HealthIsRepairSignal>(HealthAllRepair);
         }
 
-        private void OnFallDistanceReceived(FallDistanceSignal signal)
+        public void FallDistanceReceived(float fallDistance)
         {
-            TakeFallDamage(signal.FallDistance);
+            TakeFallDamage(fallDistance);
         }
 
         private void TakeFallDamage(float fallDistance)
         {
             if (fallDistance > _playerConfig.MinHeightForDamage)
             {
-                Health -= _playerConfig.DamageOfFall;
+                TakeChangeByTrigger(-_playerConfig.DamageOfFall);
+                //Health -= _playerConfig.DamageOfFall;
                 Debug.Log($"Health = {_health} because of FallDistance is {fallDistance}");
             }
         }
@@ -63,16 +65,26 @@ namespace Player
         public void TakeChangeByTrigger(int value)
         {
             Health += value;
-            Debug.Log($"Value by Trigger - {value}, Total Health = {_health}");
-            CheckHealthValue();
+            if (value > 0)
+            {
+                _soundLibrary.RequestPlay(SoundType.Healing);
+            }
+            else
+            {
+                _soundLibrary.RequestPlay(SoundType.Dammage);
+            }
+
+                CheckHealthValue();
         }
 
+        private void TakeDamage(int value) => Health -= value;
+        private void TakeHealing(int value) => Health += value;
         private void CheckHealthValue()
         {
-            if (_health <= 0) _signalBus.Fire(new HealthIsOverSignal());
+            if (_health <= 0) OnHealthIsOver?.Invoke();
         }
 
-        private void HealthAllRepair()
+        public void HealthAllRepair()
         {
             Health = _playerConfig.MaxHealth;
         }

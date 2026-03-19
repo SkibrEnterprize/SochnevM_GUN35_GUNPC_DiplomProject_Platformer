@@ -1,6 +1,4 @@
-using System.Linq;
 using UnityEngine;
-using Zenject;
 
 public class TriggerForObject : MonoBehaviour
 {
@@ -8,20 +6,11 @@ public class TriggerForObject : MonoBehaviour
         "Если не назначено в инспекторе - берутся дочерние объекты с компонентом FeaturesObject ")]
     [SerializeField] private FeaturesObject[] _featureObjects;
 
-    private SignalBus _signalBus;
-
-    [Inject]
-    private void Construct(SignalBus signalBus)
-    {
-        _signalBus = signalBus;
-    }
-
     private void Awake()
     {
         if (_featureObjects.Length == 0)
         {
             _featureObjects = GetComponentsInChildren<FeaturesObject>();
-                Debug.Log("Features!!!");
         }
     }
 
@@ -31,7 +20,6 @@ public class TriggerForObject : MonoBehaviour
             foreach (var feature in _featureObjects)
             {
                 feature?.SomeActions();
-                Debug.Log("Color Is Changeed");
             }
     }
 }

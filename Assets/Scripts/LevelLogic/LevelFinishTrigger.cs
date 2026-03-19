@@ -1,16 +1,15 @@
-using Player.Signals;
 using UnityEngine;
 using Zenject;
 
 public class LevelFinishTrigger : MonoBehaviour
 {
+    private LevelFinishSystem _system;
     private bool _isActivate;
-    private SignalBus _signalBus;
 
     [Inject]
-    private void Construct(SignalBus signalBus)
+    private void Construct(LevelFinishSystem system)
     {
-        _signalBus = signalBus;
+        _system = system;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -19,7 +18,7 @@ public class LevelFinishTrigger : MonoBehaviour
             && !_isActivate)
         {
             _isActivate = true;
-            _signalBus.Fire<LevelFinishCollectSignal>();
+            _system.EndPointReached();
         }
     }
 }

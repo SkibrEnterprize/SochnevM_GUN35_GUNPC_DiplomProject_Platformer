@@ -1,15 +1,16 @@
 using Player.Signals;
+using System;
 using UnityEngine;
 using Zenject;
 
 public class CollectItemTrigger : MonoBehaviour
 {
-    private SignalBus _signalBus;
+    private CollectItemModel _itemModel;
 
     [Inject]
-    private void Construct(SignalBus signalBus)
+    private void Construct(CollectItemModel itemModel)
     {
-        _signalBus = signalBus;
+        _itemModel = itemModel;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -18,7 +19,7 @@ public class CollectItemTrigger : MonoBehaviour
             && isActiveAndEnabled)
         {
           gameObject.SetActive(false);
-            _signalBus.Fire<CollectItemSignal>();
+            _itemModel.CollectItem();
         }
     }
 }

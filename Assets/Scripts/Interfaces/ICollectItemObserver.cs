@@ -1,5 +1,5 @@
 
 public interface ICollectItemObserver
 {
-    void OnCollectItem();
+    void CollectItem();
 }

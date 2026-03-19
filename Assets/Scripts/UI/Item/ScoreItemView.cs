@@ -11,7 +11,6 @@ public class ScoreItemView : MonoBehaviour
     public void UpdateView(string score)
     {
         _score.text = score;
-        Debug.Log("Update Score view");
     }
     
 }

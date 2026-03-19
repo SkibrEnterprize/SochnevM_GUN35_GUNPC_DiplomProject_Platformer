@@ -1,12 +1,12 @@
-using Player.Signals;
 using System;
-using UnityEngine;
 using Zenject;
 
 public class CollectItemModel : IInitializable, IDisposable, ICollectItemObserver
 {
-    private readonly SignalBus _signalBus;
     private int _score;
+    private readonly SoundLibrary _soundLibrary;
+
+    private LevelFinishConfig _config;
 
     public event Action<int> OnCountChanged;
     public int Score
@@ -17,31 +17,28 @@ public class CollectItemModel : IInitializable, IDisposable, ICollectItemObserve
            {
                 _score++;
                 OnCountChanged?.Invoke(_score);
-                Debug.Log("Health Update ON Envoke");
             }
         }
     }
-    public CollectItemModel(SignalBus signalBus,
-        LevelFinishConfig levelFinishConfig)
-    {
-        _signalBus = signalBus;
+    public CollectItemModel(LevelFinishConfig levelFinishConfig, SoundLibrary soundLibrary)
+    {        
+        _config = levelFinishConfig;
+        _soundLibrary = soundLibrary;
     }
 
     public void Initialize()
     {
-        _signalBus.Subscribe<CollectItemSignal>(OnCollectItem);
     }
     
     public void Dispose()
     {
-        _signalBus.Unsubscribe<CollectItemSignal>(OnCollectItem);
     }
 
 
-    public void OnCollectItem()
+    public void CollectItem()
     {
         Score++;
-        Debug.Log($"Collect Item = {_score}");
+        _soundLibrary.RequestPlay(SoundType.CollectItem);
     }
     
 }

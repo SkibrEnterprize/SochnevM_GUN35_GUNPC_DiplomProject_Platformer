@@ -12,7 +12,6 @@ namespace Player
         public override void InstallBindings()
         {
             var character = _player.GetComponent<CharacterController>();
-            //var playerConfig = _playerConfig;
 
             // 2. Биндим Управление
             var controls = new Controls();
@@ -27,13 +26,27 @@ namespace Player
                 .FromMethod(ctx =>
                 {
                     var container = ctx.Container;
-                    var signalBus = container.Resolve<SignalBus>();
+                    var soundLibrary = container.Resolve<SoundLibrary>();
                     return new MovementComponent(
                         character,
                         controls,
                         _playerConfig,
-                        signalBus);
+                        soundLibrary);
 
+                })
+                .AsSingle()
+                .NonLazy();
+
+            // 7. Создаем CheckPointHandler
+            Container.BindInterfacesAndSelfTo<CheckPointHolder>()
+                .FromMethod(ctx =>
+                {
+                    var container = ctx.Container;
+                    var soundLibrary = container.Resolve<SoundLibrary>();
+                    return new CheckPointHolder(
+                        _player.transform.position,
+                        _player.transform.rotation,
+                        soundLibrary);
                 })
                 .AsSingle()
                 .NonLazy();
@@ -43,23 +56,35 @@ namespace Player
                 .FromMethod(ctx =>
                 {
                     var container = ctx.Container;
-                    var signalBus = container.Resolve<SignalBus>();
+                    var movementComponent = container.Resolve<MovementComponent>();
+                    var soundLibrary = container.Resolve<SoundLibrary>();
                     return new HealthModel(
                         _playerConfig,
-                        signalBus);
+                        movementComponent,
+                        soundLibrary);
 
                 })
                 .AsSingle()
                 .NonLazy();
 
+            // 7. Создаем PlayerDeathHandler
+            Container.BindInterfacesAndSelfTo<PlayerDeathHandler>()                
+                .FromMethod(ctx =>
+                {
+                    var checkPointHolder = ctx.Container.Resolve<CheckPointHolder>();
+                    return new PlayerDeathHandler(
+                    checkPointHolder,
+                    _player.transform);
+    })
+    .AsSingle()
+    .NonLazy();
+            
             // 5. Создаем LevelFinishObserver
-            Container.BindInterfacesAndSelfTo<LevelFinishObserver>()
+            Container.BindInterfacesAndSelfTo<LevelFinishSystem>()
                 .FromMethod(ctx =>
                 {
                     var container = ctx.Container;
-                    var signalBus = container.Resolve<SignalBus>();
-                    return new LevelFinishObserver(
-                        signalBus,
+                    return new LevelFinishSystem(
                         _levelFinishConfig);
                 })
                 .AsSingle()
@@ -70,39 +95,32 @@ namespace Player
                 .FromMethod(ctx =>
                 {
                     var container = ctx.Container;
-                    var signalBus = container.Resolve<SignalBus>();
+                    var soundLibrary = container.Resolve<SoundLibrary>();
                     return new CollectItemModel(
-                        signalBus,
-                        _levelFinishConfig);
+                        _levelFinishConfig,
+                        soundLibrary);
                 })
                 .AsSingle()
                 .NonLazy();
 
-            // 7. Создаем CheckPointHandler
-            Container.BindInterfacesAndSelfTo<CheckPointHolder>()
-                .FromMethod(ctx =>
-                {
-                    return new CheckPointHolder(
-                        _player.transform.position,
-                        _player.transform.rotation);
-                })
-                .AsSingle()
-                .NonLazy();
 
-            // 7. Создаем PlayerDeathHandler
-            Container.BindInterfacesAndSelfTo<PlayerDeathHandler>()
+            Container.BindInterfacesAndSelfTo<PlayerEventObserver>()
                 .FromMethod(ctx =>
                 {
                     var container = ctx.Container;
-                    var checkPointHolder = container.Resolve<CheckPointHolder>();
-                    var signalBus = container.Resolve<SignalBus>();
-                    return new PlayerDeathHandler(
-                        checkPointHolder,
-                        _player.transform,
-                        signalBus);
+                    var playerDeathHandler = container.Resolve<PlayerDeathHandler>();
+                    var healthModel = container.Resolve<HealthModel>();
+                    var movementComponent = container.Resolve<MovementComponent>();
+                    return new PlayerEventObserver(playerDeathHandler,
+                        healthModel,
+                        movementComponent);
+
                 })
                 .AsSingle()
                 .NonLazy();
+
+
+
         }
     }
 }
