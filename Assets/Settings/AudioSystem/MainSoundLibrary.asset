@@ -13,15 +13,21 @@ MonoBehaviour:
   m_Name: MainSoundLibrary
   m_EditorClassIdentifier: 
   sounds:
-  - type: 0
-    audioEvent: {fileID: 11400000, guid: 58f5cf3131157bf4c8cbae9794ed85d2, type: 2}
   - type: 1
     audioEvent: {fileID: 11400000, guid: ef0e8165f63482743a055e8b4cb841e2, type: 2}
-  - type: 3
+  - type: 4
     audioEvent: {fileID: 11400000, guid: 3a6a6e9c45dc36943919ae5912a3dde8, type: 2}
   - type: 2
     audioEvent: {fileID: 11400000, guid: df0f46a0b4d9bcb4eaaf022f71105f28, type: 2}
-  - type: 4
-    audioEvent: {fileID: 11400000, guid: fe5c33d82560509439972528f6a978e0, type: 2}
   - type: 5
+    audioEvent: {fileID: 11400000, guid: fe5c33d82560509439972528f6a978e0, type: 2}
+  - type: 6
     audioEvent: {fileID: 11400000, guid: 4ad361817c8f0fe4d9ca9cd7fd71f2e8, type: 2}
+  - type: 7
+    audioEvent: {fileID: 11400000, guid: 4ad361817c8f0fe4d9ca9cd7fd71f2e8, type: 2}
+  - type: 8
+    audioEvent: {fileID: 11400000, guid: 8a9da353b90fe114bb99189de2cd22a4, type: 2}
+  - type: 3
+    audioEvent: {fileID: 11400000, guid: f9300e0fa9a46384295c59a57884a731, type: 2}
+  - type: 0
+    audioEvent: {fileID: 11400000, guid: 58f5cf3131157bf4c8cbae9794ed85d2, type: 2}

@@ -5,30 +5,46 @@ using Zenject;
 
 public class PlayerEventObserver : IInitializable, IDisposable
 {
-    private PlayerDeathHandler _playerDeathHandler;
     private HealthModel _healthModel;
+    private PlayerDeathHandler _playerDeathHandler;
     private MovementComponent _movementComponent;
 
 
-    public PlayerEventObserver(PlayerDeathHandler playerDeathHandler,
-                                HealthModel healthModel,
+    public PlayerEventObserver(HealthModel healthModel,
+                                PlayerDeathHandler playerDeathHandler,                                
                                 MovementComponent movementComponent)
     {
-        _playerDeathHandler = playerDeathHandler;
         _healthModel = healthModel;
+        _playerDeathHandler = playerDeathHandler;
         _movementComponent = movementComponent;
     }
     public void Initialize()
     {
-        _movementComponent.OnFallDistanceEvent += _healthModel.FallDistanceReceived;
-        _healthModel.OnHealthIsOver += _playerDeathHandler.PlayerDied;
-        _playerDeathHandler.OnHealthRepair += _healthModel.HealthAllRepair;
+        _movementComponent.OnFallDistanceEvent += TakeDamageWhenFalling;
+        _healthModel.OnHealthIsOver += PlayerDieEvents;
     }
+
+
     public void Dispose()
     {
-        _movementComponent.OnFallDistanceEvent -= _healthModel.FallDistanceReceived;
-        _healthModel.OnHealthIsOver -= _playerDeathHandler.PlayerDied;
-        _playerDeathHandler.OnHealthRepair -= _healthModel.HealthAllRepair;
+        _movementComponent.OnFallDistanceEvent -= TakeDamageWhenFalling;
+        _healthModel.OnHealthIsOver -= PlayerDieEvents;
+    }
+
+    private void TakeDamageWhenFalling(float distance)
+    {
+        _healthModel.FallDistanceReceived(distance);
+    }
+    private void PlayerDieEvents()
+    {
+        _playerDeathHandler.PlayerDied();
+        PlayerSpawnWithHealing();
+    }
+
+    private void PlayerSpawnWithHealing()
+    {
+        _playerDeathHandler.MoveToLastCheckPoint();
+        _healthModel.HealthAllRepair();
     }
 }
 

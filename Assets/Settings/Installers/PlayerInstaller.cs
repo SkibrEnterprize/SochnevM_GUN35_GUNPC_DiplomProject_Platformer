@@ -26,12 +26,10 @@ namespace Player
                 .FromMethod(ctx =>
                 {
                     var container = ctx.Container;
-                    var soundLibrary = container.Resolve<SoundLibrary>();
                     return new MovementComponent(
                         character,
                         controls,
-                        _playerConfig,
-                        soundLibrary);
+                        _playerConfig);
 
                 })
                 .AsSingle()
@@ -57,28 +55,26 @@ namespace Player
                 {
                     var container = ctx.Container;
                     var movementComponent = container.Resolve<MovementComponent>();
-                    var soundLibrary = container.Resolve<SoundLibrary>();
                     return new HealthModel(
                         _playerConfig,
-                        movementComponent,
-                        soundLibrary);
+                        movementComponent);
 
                 })
                 .AsSingle()
                 .NonLazy();
 
             // 7. Создаем PlayerDeathHandler
-            Container.BindInterfacesAndSelfTo<PlayerDeathHandler>()                
+            Container.BindInterfacesAndSelfTo<PlayerDeathHandler>()
                 .FromMethod(ctx =>
                 {
                     var checkPointHolder = ctx.Container.Resolve<CheckPointHolder>();
                     return new PlayerDeathHandler(
                     checkPointHolder,
                     _player.transform);
-    })
+                })
     .AsSingle()
     .NonLazy();
-            
+
             // 5. Создаем LevelFinishObserver
             Container.BindInterfacesAndSelfTo<LevelFinishSystem>()
                 .FromMethod(ctx =>
@@ -111,15 +107,41 @@ namespace Player
                     var playerDeathHandler = container.Resolve<PlayerDeathHandler>();
                     var healthModel = container.Resolve<HealthModel>();
                     var movementComponent = container.Resolve<MovementComponent>();
-                    return new PlayerEventObserver(playerDeathHandler,
-                        healthModel,
+                    return new PlayerEventObserver(healthModel,
+                        playerDeathHandler,
                         movementComponent);
-
                 })
                 .AsSingle()
                 .NonLazy();
 
+            Container.BindInterfacesAndSelfTo<SoundEffectObserver>()
+            .FromMethod(ctx =>
+            {
+                var container = ctx.Container;
+                var soundLibrary = container.Resolve<SoundLibrary>();
+                var playerDeathHandler = container.Resolve<PlayerDeathHandler>();
+                var healthModel = container.Resolve<HealthModel>();
+                var movementComponent = container.Resolve<MovementComponent>();
+                var levelFinishSystem = container.Resolve<LevelFinishSystem>();
+                return new SoundEffectObserver(soundLibrary,
+                    healthModel,
+                    playerDeathHandler,
+                    movementComponent,
+                    levelFinishSystem);
+            })
+            .AsSingle()
+            .NonLazy();
 
+            Container.BindInterfacesAndSelfTo<LevelFinishObserver>()
+               .FromMethod(ctx =>
+               {
+                   var container = ctx.Container;
+                   var levelFinishSystem = container.Resolve<LevelFinishSystem>();
+                   var soundLibrary = container.Resolve<SoundLibrary>();
+                   return new LevelFinishObserver(levelFinishSystem, soundLibrary);
+               })
+               .AsSingle()
+               .NonLazy();
 
         }
     }

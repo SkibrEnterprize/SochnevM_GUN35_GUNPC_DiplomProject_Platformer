@@ -11,11 +11,12 @@ namespace Player
     public sealed class MovementComponent : IInitializable, IFixedTickable, IDisposable, IChangeOfForceHandler
     {
         public event Action<float> OnFallDistanceEvent;
+        public event Action OnJump;
+        public event Action OnSideJump;
 
         private readonly CharacterController _controller;
         private readonly Controls _controls;
         private readonly PlayerConfig _playerConfig;
-        private readonly SoundLibrary _soundLibrary;
 
         private int _jumpCount;
         private bool _flyPressed;
@@ -35,13 +36,11 @@ namespace Player
         public MovementComponent(
             CharacterController controller,
             Controls controls,
-            PlayerConfig playerConfig,
-            SoundLibrary soundLibrary)
+            PlayerConfig playerConfig)
         {
             _controller = controller;
             _controls = controls;
             _playerConfig = playerConfig;
-            _soundLibrary = soundLibrary;
         }
 
         public void Initialize()
@@ -133,7 +132,8 @@ namespace Player
 
             _velocity.y += Mathf.Sqrt(2 * _playerConfig.JumpForce);
             _jumpCount++;
-            _soundLibrary.RequestPlay(SoundType.Jump);
+            OnJump?.Invoke();
+            //_soundLibrary.RequestPlay(SoundType.Jump);
         }
 
         // Прыжок от стены — отталкиваемся по диагонали в противоположную сторону от стены
@@ -151,8 +151,8 @@ namespace Player
             _velocity.y = _playerConfig.WallJumpForceY;
 
             _jumpCount++; // Замечаем прыжок
-
-            _soundLibrary.RequestPlay(SoundType.SideJump);
+            OnSideJump?.Invoke();
+            //_soundLibrary.RequestPlay(SoundType.SideJump);
             
         }
 

@@ -5,7 +5,7 @@ using Zenject;
 [CreateAssetMenu(menuName = "Audio/Sound Library")]
 public class SoundLibrary : ScriptableObject
 {
-    [Inject] private IAudioManager _audioManager; // Прямая ссылка на сервис
+    [Inject] private IAudioManager _audioManager;
     
     public List<SoundMapping> sounds;
 
@@ -13,9 +13,12 @@ public class SoundLibrary : ScriptableObject
     {
         var mapping = sounds.Find(s => s.type == type);
         if (mapping.audioEvent != null)
-        {
-            // Вызываем метод сервиса напрямую
+        {            
             _audioManager.Play(mapping.audioEvent, position);
+        }
+        else
+        {
+            Debug.Log($"Please choose sound for {type} in Main Sound Library configuration");
         }
     }
 }

@@ -1,13 +1,14 @@
-using Player.Signals;
 using System;
 using Zenject;
 using UnityEngine;
 
 public class LevelFinishSystem : IInitializable, IDisposable
 {
+    public event Action OnEndPointReached;
+    public event Action OnLevelFinished;
+
     private readonly LevelFinishConfig _levelFinishConfig;
     private int _finishCount = 0;
-
 
     public LevelFinishSystem(LevelFinishConfig levelFinishConfig)
     {        
@@ -26,11 +27,11 @@ public class LevelFinishSystem : IInitializable, IDisposable
         if (_levelFinishConfig.CollectObjectForGoal > _finishCount)
         {
             _finishCount++;
-            Debug.Log($"finishCount = {_finishCount}");
+            OnEndPointReached?.Invoke();
         }
         else
         {
-            Debug.Log("FINISH!!!!");
+            OnLevelFinished?.Invoke();
         }
     }
 }

@@ -8,12 +8,12 @@ namespace Player
     public sealed class HealthModel : IInitializable, IDisposable, ITakeChangeByTrigger
     {
         public event Action OnHealthIsOver;
+        public event Action<bool> OnHealthIsDown;
 
 
         private readonly MovementComponent _movementComponent;
         private PlayerConfig _playerConfig;
         private int _health;
-        private SoundLibrary _soundLibrary;
 
 
         public event Action<int> OnHealthChanged;
@@ -30,12 +30,10 @@ namespace Player
             }
         }
         public HealthModel(PlayerConfig playerConfig,
-            MovementComponent movementComponent,
-            SoundLibrary soundLibrary)
+            MovementComponent movementComponent)
         {
             _playerConfig = playerConfig;
             _movementComponent = movementComponent;
-            _soundLibrary = soundLibrary;
         }
 
         public void Initialize()
@@ -57,7 +55,6 @@ namespace Player
             if (fallDistance > _playerConfig.MinHeightForDamage)
             {
                 TakeChangeByTrigger(-_playerConfig.DamageOfFall);
-                //Health -= _playerConfig.DamageOfFall;
                 Debug.Log($"Health = {_health} because of FallDistance is {fallDistance}");
             }
         }
@@ -67,11 +64,11 @@ namespace Player
             Health += value;
             if (value > 0)
             {
-                _soundLibrary.RequestPlay(SoundType.Healing);
+                OnHealthIsDown?.Invoke(false);
             }
             else
             {
-                _soundLibrary.RequestPlay(SoundType.Dammage);
+                OnHealthIsDown?.Invoke(true);
             }
 
                 CheckHealthValue();

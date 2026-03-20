@@ -1,9 +1,12 @@
 public enum SoundType 
 { 
     Jump,
-    SideJump,
-    Dammage,
+    WallJump,
+    Damage,
+    Die,
     Healing,
     CollectItem, 
-    CheckPoint
+    CheckPoint,
+    EndPoint,
+    Finish
 }

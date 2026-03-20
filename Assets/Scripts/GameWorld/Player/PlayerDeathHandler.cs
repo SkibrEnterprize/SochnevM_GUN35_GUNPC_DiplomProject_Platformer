@@ -8,7 +8,7 @@ using Player;
 
 public class PlayerDeathHandler : IInitializable, IDisposable, IPlayerDeathHandler
 {
-    public event Action OnHealthRepair;
+    public event Action OnPlayerDied;
 
     [SerializeField] private Transform _playerTransform;
     private CheckPointHolder _checkPointHolder;
@@ -27,15 +27,14 @@ public class PlayerDeathHandler : IInitializable, IDisposable, IPlayerDeathHandl
     {
     }
 
-
     public void PlayerDied()
     {
         Debug.Log("Plaer Died activate");
         MoveToLastCheckPoint();
-        OnHealthRepair?.Invoke();
+        OnPlayerDied?.Invoke();
     }
 
-    private void MoveToLastCheckPoint()
+    public void MoveToLastCheckPoint()
     {
         Vector3 pos = _checkPointHolder.GetPosition();
         Quaternion rot = _checkPointHolder.GetRotation();
