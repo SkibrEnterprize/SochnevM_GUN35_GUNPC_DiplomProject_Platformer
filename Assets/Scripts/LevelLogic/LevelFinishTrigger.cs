@@ -3,13 +3,13 @@ using Zenject;
 
 public class LevelFinishTrigger : MonoBehaviour
 {
-    private LevelFinishSystem _system;
+    private LevelFinishSystem _levelSystem;
     private bool _isActivate;
 
     [Inject]
-    private void Construct(LevelFinishSystem system)
+    private void Construct(LevelFinishSystem levelSystem)
     {
-        _system = system;
+        _levelSystem = levelSystem;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -18,7 +18,7 @@ public class LevelFinishTrigger : MonoBehaviour
             && !_isActivate)
         {
             _isActivate = true;
-            _system.EndPointReached();
+            _levelSystem.EndPointReached();
         }
     }
 }

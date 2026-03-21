@@ -96,7 +96,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: bf64ba3b7c9b3564ca7beeab2bb53c7f, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -1960,9 +1960,9 @@ MonoBehaviour:
   _scriptableObjectInstallers: []
   _monoInstallers:
   - {fileID: 1421899735}
-  - {fileID: 1421899733}
   - {fileID: 1421899732}
   - {fileID: 1421899734}
+  - {fileID: 1421899733}
   _installerPrefabs: []
   _autoRun: 1
   OnPreInstall:
@@ -1994,7 +1994,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _player: {fileID: 1465602777}
   _playerConfig: {fileID: 11400000, guid: 799b9a798e977b246ae2c86dc47a20cc, type: 2}
-  _levelFinishConfig: {fileID: 11400000, guid: 9adec2e5f3c62704b8978839308b551a, type: 2}
 --- !u!114 &1421899733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2007,6 +2006,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67326b7d75d2e6644b4bcb65f3e5896e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _levelFinishConfig: {fileID: 11400000, guid: 9adec2e5f3c62704b8978839308b551a, type: 2}
 --- !u!114 &1421899734
 MonoBehaviour:
   m_ObjectHideFlags: 0

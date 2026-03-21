@@ -4,9 +4,8 @@ using Zenject;
 public class CollectItemModel : IInitializable, IDisposable, ICollectItemObserver
 {
     private int _score;
-    private readonly SoundLibrary _soundLibrary;
+    private ISoundEventBus _soundBus;
 
-    private LevelFinishConfig _config;
 
     public event Action<int> OnCountChanged;
     public int Score
@@ -20,10 +19,9 @@ public class CollectItemModel : IInitializable, IDisposable, ICollectItemObserve
             }
         }
     }
-    public CollectItemModel(LevelFinishConfig levelFinishConfig, SoundLibrary soundLibrary)
+    public CollectItemModel(ISoundEventBus soundEventBus)
     {        
-        _config = levelFinishConfig;
-        _soundLibrary = soundLibrary;
+        _soundBus = soundEventBus;
     }
 
     public void Initialize()
@@ -38,7 +36,7 @@ public class CollectItemModel : IInitializable, IDisposable, ICollectItemObserve
     public void CollectItem()
     {
         Score++;
-        _soundLibrary.RequestPlay(SoundType.CollectItem);
+        _soundBus.Play(SoundType.CollectItem);
     }
     
 }

@@ -7,7 +7,6 @@ namespace Player
     {
         [SerializeField] private GameObject _player;
         [SerializeField] private PlayerConfig _playerConfig;
-        [SerializeField] private LevelFinishConfig _levelFinishConfig;
 
         public override void InstallBindings()
         {
@@ -18,130 +17,35 @@ namespace Player
             controls.Enable();                     // включаем все action‑maps
             Container.Bind<Controls>().FromInstance(controls).AsSingle();
 
-            // Биндим конфиг игрока
             Container.Bind<PlayerConfig>().FromInstance(_playerConfig);
 
-            // 3. Создаём MovementComponent 
             Container.BindInterfacesAndSelfTo<MovementComponent>()
-                .FromMethod(ctx =>
-                {
-                    var container = ctx.Container;
-                    return new MovementComponent(
-                        character,
-                        controls,
-                        _playerConfig);
-
-                })
                 .AsSingle()
+                .WithArguments(character, _playerConfig)
                 .NonLazy();
 
-            // 7. Создаем CheckPointHandler
             Container.BindInterfacesAndSelfTo<CheckPointHolder>()
-                .FromMethod(ctx =>
-                {
-                    var container = ctx.Container;
-                    var soundLibrary = container.Resolve<SoundLibrary>();
-                    return new CheckPointHolder(
-                        _player.transform.position,
-                        _player.transform.rotation,
-                        soundLibrary);
-                })
                 .AsSingle()
+                .WithArguments(_player.transform.position, _player.transform.rotation)
                 .NonLazy();
 
-            // 4. Создаём HealthComponent
             Container.BindInterfacesAndSelfTo<HealthModel>()
-                .FromMethod(ctx =>
-                {
-                    var container = ctx.Container;
-                    var movementComponent = container.Resolve<MovementComponent>();
-                    return new HealthModel(
-                        _playerConfig,
-                        movementComponent);
-
-                })
                 .AsSingle()
+                .WithArguments(_playerConfig)
                 .NonLazy();
 
-            // 7. Создаем PlayerDeathHandler
             Container.BindInterfacesAndSelfTo<PlayerDeathHandler>()
-                .FromMethod(ctx =>
-                {
-                    var checkPointHolder = ctx.Container.Resolve<CheckPointHolder>();
-                    return new PlayerDeathHandler(
-                    checkPointHolder,
-                    _player.transform);
-                })
-    .AsSingle()
-    .NonLazy();
-
-            // 5. Создаем LevelFinishObserver
-            Container.BindInterfacesAndSelfTo<LevelFinishSystem>()
-                .FromMethod(ctx =>
-                {
-                    var container = ctx.Container;
-                    return new LevelFinishSystem(
-                        _levelFinishConfig);
-                })
                 .AsSingle()
+                .WithArguments(_player.transform)
                 .NonLazy();
 
-            // 6. Создаем CollectItemModel
             Container.BindInterfacesAndSelfTo<CollectItemModel>()
-                .FromMethod(ctx =>
-                {
-                    var container = ctx.Container;
-                    var soundLibrary = container.Resolve<SoundLibrary>();
-                    return new CollectItemModel(
-                        _levelFinishConfig,
-                        soundLibrary);
-                })
                 .AsSingle()
                 .NonLazy();
-
 
             Container.BindInterfacesAndSelfTo<PlayerEventObserver>()
-                .FromMethod(ctx =>
-                {
-                    var container = ctx.Container;
-                    var playerDeathHandler = container.Resolve<PlayerDeathHandler>();
-                    var healthModel = container.Resolve<HealthModel>();
-                    var movementComponent = container.Resolve<MovementComponent>();
-                    return new PlayerEventObserver(healthModel,
-                        playerDeathHandler,
-                        movementComponent);
-                })
                 .AsSingle()
                 .NonLazy();
-
-            Container.BindInterfacesAndSelfTo<SoundEffectObserver>()
-            .FromMethod(ctx =>
-            {
-                var container = ctx.Container;
-                var soundLibrary = container.Resolve<SoundLibrary>();
-                var playerDeathHandler = container.Resolve<PlayerDeathHandler>();
-                var healthModel = container.Resolve<HealthModel>();
-                var movementComponent = container.Resolve<MovementComponent>();
-                var levelFinishSystem = container.Resolve<LevelFinishSystem>();
-                return new SoundEffectObserver(soundLibrary,
-                    healthModel,
-                    playerDeathHandler,
-                    movementComponent,
-                    levelFinishSystem);
-            })
-            .AsSingle()
-            .NonLazy();
-
-            Container.BindInterfacesAndSelfTo<LevelFinishObserver>()
-               .FromMethod(ctx =>
-               {
-                   var container = ctx.Container;
-                   var levelFinishSystem = container.Resolve<LevelFinishSystem>();
-                   var soundLibrary = container.Resolve<SoundLibrary>();
-                   return new LevelFinishObserver(levelFinishSystem, soundLibrary);
-               })
-               .AsSingle()
-               .NonLazy();
 
         }
     }

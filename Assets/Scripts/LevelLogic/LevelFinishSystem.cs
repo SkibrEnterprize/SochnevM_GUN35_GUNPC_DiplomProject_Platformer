@@ -1,18 +1,21 @@
 using System;
-using Zenject;
 using UnityEngine;
+using Zenject;
 
 public class LevelFinishSystem : IInitializable, IDisposable
 {
-    public event Action OnEndPointReached;
-    public event Action OnLevelFinished;
+    //public event Action OnEndPointReached;
+    //public event Action OnLevelFinished;
 
+    private readonly LevelEventBus _eventBus;
     private readonly LevelFinishConfig _levelFinishConfig;
     private int _finishCount = 0;
 
-    public LevelFinishSystem(LevelFinishConfig levelFinishConfig)
+    public LevelFinishSystem(LevelFinishConfig levelFinishConfig,
+        LevelEventBus levelEventBus)
     {        
         _levelFinishConfig = levelFinishConfig;
+        _eventBus = levelEventBus;
     }
 
     public void Initialize()
@@ -24,14 +27,14 @@ public class LevelFinishSystem : IInitializable, IDisposable
 
     public void EndPointReached()
     {
-        if (_levelFinishConfig.CollectObjectForGoal > _finishCount)
+        if (_finishCount < _levelFinishConfig.CollectObjectsForGoal)
         {
             _finishCount++;
-            OnEndPointReached?.Invoke();
+            _eventBus.ReachEndPoint();            
         }
         else
         {
-            OnLevelFinished?.Invoke();
+            _eventBus.FinishLevel();
         }
     }
 }

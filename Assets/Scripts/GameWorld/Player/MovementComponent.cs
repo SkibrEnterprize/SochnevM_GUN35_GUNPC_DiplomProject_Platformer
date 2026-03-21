@@ -1,5 +1,4 @@
 ﻿
-using Player.Signals;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -17,6 +16,7 @@ namespace Player
         private readonly CharacterController _controller;
         private readonly Controls _controls;
         private readonly PlayerConfig _playerConfig;
+        private readonly ISoundEventBus _soundBus;
 
         private int _jumpCount;
         private bool _flyPressed;
@@ -36,11 +36,13 @@ namespace Player
         public MovementComponent(
             CharacterController controller,
             Controls controls,
-            PlayerConfig playerConfig)
+            PlayerConfig playerConfig,
+            ISoundEventBus soundBus)
         {
             _controller = controller;
             _controls = controls;
             _playerConfig = playerConfig;
+            _soundBus = soundBus;
         }
 
         public void Initialize()
@@ -132,7 +134,7 @@ namespace Player
 
             _velocity.y += Mathf.Sqrt(2 * _playerConfig.JumpForce);
             _jumpCount++;
-            OnJump?.Invoke();
+            _soundBus.Play(SoundType.Jump);
             //_soundLibrary.RequestPlay(SoundType.Jump);
         }
 
@@ -151,7 +153,7 @@ namespace Player
             _velocity.y = _playerConfig.WallJumpForceY;
 
             _jumpCount++; // Замечаем прыжок
-            OnSideJump?.Invoke();
+            _soundBus.Play(SoundType.WallJump);
             //_soundLibrary.RequestPlay(SoundType.SideJump);
             
         }

@@ -1,9 +1,7 @@
 
-using Player.Signals;
 using System;
 using Zenject;
 using UnityEngine;
-using Player;
 
 
 public class PlayerDeathHandler : IInitializable, IDisposable, IPlayerDeathHandler

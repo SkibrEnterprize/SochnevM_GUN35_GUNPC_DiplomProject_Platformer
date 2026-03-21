@@ -1,5 +1,4 @@
-﻿using Player.Signals;
-using System;
+﻿using System;
 using UnityEngine;
 using Zenject;
 
@@ -10,7 +9,7 @@ namespace Player
         public event Action OnHealthIsOver;
         public event Action<bool> OnHealthIsDown;
 
-
+        private ISoundEventBus _soundBus;
         private readonly MovementComponent _movementComponent;
         private PlayerConfig _playerConfig;
         private int _health;
@@ -30,10 +29,12 @@ namespace Player
             }
         }
         public HealthModel(PlayerConfig playerConfig,
-            MovementComponent movementComponent)
+            MovementComponent movementComponent,
+            ISoundEventBus soundBus)
         {
             _playerConfig = playerConfig;
             _movementComponent = movementComponent;
+            _soundBus = soundBus;
         }
 
         public void Initialize()
@@ -61,17 +62,20 @@ namespace Player
 
         public void TakeChangeByTrigger(int value)
         {
+            bool isHealing = value > 0;
             Health += value;
-            if (value > 0)
-            {
-                OnHealthIsDown?.Invoke(false);
-            }
-            else
-            {
-                OnHealthIsDown?.Invoke(true);
-            }
 
-                CheckHealthValue();
+            _soundBus.Play(isHealing ? SoundType.Healing : SoundType.Damage);
+            //if (value > 0)
+            //{
+            //    OnHealthIsDown?.Invoke(false);
+            //}
+            //else
+            //{
+            //    OnHealthIsDown?.Invoke(true);
+            //}
+
+            CheckHealthValue();
         }
 
         private void TakeDamage(int value) => Health -= value;

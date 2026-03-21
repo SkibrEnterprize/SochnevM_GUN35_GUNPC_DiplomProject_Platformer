@@ -1,76 +1,40 @@
-using Player;
 using System;
+using UnityEngine;
 using Zenject;
 
-public class SoundEffectObserver: IInitializable, IDisposable
+public class SoundEffectObserver : IInitializable, IDisposable
 {
-    private SoundLibrary _soundLibrary;
-    private HealthModel _healthModel;
-    private PlayerDeathHandler _playerDeathHandler;
-    private MovementComponent _movementComponent;
-    private readonly LevelFinishSystem _levelFinishSystem;
+    private readonly SoundLibrary _soundLibrary;
+    private readonly ISoundEventBus _eventBus;
+    private readonly IAudioManager _audioManager;
 
-
-    public SoundEffectObserver(SoundLibrary soundLibrary,
-                                HealthModel healthModel,
-                                PlayerDeathHandler playerDeathHandler,
-                                MovementComponent movementComponent,
-                                LevelFinishSystem levelFinishSystem)
+    public SoundEffectObserver(SoundLibrary soundLibrary, ISoundEventBus eventBus, IAudioManager audioManager)
     {
         _soundLibrary = soundLibrary;
-        _healthModel = healthModel;
-        _playerDeathHandler = playerDeathHandler;
-        _movementComponent = movementComponent;
-        _levelFinishSystem = levelFinishSystem;
+        _eventBus = eventBus;
+        _audioManager = audioManager;
     }
+
     public void Initialize()
     {
-        _healthModel.OnHealthIsDown += PlayHealthSound;
-        _playerDeathHandler.OnPlayerDied += PlayDieSound;
-        _movementComponent.OnJump += PlayJumpSound;
-        _movementComponent.OnSideJump += PlaySideJumpSound;
-        _levelFinishSystem.OnEndPointReached += PlayEndPointReachedSound;
-        _levelFinishSystem.OnLevelFinished += PlayLevelFinishSound;
+        _eventBus.OnSoundRequested += HandleSoundRequest;
     }
 
-    private void PlayDieSound()
+    private void HandleSoundRequest(SoundType type, Vector3 position)
     {
-        _soundLibrary.RequestPlay(SoundType.Die);
-    }
-
-    private void PlaySideJumpSound()
-    {
-        _soundLibrary.RequestPlay(SoundType.WallJump);
-    }
-
-    private void PlayJumpSound()
-    {
-        _soundLibrary.RequestPlay(SoundType.Jump);
-    }
-
-    private void PlayHealthSound(bool obj)
-    {
-        _soundLibrary.RequestPlay(obj ? SoundType.Healing : SoundType.Damage);
-    }
-
-    private void PlayLevelFinishSound()
-    {
-        _soundLibrary.RequestPlay(SoundType.Finish);
-    }
-
-    private void PlayEndPointReachedSound()
-    {
-        _soundLibrary?.RequestPlay(SoundType.EndPoint);
+        var audioEvent = _soundLibrary.GetEvent(type);
+        if (audioEvent != null)
+        {
+            _audioManager.Play(audioEvent, position);
+        }
+        else
+        {
+            Debug.LogWarning($"Sound for {type} not found in library!");
+        }
     }
 
     public void Dispose()
     {
-        _healthModel.OnHealthIsDown -= PlayHealthSound;
-        _playerDeathHandler.OnPlayerDied -= PlayDieSound;
-        _movementComponent.OnJump -= PlayJumpSound;
-        _movementComponent.OnSideJump -= PlaySideJumpSound;
-        _levelFinishSystem.OnEndPointReached -= PlayEndPointReachedSound;
-        _levelFinishSystem.OnLevelFinished -= PlayLevelFinishSound;
+        _eventBus.OnSoundRequested -= HandleSoundRequest;
     }
-
 }
