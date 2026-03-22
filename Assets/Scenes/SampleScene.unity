@@ -1922,6 +1922,8 @@ GameObject:
   - component: {fileID: 1421899733}
   - component: {fileID: 1421899734}
   - component: {fileID: 1421899735}
+  - component: {fileID: 1421899736}
+  - component: {fileID: 1421899737}
   m_Layer: 0
   m_Name: '[SYSTEM]'
   m_TagString: Untagged
@@ -1963,6 +1965,8 @@ MonoBehaviour:
   - {fileID: 1421899732}
   - {fileID: 1421899734}
   - {fileID: 1421899733}
+  - {fileID: 1421899736}
+  - {fileID: 1421899737}
   _installerPrefabs: []
   _autoRun: 1
   OnPreInstall:
@@ -2020,7 +2024,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _healthView: {fileID: 508589014}
-  _ItemView: {fileID: 2130993539}
+  _itemView: {fileID: 2130993539}
 --- !u!114 &1421899735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2035,6 +2039,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _audioManager: {fileID: 1557927197}
   _soundLibrary: {fileID: 11400000, guid: 28429d601135f7c47a749c3c37d3defc, type: 2}
+--- !u!114 &1421899736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421899729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cc2845e13681ac46af775d8ab4f31f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1421899737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421899729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f7a633ea01c05343a419d7d0fd402c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1448595196
 GameObject:
   m_ObjectHideFlags: 0

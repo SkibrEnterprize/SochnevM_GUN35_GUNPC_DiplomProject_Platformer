@@ -6,33 +6,18 @@ using Zenject;
 public class UiInstaller : MonoInstaller
 {
     [SerializeField] private HealthView _healthView;
-    [SerializeField] private ScoreItemView _ItemView;
-
+    [SerializeField] private ScoreItemView _itemView;
     public override void InstallBindings()
     {
+        Container.BindInterfacesAndSelfTo<CollectItemEventBus>().AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<HealthPresenter>()
-                .FromMethod(ctx =>
-                {
-                    var container = ctx.Container;
-                    var healthModel = container.Resolve<HealthModel>();
-                    return new HealthPresenter(
-                        healthModel,
-                        _healthView);
-
-                })
                 .AsSingle()
+                .WithArguments(_healthView)
                 .NonLazy();
 
-        Container.BindInterfacesAndSelfTo<CollectItemPresenter>()
-               .FromMethod(ctx =>
-               {
-                   var container = ctx.Container;
-                   var ItemModel = container.Resolve<CollectItemModel>();
-                   return new CollectItemPresenter(
-                       ItemModel,
-                       _ItemView);
-               })
-               .AsSingle()
-               .NonLazy();
+        Container.BindInterfacesAndSelfTo<CollectItemObserver>()
+                .AsSingle()
+                .WithArguments(_itemView)
+                .NonLazy();
     }
 }

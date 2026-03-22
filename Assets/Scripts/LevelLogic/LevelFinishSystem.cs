@@ -1,13 +1,8 @@
 using System;
-using UnityEngine;
 using Zenject;
-
 public class LevelFinishSystem : IInitializable, IDisposable
 {
-    //public event Action OnEndPointReached;
-    //public event Action OnLevelFinished;
-
-    private readonly LevelEventBus _eventBus;
+    private readonly LevelEventBus _levelEventBus;
     private readonly LevelFinishConfig _levelFinishConfig;
     private int _finishCount = 0;
 
@@ -15,7 +10,7 @@ public class LevelFinishSystem : IInitializable, IDisposable
         LevelEventBus levelEventBus)
     {        
         _levelFinishConfig = levelFinishConfig;
-        _eventBus = levelEventBus;
+        _levelEventBus = levelEventBus;
     }
 
     public void Initialize()
@@ -30,11 +25,11 @@ public class LevelFinishSystem : IInitializable, IDisposable
         if (_finishCount < _levelFinishConfig.CollectObjectsForGoal)
         {
             _finishCount++;
-            _eventBus.ReachEndPoint();            
+            _levelEventBus.ReachEndPoint();            
         }
         else
         {
-            _eventBus.FinishLevel();
+            _levelEventBus.FinishLevel();
         }
     }
 }

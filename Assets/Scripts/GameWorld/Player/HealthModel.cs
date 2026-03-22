@@ -6,10 +6,7 @@ namespace Player
 {
     public sealed class HealthModel : IInitializable, IDisposable, ITakeChangeByTrigger
     {
-        public event Action OnHealthIsOver;
-        public event Action<bool> OnHealthIsDown;
-
-        private ISoundEventBus _soundBus;
+        private IHealthEventBus _healthEventBus;
         private readonly MovementComponent _movementComponent;
         private PlayerConfig _playerConfig;
         private int _health;
@@ -30,11 +27,11 @@ namespace Player
         }
         public HealthModel(PlayerConfig playerConfig,
             MovementComponent movementComponent,
-            ISoundEventBus soundBus)
+            IHealthEventBus healthEventBus)
         {
             _playerConfig = playerConfig;
             _movementComponent = movementComponent;
-            _soundBus = soundBus;
+            _healthEventBus = healthEventBus;
         }
 
         public void Initialize()
@@ -62,19 +59,8 @@ namespace Player
 
         public void TakeChangeByTrigger(int value)
         {
-            bool isHealing = value > 0;
             Health += value;
-
-            _soundBus.Play(isHealing ? SoundType.Healing : SoundType.Damage);
-            //if (value > 0)
-            //{
-            //    OnHealthIsDown?.Invoke(false);
-            //}
-            //else
-            //{
-            //    OnHealthIsDown?.Invoke(true);
-            //}
-
+            _healthEventBus.HealthUpdated(value);
             CheckHealthValue();
         }
 
@@ -82,9 +68,8 @@ namespace Player
         private void TakeHealing(int value) => Health += value;
         private void CheckHealthValue()
         {
-            if (_health <= 0) OnHealthIsOver?.Invoke();
+            if (_health <= 0) _healthEventBus.HealthIsOver();
         }
-
         public void HealthAllRepair()
         {
             Health = _playerConfig.MaxHealth;

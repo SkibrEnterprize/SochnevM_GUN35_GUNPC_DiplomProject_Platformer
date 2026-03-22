@@ -1,11 +1,11 @@
 using System;
 using Zenject;
 
-public class CheckPointObserver : IInitializable, IDisposable
+public class LevelPointObserver : IInitializable, IDisposable
 {
     private readonly ILevelEventBus _levelBus;
     private readonly ISoundEventBus _soundBus;
-    public CheckPointObserver(ILevelEventBus levelBus, ISoundEventBus soundBus)
+    public LevelPointObserver(ILevelEventBus levelBus, ISoundEventBus soundBus)
     {
         _levelBus = levelBus;
         _soundBus = soundBus;

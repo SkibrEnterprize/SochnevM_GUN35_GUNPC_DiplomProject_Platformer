@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ScoreItemView : MonoBehaviour
+public class ScoreItemView : MonoBehaviour, IScoreItemView
 {
     [SerializeField] private Image _image;
     [SerializeField] private TextMeshProUGUI _score;

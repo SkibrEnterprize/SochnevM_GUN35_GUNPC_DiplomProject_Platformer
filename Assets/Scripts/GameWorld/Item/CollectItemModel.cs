@@ -1,42 +1,21 @@
 using System;
+using UnityEngine;
 using Zenject;
 
-public class CollectItemModel : IInitializable, IDisposable, ICollectItemObserver
+public class CollectItemModel : ICollectItemModel
 {
     private int _score;
-    private ISoundEventBus _soundBus;
-
-
-    public event Action<int> OnCountChanged;
-    public int Score
-    {
-        get => _score;
-        set
-        {
-           {
-                _score++;
-                OnCountChanged?.Invoke(_score);
-            }
-        }
-    }
-    public CollectItemModel(ISoundEventBus soundEventBus)
-    {        
-        _soundBus = soundEventBus;
-    }
-
-    public void Initialize()
-    {
-    }
+    private ICollectItemEventBus _collectEventBus;
     
-    public void Dispose()
+    public CollectItemModel(ICollectItemEventBus collectEventBus)
     {
+        _collectEventBus = collectEventBus;
     }
 
-
-    public void CollectItem()
+    public void CollectItem(int value)
     {
-        Score++;
-        _soundBus.Play(SoundType.CollectItem);
+        _score += value;
+        _collectEventBus.CollectItem(_score);
+        Debug.Log("CollectItem!!!");
     }
-    
 }

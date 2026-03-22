@@ -4,15 +4,15 @@ using Zenject;
 public class CheckPointComponent : MonoBehaviour
 {
     [SerializeField] private bool _isActivate = false;
-    private CheckPointHolder _checkPointHandler;
+    private CheckPointModel _checkPointModel;
 
     public Vector3 Position => transform.position;
     public Quaternion Rotation => transform.rotation;
 
     [Inject]
-    private void Construct(CheckPointHolder checkPointHandler)
+    private void Construct(CheckPointModel checkPointHandler)
     {
-        _checkPointHandler = checkPointHandler;
+        _checkPointModel = checkPointHandler;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -21,7 +21,7 @@ public class CheckPointComponent : MonoBehaviour
         if (other.gameObject.TryGetComponent<CharacterController>(out CharacterController controller))
         {
             _isActivate = true;
-            _checkPointHandler.SetCheckpoint(transform.position, transform.rotation);
+            _checkPointModel.SetCheckpoint(transform.position, transform.rotation);
             Debug.Log($"[Checkpoint] Активирован: {gameObject.name}");
         }
     }

@@ -22,21 +22,15 @@ namespace Player
             Container.BindInterfacesAndSelfTo<MovementComponent>()
                 .AsSingle()
                 .WithArguments(character, _playerConfig)
-                .NonLazy();
-
-            Container.BindInterfacesAndSelfTo<CheckPointHolder>()
-                .AsSingle()
-                .WithArguments(_player.transform.position, _player.transform.rotation)
-                .NonLazy();
+                .NonLazy();            
 
             Container.BindInterfacesAndSelfTo<HealthModel>()
                 .AsSingle()
                 .WithArguments(_playerConfig)
                 .NonLazy();
 
-            Container.BindInterfacesAndSelfTo<PlayerDeathHandler>()
+            Container.BindInterfacesAndSelfTo<PlayerDeathObserver>()
                 .AsSingle()
-                .WithArguments(_player.transform)
                 .NonLazy();
 
             Container.BindInterfacesAndSelfTo<CollectItemModel>()

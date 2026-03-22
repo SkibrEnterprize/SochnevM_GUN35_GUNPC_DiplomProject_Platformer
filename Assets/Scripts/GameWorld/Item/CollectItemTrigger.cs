@@ -3,12 +3,13 @@ using Zenject;
 
 public class CollectItemTrigger : MonoBehaviour
 {
-    private CollectItemModel _itemModel;
+    [SerializeField] private int _valueForCollect = 1;
+    private CollectItemModel _collectModel;
 
     [Inject]
     private void Construct(CollectItemModel itemModel)
     {
-        _itemModel = itemModel;
+        _collectModel = itemModel;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -17,7 +18,7 @@ public class CollectItemTrigger : MonoBehaviour
             && isActiveAndEnabled)
         {
           gameObject.SetActive(false);
-            _itemModel.CollectItem();
+          _collectModel.CollectItem(_valueForCollect);
         }
     }
 }

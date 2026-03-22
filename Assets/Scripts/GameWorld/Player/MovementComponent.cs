@@ -10,13 +10,12 @@ namespace Player
     public sealed class MovementComponent : IInitializable, IFixedTickable, IDisposable, IChangeOfForceHandler
     {
         public event Action<float> OnFallDistanceEvent;
-        public event Action OnJump;
-        public event Action OnSideJump;
 
         private readonly CharacterController _controller;
         private readonly Controls _controls;
         private readonly PlayerConfig _playerConfig;
         private readonly ISoundEventBus _soundBus;
+        private readonly ICheckPointEventBus _checkPointEventBus;
 
         private int _jumpCount;
         private bool _flyPressed;
@@ -37,16 +36,20 @@ namespace Player
             CharacterController controller,
             Controls controls,
             PlayerConfig playerConfig,
-            ISoundEventBus soundBus)
+            ISoundEventBus soundBus,
+            ICheckPointEventBus checkPointEventBus)
         {
             _controller = controller;
             _controls = controls;
             _playerConfig = playerConfig;
             _soundBus = soundBus;
+            _checkPointEventBus = checkPointEventBus;
         }
 
         public void Initialize()
         {
+            _checkPointEventBus.CheckPointReached(_controller.gameObject.transform.position,
+                                                _controller.gameObject.transform.rotation);
             _controls.Player.Move.started += OnMoveStarted;
             _controls.Player.Move.canceled += OnMoveCanceled;
 
@@ -274,6 +277,12 @@ namespace Player
                 _flyAdvancedSpeed -= flySpeed;
                 _moveAdvancedSpeed -= moveSpeed;
             }
+        }
+
+        public void MoveToCheckPoint(Vector3 positoin, Quaternion rotation)
+        {
+            _controller.transform.position = positoin;
+            _controller.transform.rotation = rotation;
         }
     }
 }
