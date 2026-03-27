@@ -284,6 +284,12 @@ namespace Player
             _controller.transform.position = positoin;
             _controller.transform.rotation = rotation;
         }
+
+        public void ApplyImpulse(Vector3 impulse)
+        {
+            // «Мгновенно» меняем скорость, но оставляем её на следующем FixedTick()
+            _velocity += impulse;
+        }
     }
 }
 
