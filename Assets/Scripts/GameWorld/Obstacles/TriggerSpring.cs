@@ -2,10 +2,6 @@
 using UnityEngine;
 using Zenject;
 
-/// <summary>
-/// Простой «пружинный» триггер.
-/// Добавьте его на любой Collider (IsTrigger = true).
-/// </summary>
 [RequireComponent(typeof(Collider))]
 public class SpringTrigger : MonoBehaviour
 {
@@ -17,8 +13,6 @@ public class SpringTrigger : MonoBehaviour
     [SerializeField] private bool _useLocalSpace = true;
     private MovementComponent _movementComponent;
     private Vector3 _impulse;
-
-    /* ------------------------------------------------------------------ */
 
     [Inject]
     public void Construct(MovementComponent movementComponent) {  _movementComponent = movementComponent; }
@@ -40,9 +34,6 @@ public class SpringTrigger : MonoBehaviour
             Debug.Log("TriggerSpring!!!");
         }
     }
-
-
-    /* ------------------------------------------------------------------ */
 
     private void OnDrawGizmosSelected()
     {

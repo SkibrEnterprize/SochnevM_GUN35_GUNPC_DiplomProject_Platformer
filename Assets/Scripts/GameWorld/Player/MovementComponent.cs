@@ -26,11 +26,16 @@ namespace Player
         private float _rayDistanceAtHead = 0.1f;
 
         private Vector3 _velocity = Vector3.zero;
-        private Vector3 _velocitySmoothRef = Vector3.zero;
+        private float _externalSpeedModifier = 1f;
 
         private float _fallStartY;   // «null» — значит падение ещё не началось
         private bool _isFalling;
         private float _fallDistance;
+
+        private float _acceleration = 40f;    // Скорость разгона
+        private float _deceleration = 25f;    // Скорость торможения (инерция)
+        private float _currentTraction = 1f; // 1.0 — асфальт, 0.2 — лед, 0.05 — супер-лед
+        private float _defaultModifire = 1f;
 
         public MovementComponent(
             CharacterController controller,
@@ -83,7 +88,6 @@ namespace Player
             _flyPressed = false;
         }
 
-
         public void FixedTick()
         {
             ApplyMovement();
@@ -116,8 +120,6 @@ namespace Player
         {
             _moveInput = Vector2.zero;
         }
-
-
 
         private bool CanJump()
         {
@@ -158,7 +160,7 @@ namespace Player
             _jumpCount++; // Замечаем прыжок
             _soundBus.Play(SoundType.WallJump);
             //_soundLibrary.RequestPlay(SoundType.SideJump);
-            
+
         }
 
         private bool IsGrounded()
@@ -200,39 +202,60 @@ namespace Player
 
         private void ApplyMovement()
         {
-            float speed = IsGrounded()
-        ? _playerConfig.MoveSpeedGround
-        : _playerConfig.MoveSpeedAir;
+            // 1. Определяем целевую скорость
+            // Скорость зависит от того, на земле мы или в воздухе, и умножается на дебафф зоны (болота)
+            float baseSpeed = IsGrounded() ? _playerConfig.MoveSpeedGround : _playerConfig.MoveSpeedAir;
+            float targetMaxSpeed = _moveInput.x * baseSpeed * _externalSpeedModifier;                      
 
-            Vector3 inputDirection = new Vector3(_moveInput.x, 0, 0);
+            float currentForce;
+            bool isTryingToMove = Mathf.Abs(_moveInput.x) > 0.01f;
 
+            if (isTryingToMove)
+            {
+                // РАЗГОН ИЛИ РАЗВОРОТ
+                // Умножаем на сцепление: на льду или в болоте разгоняться тяжело
+                currentForce = _acceleration * _currentTraction;
+            }
+            else
+            {
+                // ТОРМОЖЕНИЕ (Игрок отпустил кнопки)
+                if (_externalSpeedModifier < 0.9f)
+                {
+                    // ЭФФЕКТ БОЛОТА: Если скорость урезана, значит среда вязкая. 
+                    // Игнорируем скольжение и останавливаемся быстро.
+                    currentForce = _deceleration * 2f;
+                }
+                else
+                {
+                    // ЭФФЕКТ ЛЬДА / ОБЫЧНОЙ ЗЕМЛИ: 
+                    // На льду _currentTraction маленький (например 0.2), поэтому торможение будет долгим.
+                    currentForce = _deceleration * _currentTraction;
+                }
+            }
+
+            // 3. Применяем горизонтальную силу (изменяем _velocity.x)
+            _velocity.x = Mathf.MoveTowards(_velocity.x, targetMaxSpeed, currentForce * Time.fixedDeltaTime);
+
+            // 4. Проверка стен (чтобы инерция не проталкивала сквозь стены)
             bool wallLeft = IsWallAtSide(-1);
             bool wallRight = IsWallAtSide(1);
+            if (wallLeft && _velocity.x < 0) _velocity.x = 0;
+            if (wallRight && _velocity.x > 0) _velocity.x = 0;
 
-            if (wallLeft && inputDirection.x < 0)
-                inputDirection.x = 0;
-
-            if (wallRight && inputDirection.x > 0)
-                inputDirection.x = 0;
-
-            float targetSpeed = inputDirection.x * speed;
-            _velocity.x = Mathf.SmoothDamp(_velocity.x, targetSpeed, ref _velocitySmoothRef.x, 0.1f);
-
-            // Плавное скольжение по стене
+            // 5. Вертикальная логика (Стены, Fly, Гравитация)
             if (IsWallClinging() && _velocity.y < _playerConfig.WallSlideSpeed)
             {
                 _velocity.y = Mathf.Lerp(_velocity.y, _playerConfig.WallSlideSpeed, _playerConfig.SlowClingFallSpeed);
             }
             else
             {
-                // Если удерживается кнопка прыжка и персонаж в воздухе с падением вниз — плавное снижение скорости падения
                 if (_flyPressed && _velocity.y < 0)
                 {
-                    _velocity.y = Mathf.Lerp(_velocity.y
-                        - _flyAdvancedSpeed,
-                        -_playerConfig.JumpHoldFallAirSpeed,
-                        _playerConfig.SlowFallAirSpeed);
-                    _velocity.x += _moveAdvancedSpeed;
+                    _velocity.y = Mathf.Lerp(_velocity.y - _flyAdvancedSpeed,
+                                            -_playerConfig.JumpHoldFallAirSpeed,
+                                            _playerConfig.SlowFallAirSpeed);
+                    // Добавочное ускорение при парении (по желанию)
+                    _velocity.x += _moveInput.x * _moveAdvancedSpeed * Time.fixedDeltaTime;
                 }
                 else
                 {
@@ -240,11 +263,15 @@ namespace Player
                 }
             }
 
+            // 6. Применение движения через CharacterController
             Vector3 move = new Vector3(_velocity.x, _velocity.y, 0) * Time.fixedDeltaTime;
             _controller.Move(move);
 
-            if (_controller.isGrounded && _velocity.y < 0 || IsWallAtHead()) _velocity.y = 0f;
-
+            // Сброс вертикальной скорости
+            if ((_controller.isGrounded && _velocity.y < 0) || IsWallAtHead())
+            {
+                _velocity.y = 0f;
+            }            
         }
 
         private void UpdateFallState()
@@ -286,9 +313,19 @@ namespace Player
         }
 
         public void ApplyImpulse(Vector3 impulse)
-        {
-            // «Мгновенно» меняем скорость, но оставляем её на следующем FixedTick()
+        {           
             _velocity += impulse;
+        }
+        public void SetSurfaceEffect(float speedModifier, float traction)
+        {
+            _externalSpeedModifier = speedModifier;
+            _currentTraction = traction;
+        }
+
+        public void ResetSurfaceEffect()
+        {
+            _externalSpeedModifier = _defaultModifire;
+            _currentTraction = _defaultModifire;
         }
     }
 }

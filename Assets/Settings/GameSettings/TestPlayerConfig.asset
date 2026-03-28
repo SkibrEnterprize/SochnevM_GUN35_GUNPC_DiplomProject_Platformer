@@ -21,8 +21,8 @@ MonoBehaviour:
   Gravity: 40
   SlowClingFallSpeed: 0.5
   JumpForce: 140
-  WallJumpForceX: 60
-  WallJumpForceY: 15
+  WallJumpForceX: 20
+  WallJumpForceY: 20
   WallHorizontalPush: 50
   WallSlideSpeed: -2
   LayerMaskForWall:
