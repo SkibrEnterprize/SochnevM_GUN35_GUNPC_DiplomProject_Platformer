@@ -19,6 +19,11 @@ namespace Player
 
             Container.Bind<PlayerConfig>().FromInstance(_playerConfig);
 
+            Container.BindInterfacesAndSelfTo<PlayerStartParameters>()
+                .AsSingle()
+                .WithArguments(character)
+                .NonLazy();
+
             Container.BindInterfacesAndSelfTo<MovementComponent>()
                 .AsSingle()
                 .WithArguments(character, _playerConfig)

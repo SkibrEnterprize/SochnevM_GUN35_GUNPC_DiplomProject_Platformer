@@ -1,16 +1,15 @@
 using Player;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
 public class TriggerExplosionComponent : MonoBehaviour
 {
-    [Header("Настройки задержки")]
+    [Header("Config Delay")]
     [SerializeField] float _activationDelay = 1.5f; // Та самая визуальная задержка
     [SerializeField] Color _warningColor = Color.red;
 
-    [Header("Настройки урона и отброса")]
+    [Header("Config Damage and Adforce")]
     [SerializeField] int _damage = 20;
     [SerializeField] float _knockbackForce = 10f;
     [SerializeField] float _knockupForce = 2f;

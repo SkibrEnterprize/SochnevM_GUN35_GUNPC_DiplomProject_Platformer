@@ -22,8 +22,6 @@ namespace Player
         private float _flyAdvancedSpeed;
         private float _moveAdvancedSpeed;
         private Vector2 _moveInput = Vector2.zero;
-        private float _rayDistanceAtWall = 0.6f;
-        private float _rayDistanceAtHead = 0.1f;
 
         private Vector3 _velocity = Vector3.zero;
         private float _externalSpeedModifier = 1f;
@@ -35,8 +33,9 @@ namespace Player
         private float _acceleration = 40f;    // Скорость разгона
         private float _deceleration = 25f;    // Скорость торможения (инерция)
         private float _currentTraction = 1f; // 1.0 — асфальт, 0.2 — лед, 0.05 — супер-лед
-        private float _defaultModifire = 1f;
 
+        private float _defaultModifire = 1f;
+        public bool IsMovementFrozen { get; set; }
         public MovementComponent(
             CharacterController controller,
             Controls controls,
@@ -137,10 +136,21 @@ namespace Player
             if (!IsGrounded())
                 _velocity.y = 0f;
 
-            _velocity.y += Mathf.Sqrt(2 * _playerConfig.JumpForce);
+            // Применяем модификатор к силе прыжка. 
+            // Если _externalSpeedModifier = 0.5 (болото), прыжок станет заметно ниже.
+            float effectiveJumpForce = _playerConfig.JumpForce * _externalSpeedModifier;
+
+            _velocity.y += Mathf.Sqrt(2 * effectiveJumpForce);
+
             _jumpCount++;
             _soundBus.Play(SoundType.Jump);
-            //_soundLibrary.RequestPlay(SoundType.Jump);
+            //if (!IsGrounded())
+            //    _velocity.y = 0f;
+
+            //_velocity.y += Mathf.Sqrt(2 * _playerConfig.JumpForce);
+            //_jumpCount++;
+            //_soundBus.Play(SoundType.Jump);
+            ////_soundLibrary.RequestPlay(SoundType.Jump);
         }
 
         // Прыжок от стены — отталкиваемся по диагонали в противоположную сторону от стены
@@ -178,14 +188,20 @@ namespace Player
         {
             Vector3 origin = _controller.transform.position + Vector3.up * (_controller.height / 2f);
             Vector3 dir = _controller.transform.right * directionX;
+            
+            float dynamicDistance = _controller.radius + 0.1f;
 
-            return Physics.Raycast(origin, dir, _rayDistanceAtWall, _playerConfig.LayerMaskForWall);
+            Debug.DrawRay(origin, dir * dynamicDistance, Color.red);
+
+            return Physics.Raycast(origin, dir, dynamicDistance, _playerConfig.LayerMaskForWall);
         }
 
         private bool IsWallAtHead()
         {
-            Vector3 origin = _controller.transform.position + Vector3.up * (_controller.height / 2f);
-            return Physics.Raycast(origin, Vector3.up, _rayDistanceAtHead);
+            Vector3 origin = _controller.transform.position + Vector3.up * _controller.height;
+            float headCheckDistance = 0.2f;
+
+            return Physics.Raycast(origin, Vector3.up, headCheckDistance, _playerConfig.LayerMaskForWall);
         }
 
         // Определяем, облокотился ли персонаж на стену (стена слева или справа + не на земле)
@@ -202,6 +218,7 @@ namespace Player
 
         private void ApplyMovement()
         {
+            if (IsMovementFrozen) return;
             // 1. Определяем целевую скорость
             // Скорость зависит от того, на земле мы или в воздухе, и умножается на дебафф зоны (болота)
             float baseSpeed = IsGrounded() ? _playerConfig.MoveSpeedGround : _playerConfig.MoveSpeedAir;
