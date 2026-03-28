@@ -144,13 +144,7 @@ namespace Player
 
             _jumpCount++;
             _soundBus.Play(SoundType.Jump);
-            //if (!IsGrounded())
-            //    _velocity.y = 0f;
 
-            //_velocity.y += Mathf.Sqrt(2 * _playerConfig.JumpForce);
-            //_jumpCount++;
-            //_soundBus.Play(SoundType.Jump);
-            ////_soundLibrary.RequestPlay(SoundType.Jump);
         }
 
         // Прыжок от стены — отталкиваемся по диагонали в противоположную сторону от стены
@@ -183,28 +177,38 @@ namespace Player
             return false;
         }
 
-        // Проверяем наличие стены слева и справа возле персонажа
+        // проверяем наличие стены слева и справа возле персонажа
         private bool IsWallAtSide(float directionX)
         {
-            Vector3 origin = _controller.transform.position + Vector3.up * (_controller.height / 2f);
-            Vector3 dir = _controller.transform.right * directionX;
-            
-            float dynamicDistance = _controller.radius + 0.1f;
+            // 1. Центр физической капсулы в мировых координатах
+            // Это всегда будет "середина" игрока, как бы ты ни менял масштаб или центр
+            Vector3 origin = _controller.bounds.center;
 
+            // 2. Направление (влево или вправо)
+            Vector3 dir = _controller.transform.right * directionX;
+
+            // 3. Дистанция: Берем текущий горизонтальный размер (extents.x — это радиус в мире)
+            // + небольшой запас 0.1f наружу
+            float dynamicDistance = _controller.bounds.extents.x + 0.1f;
+
+            // Рисуем луч из центра игрока сквозь плечо наружу
             Debug.DrawRay(origin, dir * dynamicDistance, Color.red);
 
             return Physics.Raycast(origin, dir, dynamicDistance, _playerConfig.LayerMaskForWall);
         }
 
+
         private bool IsWallAtHead()
         {
-            Vector3 origin = _controller.transform.position + Vector3.up * _controller.height;
+            Vector3 origin = _controller.bounds.center + Vector3.up * _controller.bounds.extents.y;
+            origin.y -= 0.05f;
             float headCheckDistance = 0.2f;
-
+            Debug.DrawRay(origin, Vector3.up * headCheckDistance, Color.green);
             return Physics.Raycast(origin, Vector3.up, headCheckDistance, _playerConfig.LayerMaskForWall);
+
         }
 
-        // Определяем, облокотился ли персонаж на стену (стена слева или справа + не на земле)
+        // определяем, облокотился ли персонаж на стену (стена слева или справа + не на земле)
         private bool IsWallClinging()
         {
             if (IsGrounded())
@@ -219,47 +223,39 @@ namespace Player
         private void ApplyMovement()
         {
             if (IsMovementFrozen) return;
-            // 1. Определяем целевую скорость
-            // Скорость зависит от того, на земле мы или в воздухе, и умножается на дебафф зоны (болота)
+
             float baseSpeed = IsGrounded() ? _playerConfig.MoveSpeedGround : _playerConfig.MoveSpeedAir;
-            float targetMaxSpeed = _moveInput.x * baseSpeed * _externalSpeedModifier;                      
+            float targetMaxSpeed = _moveInput.x * baseSpeed * _externalSpeedModifier;
 
             float currentForce;
             bool isTryingToMove = Mathf.Abs(_moveInput.x) > 0.01f;
 
             if (isTryingToMove)
             {
-                // РАЗГОН ИЛИ РАЗВОРОТ
-                // Умножаем на сцепление: на льду или в болоте разгоняться тяжело
                 currentForce = _acceleration * _currentTraction;
             }
             else
             {
-                // ТОРМОЖЕНИЕ (Игрок отпустил кнопки)
                 if (_externalSpeedModifier < 0.9f)
                 {
-                    // ЭФФЕКТ БОЛОТА: Если скорость урезана, значит среда вязкая. 
-                    // Игнорируем скольжение и останавливаемся быстро.
                     currentForce = _deceleration * 2f;
                 }
                 else
                 {
-                    // ЭФФЕКТ ЛЬДА / ОБЫЧНОЙ ЗЕМЛИ: 
-                    // На льду _currentTraction маленький (например 0.2), поэтому торможение будет долгим.
                     currentForce = _deceleration * _currentTraction;
                 }
             }
 
-            // 3. Применяем горизонтальную силу (изменяем _velocity.x)
+            // применяем горизонтальную силу
             _velocity.x = Mathf.MoveTowards(_velocity.x, targetMaxSpeed, currentForce * Time.fixedDeltaTime);
 
-            // 4. Проверка стен (чтобы инерция не проталкивала сквозь стены)
+            // проверка стен (чтобы инерция не толкала сквозь стены)
             bool wallLeft = IsWallAtSide(-1);
             bool wallRight = IsWallAtSide(1);
             if (wallLeft && _velocity.x < 0) _velocity.x = 0;
             if (wallRight && _velocity.x > 0) _velocity.x = 0;
 
-            // 5. Вертикальная логика (Стены, Fly, Гравитация)
+            // вертикальная логика (Стены, Fly, Гравитация)
             if (IsWallClinging() && _velocity.y < _playerConfig.WallSlideSpeed)
             {
                 _velocity.y = Mathf.Lerp(_velocity.y, _playerConfig.WallSlideSpeed, _playerConfig.SlowClingFallSpeed);
@@ -271,7 +267,7 @@ namespace Player
                     _velocity.y = Mathf.Lerp(_velocity.y - _flyAdvancedSpeed,
                                             -_playerConfig.JumpHoldFallAirSpeed,
                                             _playerConfig.SlowFallAirSpeed);
-                    // Добавочное ускорение при парении (по желанию)
+                    // Добавочное ускорение при парении
                     _velocity.x += _moveInput.x * _moveAdvancedSpeed * Time.fixedDeltaTime;
                 }
                 else
@@ -279,16 +275,20 @@ namespace Player
                     _velocity.y -= _playerConfig.Gravity * Time.fixedDeltaTime;
                 }
             }
-
-            // 6. Применение движения через CharacterController
+           
             Vector3 move = new Vector3(_velocity.x, _velocity.y, 0) * Time.fixedDeltaTime;
             _controller.Move(move);
 
-            // Сброс вертикальной скорости
-            if ((_controller.isGrounded && _velocity.y < 0) || IsWallAtHead())
+            if (IsWallAtHead() && _velocity.y > 0)
+            {
+                Debug.Log("Head!!!");
+                _velocity.y = -0.1f; // Небольшой импульс вниз, чтобы "отлепиться"
+            }
+           
+            if (_controller.isGrounded && _velocity.y < 0)
             {
                 _velocity.y = 0f;
-            }            
+            }
         }
 
         private void UpdateFallState()
@@ -330,7 +330,7 @@ namespace Player
         }
 
         public void ApplyImpulse(Vector3 impulse)
-        {           
+        {
             _velocity += impulse;
         }
         public void SetSurfaceEffect(float speedModifier, float traction)

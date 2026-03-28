@@ -7,6 +7,7 @@ namespace Player
     {
         [SerializeField] private GameObject _player;
         [SerializeField] private PlayerConfig _playerConfig;
+        [SerializeField] private CombatConfig _combatConfig;
 
         public override void InstallBindings()
         {
@@ -26,8 +27,13 @@ namespace Player
 
             Container.BindInterfacesAndSelfTo<MovementComponent>()
                 .AsSingle()
-                .WithArguments(character, _playerConfig)
-                .NonLazy();            
+                .WithArguments(character, controls, _playerConfig)
+                .NonLazy();
+
+            Container.BindInterfacesAndSelfTo<CombatComponent>()
+                .AsSingle()
+                .WithArguments(controls, _combatConfig, character)
+                .NonLazy();
 
             Container.BindInterfacesAndSelfTo<HealthModel>()
                 .AsSingle()

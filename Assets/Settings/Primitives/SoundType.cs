@@ -8,5 +8,7 @@ public enum SoundType
     CollectItem, 
     CheckPoint,
     EndPoint,
-    Finish
+    Finish,
+    Attack,
+    HeavyAttack
 }
