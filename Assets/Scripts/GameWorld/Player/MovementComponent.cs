@@ -33,21 +33,24 @@ namespace Player
         private float _acceleration = 40f;    // Скорость разгона
         private float _deceleration = 25f;    // Скорость торможения (инерция)
         private float _currentTraction = 1f; // 1.0 — асфальт, 0.2 — лед, 0.05 — супер-лед
-
         private float _defaultModifire = 1f;
         public bool IsMovementFrozen { get; set; }
+
+        private PlayerStartParameters _startParameters;
         public MovementComponent(
             CharacterController controller,
             Controls controls,
             PlayerConfig playerConfig,
             ISoundEventBus soundBus,
-            ICheckPointEventBus checkPointEventBus)
+            ICheckPointEventBus checkPointEventBus,
+            PlayerStartParameters playerStartParameters)
         {
             _controller = controller;
             _controls = controls;
             _playerConfig = playerConfig;
             _soundBus = soundBus;
             _checkPointEventBus = checkPointEventBus;
+            _startParameters = playerStartParameters;
         }
 
         public void Initialize()
@@ -62,7 +65,6 @@ namespace Player
 
             _controls.Player.Fly.started += OnFlyStarted;
             _controls.Player.Fly.canceled += OnFlyCanceled;
-
         }
 
         public void Dispose()
@@ -90,6 +92,7 @@ namespace Player
         public void FixedTick()
         {
             ApplyMovement();
+            ApplyRotation();
             UpdateFallState();
         }
 
@@ -288,6 +291,14 @@ namespace Player
             if (_controller.isGrounded && _velocity.y < 0)
             {
                 _velocity.y = 0f;
+            }
+        }
+        private void ApplyRotation()
+        {
+            if (Mathf.Abs(_moveInput.x) > 0.05f)
+            {
+                float targetY = (_moveInput.x > 0) ? 0f : 180f;
+                _startParameters.ViewTransform.localRotation = Quaternion.Euler(0, targetY, 0);
             }
         }
 

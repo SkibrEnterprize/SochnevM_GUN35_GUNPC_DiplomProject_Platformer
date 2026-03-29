@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class AudioManager : MonoBehaviour, IAudioManager
+public class AudioSystem : MonoBehaviour, IAudioSystem
 {
     [SerializeField] private int poolSize = 10;
     private List<AudioSource> _pool = new List<AudioSource>();

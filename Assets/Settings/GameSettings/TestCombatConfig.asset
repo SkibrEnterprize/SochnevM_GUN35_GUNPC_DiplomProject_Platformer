@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LightAttack:
     Damage: 20
-    Range: 3
+    Range: 1
     Cooldown: 1
     KnockbackForce: 0
   HeavyAttack:

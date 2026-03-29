@@ -6,9 +6,9 @@ public class SoundEffectObserver : IInitializable, IDisposable
 {
     private readonly SoundLibrary _soundLibrary;
     private readonly ISoundEventBus _eventBus;
-    private readonly IAudioManager _audioManager;
+    private readonly IAudioSystem _audioManager;
 
-    public SoundEffectObserver(SoundLibrary soundLibrary, ISoundEventBus eventBus, IAudioManager audioManager)
+    public SoundEffectObserver(SoundLibrary soundLibrary, ISoundEventBus eventBus, IAudioSystem audioManager)
     {
         _soundLibrary = soundLibrary;
         _eventBus = eventBus;

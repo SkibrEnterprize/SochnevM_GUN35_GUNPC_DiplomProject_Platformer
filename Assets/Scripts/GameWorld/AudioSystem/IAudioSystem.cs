@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public interface IAudioManager
+public interface IAudioSystem
 {
     void Play(AudioEvent ev, Vector3 position);
 }
