@@ -11,7 +11,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     private void Awake() => _currentHealth = _maxHealth;
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, Vector3 attackerPosition)
     {
         if (_currentHealth <= 0) return;
 

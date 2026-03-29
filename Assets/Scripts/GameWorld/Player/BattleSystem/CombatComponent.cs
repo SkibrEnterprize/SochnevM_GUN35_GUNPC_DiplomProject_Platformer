@@ -120,14 +120,14 @@ namespace Player
                 {
                     if (enemy.TryGetComponent<IDamageable>(out var target))
                     {
-                        target.TakeDamage(data.Damage);
+                        target.TakeDamage(data.Damage, origin);
                         Debug.Log($"[Combat] Удар по {enemy.name}. Направление: {directionX}");
                     }
                 }
             }
 
-            Quaternion vfxRotation = _startParameters.ViewTransform.rotation * Quaternion.Euler(25, -90, 45);
-            Vector3 vfxPosition = origin + attackDir * 0.8f;
+            Vector3 vfxPosition = _startParameters.CombatVFXPoint.position;
+            Quaternion vfxRotation = _startParameters.CombatVFXPoint.rotation * Quaternion.Euler(25, -90, 45);
             _vfxBus.Play(vfxType, vfxPosition, vfxRotation, _controller.gameObject.transform);
             
         }
