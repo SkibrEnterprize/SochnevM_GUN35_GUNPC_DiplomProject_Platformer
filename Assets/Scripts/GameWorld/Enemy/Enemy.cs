@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[RequireComponent (typeof(CharacterController))]
+[RequireComponent(typeof(CharacterController))]
 public class Enemy : MonoBehaviour, IDamageable
 {
     [Header("Movement")]
@@ -11,10 +11,24 @@ public class Enemy : MonoBehaviour, IDamageable
 
     [SerializeField] private float _knockbackResistance = 5f; // Насколько быстро гасится отскок
 
+    [Header("Detection")]
+    [SerializeField] private Transform _enemyEyesForDebug;
+    [SerializeField] private float _detectionRange = 7f;
+    [SerializeField] private float _lostRange = 10f;
+    [SerializeField] private float _attackRange = 1.5f;
+    private Transform _player;
+    [SerializeField] private LayerMask _obstacleLayer; // Слой стен и препятствий
+    [SerializeField] private float _viewAngle = 90f; // Угол обзора
+    [SerializeField] private bool _showGizmos = true;
+    [SerializeField] private bool _showDetectRadius = true;
+    [SerializeField] private bool _showAttackRadius = true;
+    [SerializeField] private bool _showEyeVision = true;
 
+    public float LostRange => _lostRange;
 
-    private Transform _groundCheck; 
-    private Transform _wallCheck;   
+    private Transform _enemyEyes;
+    private Transform _groundCheck;
+    private Transform _wallCheck;
     private Vector3 _impactVelocity = Vector3.zero; // Текущий импульс отскока
 
     private CharacterController _controller;
@@ -24,8 +38,10 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         _controller = GetComponent<CharacterController>();
         _stateMachine = new EnemyStateMachine();
+        _player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        _stateMachine.ChangeState(new EnemyPatrolState(this));
 
-        _stateMachine.ChangeState(new PatrolState(this));
+        _enemyEyes = GetComponentInChildren<EnemyEyesPoint>().transform;
         _groundCheck = GetComponentInChildren<EnemyGroundCheck>().transform;
         _wallCheck = GetComponentInChildren<EnemyWallCheck>().transform;
     }
@@ -67,13 +83,8 @@ public class Enemy : MonoBehaviour, IDamageable
 
     public void TakeDamage(float damage, Vector3 attackerPosition)
     {
-        Debug.Log($"Враг получил {damage} урона!");
-
-        // Вычисляем направление от игрока к врагу
         Vector3 pushDirection = (transform.position - attackerPosition).normalized;
-        pushDirection.y = 0.5f; // Немного подкидываем вверх для эффекта
-
-        ApplyKnockback(pushDirection, 10f); // 10f — сила отскока
+        _stateMachine.ChangeState(new EnemyHitState(this, pushDirection));
     }
 
     public void ApplyKnockback(Vector3 direction, float force)
@@ -85,4 +96,86 @@ public class Enemy : MonoBehaviour, IDamageable
         // _stateMachine.ChangeState(new HitState(this)); 
     }
 
+    public bool CanSeePlayer()
+    {
+
+        if (_player == null || _enemyEyes == null) return false;
+
+        // Вектор от ГЛАЗ врага к игроку
+        Vector3 dirToPlayer = (_player.position - _enemyEyes.position).normalized;
+        float distance = Vector3.Distance(_enemyEyes.position, _player.position);
+
+        // 1. Проверка дистанции
+        if (distance <= _detectionRange)
+        {
+            // 2. Проверка угла обзора (используем направление глаз _enemyEyes.right)
+            if (Vector3.Angle(_enemyEyes.right, dirToPlayer) < _viewAngle / 2f)
+            {
+
+                // 3. Raycast на препятствия
+                if (Physics.Raycast(_enemyEyes.position, dirToPlayer, out RaycastHit hit, _detectionRange))
+                {
+                    if (hit.collider.TryGetComponent<PlayerDetect>(out PlayerDetect playerDetect))
+                    {
+                        Debug.Log("Find Player");
+                        return true;
+                    }
+                }
+            }
+        }
+        Debug.Log("NOT Find Player");
+        return false;
+    }
+
+    public bool CanAttackPlayer()
+    {
+        if (_player == null) return false;
+        return Vector3.Distance(transform.position, _player.position) <= _attackRange;
+    }
+    // Метод для удобной смены стейтов извне (из самих стейтов)
+    public void ChangeState(IEnemyState newState) => _stateMachine.ChangeState(newState);
+    public Transform GetPlayer() => _player;
+
+
+    private void OnDrawGizmos()
+    {
+        if (!_showGizmos || _enemyEyesForDebug == null) return;
+
+        // радиус обнаружения
+        if (_showDetectRadius)
+        {
+            Gizmos.color = new Color(0, 1, 0, 0.2f); // Прозрачно-зеленый
+            Gizmos.DrawWireSphere(_enemyEyesForDebug.position, _detectionRange);
+        }
+        // радиус атаки 
+        if (_showAttackRadius)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, _attackRange);
+        }
+
+        // конус обзора
+        if (_showEyeVision)
+        {
+            Gizmos.color = Color.yellow;
+            Vector3 topBoundary = Quaternion.Euler(0, 0, _viewAngle / 2f) * _enemyEyesForDebug.right;
+            Vector3 bottomBoundary = Quaternion.Euler(0, 0, -_viewAngle / 2f) * _enemyEyesForDebug.right;
+
+            Gizmos.DrawRay(_enemyEyesForDebug.position, topBoundary * _detectionRange);
+            Gizmos.DrawRay(_enemyEyesForDebug.position, bottomBoundary * _detectionRange);
+
+            // Соединяем концы лучей линией, чтобы получился треугольник (сектор)
+            Gizmos.DrawLine(_enemyEyesForDebug.position + topBoundary * _detectionRange,
+                            _enemyEyesForDebug.position + bottomBoundary * _detectionRange);
+        }
+
+        // линия до игрока (только если он увиден)
+        if (CanSeePlayer() && _player != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(_enemyEyesForDebug.position, _player.position);
+
+            Gizmos.DrawSphere(_player.position, 0.2f);
+        }
+    }
 }
