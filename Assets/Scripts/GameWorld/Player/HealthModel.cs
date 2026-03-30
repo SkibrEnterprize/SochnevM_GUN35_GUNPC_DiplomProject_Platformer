@@ -4,10 +4,10 @@ using Zenject;
 
 namespace Player
 {
-    public sealed class HealthModel : IInitializable, IDisposable, ITakeChangeByTrigger
+    public sealed class HealthModel : IInitializable, IDisposable, IHealthAffected
     {
         private IHealthEventBus _healthEventBus;
-        private readonly MovementComponent _movementComponent;
+        private readonly PlayerMovementSystem _movementComponent;
         private PlayerConfig _playerConfig;
         private int _health;
 
@@ -26,7 +26,7 @@ namespace Player
             }
         }
         public HealthModel(PlayerConfig playerConfig,
-            MovementComponent movementComponent,
+            PlayerMovementSystem movementComponent,
             IHealthEventBus healthEventBus)
         {
             _playerConfig = playerConfig;
@@ -52,16 +52,17 @@ namespace Player
         {
             if (fallDistance > _playerConfig.MinHeightForDamage)
             {
-                TakeChangeByTrigger(-_playerConfig.DamageOfFall);
+                ApplyHealthChange(-_playerConfig.DamageOfFall);
                 Debug.Log($"Health = {_health} because of FallDistance is {fallDistance}");
             }
         }
-
-        public void TakeChangeByTrigger(int value)
+                
+        public void ApplyHealthChange(int delta, Vector3 sourcePosition = default)
         {
-            Health += value;
-            _healthEventBus.HealthUpdated(value);
+            Health += delta;
+            _healthEventBus.HealthUpdated(delta);
             CheckHealthValue();
+
         }
 
         private void TakeDamage(int value) => Health -= value;
@@ -74,5 +75,6 @@ namespace Player
         {
             Health = _playerConfig.MaxHealth;
         }
+        
     }
 }

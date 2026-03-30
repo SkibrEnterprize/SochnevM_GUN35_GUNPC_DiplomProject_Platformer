@@ -13,10 +13,10 @@ namespace Player
         {
             var character = _player.GetComponent<CharacterController>();
 
-            // 2. Биндим Управление
-            var controls = new Controls();
-            controls.Enable();                     // включаем все action‑maps
-            Container.Bind<Controls>().FromInstance(controls).AsSingle();
+            //// 2. Биндим Управление
+            //var controls = new Controls();
+            //controls.Enable();                     // включаем все action‑maps
+            //Container.Bind<Controls>().FromInstance(controls).AsSingle();
 
             Container.Bind<PlayerConfig>().FromInstance(_playerConfig);
 
@@ -25,14 +25,14 @@ namespace Player
                 .WithArguments(character)
                 .NonLazy();
 
-            Container.BindInterfacesAndSelfTo<MovementComponent>()
+            Container.BindInterfacesAndSelfTo<PlayerMovementSystem>()
                 .AsSingle()
-                .WithArguments(character, controls, _playerConfig)
+                .WithArguments(character, _playerConfig)
                 .NonLazy();
 
             Container.BindInterfacesAndSelfTo<CombatComponent>()
                 .AsSingle()
-                .WithArguments(controls, _combatConfig, character)
+                .WithArguments(_combatConfig, character)
                 .NonLazy();
 
             Container.BindInterfacesAndSelfTo<HealthModel>()

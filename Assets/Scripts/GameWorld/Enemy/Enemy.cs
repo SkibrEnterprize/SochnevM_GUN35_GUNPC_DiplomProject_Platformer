@@ -1,7 +1,9 @@
 using UnityEngine;
+using UnityEngine.Rendering;
+using Zenject;
 
 [RequireComponent(typeof(CharacterController))]
-public class Enemy : MonoBehaviour, IDamageable
+public class Enemy : MonoBehaviour, IHealthAffected
 {
     [Header("Movement")]
     [SerializeField] private float _moveSpeed = 2f;
@@ -16,16 +18,36 @@ public class Enemy : MonoBehaviour, IDamageable
     [SerializeField] private float _detectionRange = 7f;
     [SerializeField] private float _lostRange = 10f;
     [SerializeField] private float _attackRange = 1.5f;
-    private Transform _player;
     [SerializeField] private LayerMask _obstacleLayer; // Слой стен и препятствий
     [SerializeField] private float _viewAngle = 90f; // Угол обзора
+    private Transform _player;
+
+    [Header("Attack")]
+    [SerializeField] private EnemyTypeAttack _enemyTypeAttack;
+
+    [Header("Combat Settings")]
+    [SerializeField] private int _health = 100;
+    [SerializeField] private int _attackDamage = 15;
+    [SerializeField] private float _attackCooldown = 1.2f;
+    [SerializeField] private LayerMask _attackMask;
+    private float _lastAttackTime;                        // Таймер последнего удара
+
+    [Header("Ranged Attack")]
+    [SerializeField] private GameObject _projectilePrefab;
+    private Transform _firePoint; // Точка, откуда вылетает пуля
+
     [SerializeField] private bool _showGizmos = true;
     [SerializeField] private bool _showDetectRadius = true;
     [SerializeField] private bool _showAttackRadius = true;
     [SerializeField] private bool _showEyeVision = true;
 
-    public float LostRange => _lostRange;
+    [Header("VFX Settings")]
+    [SerializeField] private Transform _combatVFXPoint;
+    private VFXEventBus _vfxBus;
 
+
+    public float LostRange => _lostRange;
+    public EnemyTypeAttack EnemyTypeAttack => _enemyTypeAttack;
     private Transform _enemyEyes;
     private Transform _groundCheck;
     private Transform _wallCheck;
@@ -34,6 +56,8 @@ public class Enemy : MonoBehaviour, IDamageable
     private CharacterController _controller;
     private EnemyStateMachine _stateMachine;
 
+    [Inject]
+    public void Construct(VFXEventBus vfxBus) => _vfxBus = vfxBus;
     private void Awake()
     {
         _controller = GetComponent<CharacterController>();
@@ -41,12 +65,17 @@ public class Enemy : MonoBehaviour, IDamageable
         _player = GameObject.FindGameObjectWithTag("Player")?.transform;
         _stateMachine.ChangeState(new EnemyPatrolState(this));
 
+        _firePoint = GetComponentInChildren<FirePoint>().transform;
+        _combatVFXPoint = GetComponentInChildren<CombatVFXPoint>().transform;
         _enemyEyes = GetComponentInChildren<EnemyEyesPoint>().transform;
         _groundCheck = GetComponentInChildren<EnemyGroundCheck>().transform;
         _wallCheck = GetComponentInChildren<EnemyWallCheck>().transform;
     }
 
+
     private void Update() => _stateMachine.Update();
+    public void ChangeState(IEnemyState newState) => _stateMachine.ChangeState(newState);
+    public Transform GetPlayer() => _player;
 
     public bool IsWallAhead()
     {
@@ -115,7 +144,7 @@ public class Enemy : MonoBehaviour, IDamageable
                 // 3. Raycast на препятствия
                 if (Physics.Raycast(_enemyEyes.position, dirToPlayer, out RaycastHit hit, _detectionRange))
                 {
-                    if (hit.collider.TryGetComponent<PlayerDetect>(out PlayerDetect playerDetect))
+                    if (hit.collider.TryGetComponent<PlayerHealth>(out PlayerHealth playerDetect))
                     {
                         Debug.Log("Find Player");
                         return true;
@@ -127,15 +156,69 @@ public class Enemy : MonoBehaviour, IDamageable
         return false;
     }
 
+    // Реализация интерфейса IHealthAffected
+    public void ApplyHealthChange(int delta, Vector3 sourcePosition = default)
+    {
+        _health += delta;
+        Debug.Log($"HP врага: {_health}");
+
+        if (delta < 0) // Если это урон
+        {
+            ApplyKnockback((transform.position - sourcePosition).normalized, 5f);
+            // Если HP <= 0, переходим в DeathState (создадим позже)
+            if (_health <= 0) _stateMachine.ChangeState(new EnemyDeathState(this));
+        }
+    }
+    public bool CanAttackReady() => Time.time >= _lastAttackTime + _attackCooldown;
     public bool CanAttackPlayer()
     {
         if (_player == null) return false;
-        return Vector3.Distance(transform.position, _player.position) <= _attackRange;
+        // Считаем расстояние от врага до игрока
+        float distance = Vector3.Distance(transform.position, _player.position);
+        // Возвращаем true, если игрок в радиусе атаки
+        return distance <= _attackRange;
     }
-    // Метод для удобной смены стейтов извне (из самих стейтов)
-    public void ChangeState(IEnemyState newState) => _stateMachine.ChangeState(newState);
-    public Transform GetPlayer() => _player;
 
+
+    public void PerformAttack()
+    {
+        _lastAttackTime = Time.time;
+
+        // Поиск цели в радиусе атаки (Physics или Physics2D в зависимости от проекта)
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, _attackRange, _attackMask);
+        foreach (var hit in hitColliders)
+        {
+            // Ищем наш новый интерфейс на цели (Игроке)
+            if (hit.TryGetComponent(out IHealthAffected target))
+            {
+                target.ApplyHealthChange(-_attackDamage, transform.position);
+                Vector3 vfxPosition = _combatVFXPoint.position;
+                Quaternion vfxRotation = _combatVFXPoint.rotation * Quaternion.Euler(25, -90, 45);
+                _vfxBus.Play(VFXType.Attack, vfxPosition, vfxRotation, _controller.gameObject.transform);
+            }
+        }
+    }
+    public void Shoot()
+    {
+        if (_player == null) return;
+
+        _lastAttackTime = Time.time;
+
+        // Создаем пулю
+        GameObject bullet = Instantiate(_projectilePrefab, _firePoint.position, Quaternion.identity);
+
+        // 1. Вычисляем направление: (Куда - Откуда)
+        Vector3 direction = (_player.position - _firePoint.position).normalized;
+
+        // 2. Если пуля 3D, можно развернуть её «лицом» к игроку
+        bullet.transform.right = direction;
+
+        if (bullet.TryGetComponent(out EnemyProjectile projectile))
+        {
+            // Передаем вычисленное направление в метод Launch
+            projectile.Launch(direction);
+        }
+    }
 
     private void OnDrawGizmos()
     {

@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public class ChaseState : IEnemyState
+public class EnemyChaseState : IEnemyState
 {
-    private Enemy _enemy;
-    private Transform _player;
+    private readonly Enemy _enemy;
+    private readonly Transform _player;
 
-    public ChaseState(Enemy enemy)
+    public EnemyChaseState(Enemy enemy)
     {
         _enemy = enemy;
         _player = enemy.GetPlayer();
@@ -15,41 +15,45 @@ public class ChaseState : IEnemyState
 
     public void Update()
     {
+        // 1. Проверка потери цели (игрок слишком далеко)
         if (_player == null || Vector3.Distance(_enemy.transform.position, _player.position) > _enemy.LostRange)
         {
             _enemy.ChangeState(new EnemyPatrolState(_enemy));
             return;
         }
 
-        // Вычисляем направление к игроку
-        Vector3 direction = (_player.position - _enemy.transform.position).normalized;
-        direction.y = 0; // Нам нужно только влево/вправо
+        // 2. Поворот в сторону игрока (всегда смотрим на цель)
+        float targetAngle = _player.position.x > _enemy.transform.position.x ? 0 : 180;
+        _enemy.transform.rotation = Quaternion.Euler(0, targetAngle, 0);
 
-        // Разворот в сторону игрока
-        float angle = _player.position.x > _enemy.transform.position.x ? 0 : 180;
-        _enemy.transform.rotation = Quaternion.Euler(0, angle, 0);
-
-        _enemy.Move(direction);
-
+        // 3. Проверка на атаку (дистанция + кулдаун)
         if (_enemy.CanAttackPlayer())
         {
-            // Здесь будет переход в AttackState
-            Debug.Log("АТАКА!");
+            if (_enemy.CanAttackReady())
+            {
+                _enemy.ChangeState(new AttackState(_enemy));
+                return;
+            }
+            else
+            {
+                // Если дистанция для атаки есть, но кулдаун не прошел — просто стоим и ждем
+                _enemy.Move(Vector3.zero);
+                return;
+            }
         }
 
-        // Проверка препятствий перед движением
+        // 4. Логика движения к игроку
         bool canMove = _enemy.IsGroundAhead() && !_enemy.IsWallAhead();
 
         if (canMove)
         {
-            // Если путь чист — бежим к игроку
+            // Двигаемся вперед (в ту сторону, куда развернуты через rotation)
             _enemy.Move(_enemy.transform.right);
         }
         else
         {
-            // Если впереди стена или обрыв — замираем у края/стены
+            // Если впереди стена или обрыв — останавливаемся
             _enemy.Move(Vector3.zero);
-            Debug.Log("Препятствие! Не могу преследовать дальше.");
         }
     }
 

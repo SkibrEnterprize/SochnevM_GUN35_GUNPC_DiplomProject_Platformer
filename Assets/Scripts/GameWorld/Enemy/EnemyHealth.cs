@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class EnemyHealth : MonoBehaviour, IDamageable
+public class EnemyHealth : MonoBehaviour, IHealthAffected
 {
     [SerializeField] private float _maxHealth = 100f;
     private float _currentHealth;
@@ -10,15 +10,14 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public event Action<float> OnTakeDamage;
 
     private void Awake() => _currentHealth = _maxHealth;
-
-    public void TakeDamage(float amount, Vector3 attackerPosition)
+    public void ApplyHealthChange(int delta, Vector3 sourcePosition = default)
     {
         if (_currentHealth <= 0) return;
 
-        _currentHealth -= amount;
-        OnTakeDamage?.Invoke(amount);
+        _currentHealth -= delta;
+        OnTakeDamage?.Invoke(delta);
 
-        Debug.Log($"{gameObject.name} получил урон: {amount}. Осталось: {_currentHealth}");
+        Debug.Log($"{gameObject.name} получил урон: {delta}. Осталось: {_currentHealth}");
 
         if (_currentHealth <= 0) Die();
     }
@@ -29,4 +28,5 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         // логика смерти: частицы, звук, удаление
         Destroy(gameObject, 0.1f);
     }
+
 }

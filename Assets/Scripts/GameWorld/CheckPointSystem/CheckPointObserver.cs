@@ -6,12 +6,12 @@ using Zenject;
 public class CheckPointObserver : IInitializable, IDisposable
 {
     private ICheckPointEventBus _checkPointEventBus;
-    private MovementComponent _movementComponent;
+    private PlayerMovementSystem _movementComponent;
     private ISoundEventBus _soundBus;
 
     private Vector3 _position;
     private Quaternion _rotation;
-    public CheckPointObserver(MovementComponent movementComponent, 
+    public CheckPointObserver(PlayerMovementSystem movementComponent, 
         ISoundEventBus soundBus, 
         ICheckPointEventBus checkPointEventBus)
     {

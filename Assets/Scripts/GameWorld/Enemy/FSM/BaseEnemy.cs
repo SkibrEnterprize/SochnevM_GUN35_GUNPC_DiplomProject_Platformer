@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class BaseEnemy : MonoBehaviour, IDamageable
+public abstract class BaseEnemy : MonoBehaviour, IHealthAffected
 {
     [Header("Settings")]
     public float moveSpeed = 3f;
@@ -23,6 +23,6 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable
     {
         StateMachine.Update();
     }
-
-    public abstract void TakeDamage(float damage, Vector3 attackerPosition);
+    public abstract void ApplyHealthChange(int delta, Vector3 sourcePosition = default);
+    
 }

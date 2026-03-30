@@ -7,7 +7,7 @@ using Zenject;
 namespace Player
 {
 
-    public sealed class MovementComponent : IInitializable, IFixedTickable, IDisposable, IChangeOfForceHandler
+    public sealed class PlayerMovementSystem : IInitializable, IFixedTickable, IDisposable, IChangeOfForceHandler
     {
         public event Action<float> OnFallDistanceEvent;
 
@@ -37,7 +37,7 @@ namespace Player
         public bool IsMovementFrozen { get; set; }
 
         private PlayerStartParameters _startParameters;
-        public MovementComponent(
+        public PlayerMovementSystem(
             CharacterController controller,
             Controls controls,
             PlayerConfig playerConfig,

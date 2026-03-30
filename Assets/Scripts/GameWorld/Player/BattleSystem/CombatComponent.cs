@@ -118,9 +118,9 @@ namespace Player
 
                 if (Vector3.Dot(attackDir, dirToEnemy) > 0.1f)
                 {
-                    if (enemy.TryGetComponent<IDamageable>(out var target))
+                    if (enemy.TryGetComponent<IHealthAffected>(out var target))
                     {
-                        target.TakeDamage(data.Damage, origin);
+                        target.ApplyHealthChange(-data.Damage, origin);
                         Debug.Log($"[Combat] Удар по {enemy.name}. Направление: {directionX}");
                     }
                 }

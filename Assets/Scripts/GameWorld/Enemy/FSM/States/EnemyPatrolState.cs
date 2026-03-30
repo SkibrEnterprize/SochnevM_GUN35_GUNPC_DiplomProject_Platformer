@@ -25,8 +25,15 @@ public class EnemyPatrolState : IEnemyState
 
         if (_enemy.CanSeePlayer())
         {
-            _enemy.ChangeState(new ChaseState(_enemy));
-            Debug.Log("Change state to chase");
+            if (_enemy.EnemyTypeAttack == EnemyTypeAttack.CloseAttack)
+            {
+                _enemy.ChangeState(new EnemyChaseState(_enemy));
+                Debug.Log("Change state to chase");
+            }
+            else if (_enemy.EnemyTypeAttack == EnemyTypeAttack.RangeAttack)
+            {
+                _enemy.ChangeState(new EnemyRangedAttackState(_enemy));
+            }
         }
     }
 

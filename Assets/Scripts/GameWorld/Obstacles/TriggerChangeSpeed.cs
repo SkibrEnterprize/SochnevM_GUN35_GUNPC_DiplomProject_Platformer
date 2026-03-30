@@ -9,10 +9,10 @@ public class TriggerChangeSpeed : MonoBehaviour
     [SerializeField] float _speedModifire = 1f;
     [Range(0.05f, 1f)]
     [SerializeField] float _traction = 0.2f;
-    private MovementComponent _movementComponent;
+    private PlayerMovementSystem _movementComponent;
 
     [Inject]
-    private void Construct(MovementComponent movementComponent)
+    private void Construct(PlayerMovementSystem movementComponent)
     {
         _movementComponent = movementComponent;
     }

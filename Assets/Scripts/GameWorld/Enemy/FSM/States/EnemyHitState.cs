@@ -22,7 +22,7 @@ public class EnemyHitState : IEnemyState
 
         if (_timer <= 0)
         {
-            _enemy.ChangeState(new ChaseState(_enemy));
+            _enemy.ChangeState(new EnemyChaseState(_enemy));
         }
     }
 

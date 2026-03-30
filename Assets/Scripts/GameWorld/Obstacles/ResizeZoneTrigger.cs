@@ -13,12 +13,12 @@ public class ResizeZoneTrigger : MonoBehaviour
     private float _defaultHeight;
     private float _defaultRadius;
     private PlayerStartParameters _playerStartParameters;
-    private MovementComponent _movementComponent;
+    private PlayerMovementSystem _movementComponent;
     private float _duration = 1f;
 
     [Inject]
     private void Construct(PlayerStartParameters playerStartParameters,
-        MovementComponent movementComponent)
+        PlayerMovementSystem movementComponent)
     {
         _playerStartParameters = playerStartParameters;
         _movementComponent = movementComponent;

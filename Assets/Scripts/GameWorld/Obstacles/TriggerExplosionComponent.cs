@@ -17,14 +17,14 @@ public class TriggerExplosionComponent : MonoBehaviour
     [SerializeField] private bool _showGizmos = true;
 
 
-    private MovementComponent _movementComponent;
+    private PlayerMovementSystem _movementComponent;
     private HealthModel _healthModel;
     private MeshRenderer _renderer;
     private Color _originalColor;
     private bool _isTriggered = false;
 
     [Inject]
-    private void Construct(MovementComponent movementComponent,
+    private void Construct(PlayerMovementSystem movementComponent,
             HealthModel healthModel)
     {
         _movementComponent = movementComponent;
@@ -75,7 +75,7 @@ public class TriggerExplosionComponent : MonoBehaviour
         direction.y = _knockupForce; // Немного подбрасываем вверх
 
         _movementComponent.ApplyImpulse(direction * _knockbackForce);
-        _healthModel.TakeChangeByTrigger(-_damage);
+        _healthModel.ApplyHealthChange(-_damage);
     }
 
     private void OnDrawGizmosSelected()

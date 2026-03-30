@@ -11,11 +11,11 @@ public class SpringTrigger : MonoBehaviour
     [SerializeField] private int _impulseY = 5;
     [Tooltip("Относительно локальной оси объекта?")]
     [SerializeField] private bool _useLocalSpace = true;
-    private MovementComponent _movementComponent;
+    private PlayerMovementSystem _movementComponent;
     private Vector3 _impulse;
 
     [Inject]
-    public void Construct(MovementComponent movementComponent) {  _movementComponent = movementComponent; }
+    public void Construct(PlayerMovementSystem movementComponent) {  _movementComponent = movementComponent; }
     private void Awake()
     {
     _impulse = new Vector3(_impulseX, _impulseY, 0);        

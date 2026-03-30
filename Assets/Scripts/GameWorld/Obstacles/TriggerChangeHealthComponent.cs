@@ -4,18 +4,18 @@ using Zenject;
 public class TriggerChangeHealthComponent : MonoBehaviour
 {
     [Tooltip("A negative value causes damage\nA positive value heals for that amount")]
-    [SerializeField] private int _amountOfChangeInHealth = 10;
-    private ITakeChangeByTrigger _healthComponent;
+    [SerializeField] private int _amountOfChange = 10;
+    //private IHealthAffected _healthComponent;
 
-    [Inject] 
-    private void Construct(ITakeChangeByTrigger healthComponent)
-    {
-        _healthComponent = healthComponent;
-    }
+    //[Inject] 
+    //private void Construct(IHealthAffected healthComponent)
+    //{
+    //    _healthComponent = healthComponent;
+    //}
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.TryGetComponent<CharacterController>(out CharacterController  controller))
-        _healthComponent.TakeChangeByTrigger(_amountOfChangeInHealth);
+        if(other.gameObject.TryGetComponent<IHealthAffected>(out IHealthAffected healthAffected))
+            healthAffected.ApplyHealthChange(_amountOfChange);
     }
 }
