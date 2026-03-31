@@ -1,11 +1,15 @@
 using UnityEngine;
+using Zenject;
 
 public class MainMenuController : MonoBehaviour
 {
     [Header("Panels")]
     [SerializeField] private GameObject _mainPanel;
     [SerializeField] private GameObject _levelSelectPanel;
+    private SceneLoader _sceneLoader;
 
+    [Inject]
+    public void Construct(SceneLoader sceneLoader) => _sceneLoader = sceneLoader;
     private void Start()
     {
         // √арантируем, что в главном меню мышь всегда видна и свободна
@@ -36,7 +40,7 @@ public class MainMenuController : MonoBehaviour
     public void LoadLevelByName(string levelName)
     {
         Debug.Log($"«агрузка уровн€: {levelName}");
-        SceneLoader.LoadLevel(levelName);
+        _sceneLoader.LoadLevel(levelName);
     }
 
     public void ExitGame()

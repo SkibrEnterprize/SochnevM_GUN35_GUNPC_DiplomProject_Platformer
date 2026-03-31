@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f7ec1fe7d0ae9444983b4477a6568d3, type: 3}
   m_Name: TestLevelFinishConfig
   m_EditorClassIdentifier: 
+  _collectObjectsForGoal: 3
+  _nextSceneName: MainMenu

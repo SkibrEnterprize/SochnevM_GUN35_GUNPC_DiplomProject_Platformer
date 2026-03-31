@@ -15,7 +15,6 @@ public class EnemyPatrolState : IEnemyState
         bool wall = _enemy.IsWallAhead();
         bool ground = _enemy.IsGroundAhead();
 
-        Debug.Log($"Wall: {wall}, Ground: {ground}"); 
 
         if (wall || !ground)
         {

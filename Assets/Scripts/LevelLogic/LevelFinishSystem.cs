@@ -1,35 +1,22 @@
-using System;
-using Zenject;
-public class LevelFinishSystem : IInitializable, IDisposable
+public class LevelFinishSystem
 {
-    private readonly LevelEventBus _levelEventBus;
-    private readonly LevelFinishConfig _levelFinishConfig;
+    private readonly ILevelEventBus _levelEventBus;
+    private readonly LevelFinishConfig _config;
     private int _finishCount = 0;
 
-    public LevelFinishSystem(LevelFinishConfig levelFinishConfig,
-        LevelEventBus levelEventBus)
-    {        
-        _levelFinishConfig = levelFinishConfig;
+    public LevelFinishSystem(LevelFinishConfig config, ILevelEventBus levelEventBus)
+    {
+        _config = config;
         _levelEventBus = levelEventBus;
-    }
-
-    public void Initialize()
-    {
-    }
-    public void Dispose()
-    {
     }
 
     public void EndPointReached()
     {
-        if (_finishCount < _levelFinishConfig.CollectObjectsForGoal)
-        {
-            _finishCount++;
-            _levelEventBus.ReachEndPoint();            
-        }
-        else
-        {
+        _finishCount++;
+        // Проверяем достижение цели из нашего ScriptableObject
+        if (_finishCount >= _config.CollectObjectsForGoal)
             _levelEventBus.FinishLevel();
-        }
+        else
+            _levelEventBus.ReachEndPoint();
     }
 }

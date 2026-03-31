@@ -146,13 +146,11 @@ public class Enemy : MonoBehaviour, IHealthAffected
                 {
                     if (hit.collider.TryGetComponent<PlayerHealth>(out PlayerHealth playerDetect))
                     {
-                        Debug.Log("Find Player");
                         return true;
                     }
                 }
             }
         }
-        Debug.Log("NOT Find Player");
         return false;
     }
 
@@ -160,7 +158,6 @@ public class Enemy : MonoBehaviour, IHealthAffected
     public void ApplyHealthChange(int delta, Vector3 sourcePosition = default)
     {
         _health += delta;
-        Debug.Log($"HP врага: {_health}");
 
         if (delta < 0) // Если это урон
         {

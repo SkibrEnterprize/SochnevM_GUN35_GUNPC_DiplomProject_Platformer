@@ -5,11 +5,13 @@ public class PauseMenuView : MonoBehaviour
 {
     [SerializeField] private GameObject _pausePanel; // Твоя панелька с кнопками
     private GameManager _gameManager;
+    private SceneLoader _sceneLoader;
 
     [Inject]
-    public void Construct(GameManager gameManager)
+    public void Construct(GameManager gameManager, SceneLoader sceneLoader)
     {
         _gameManager = gameManager;
+        _sceneLoader = sceneLoader;
     }
     private void OnEnable() => _gameManager.OnStateChanged += HandleStateChange;
     private void OnDisable() => _gameManager.OnStateChanged -= HandleStateChange;
@@ -38,6 +40,6 @@ public class PauseMenuView : MonoBehaviour
 
         // 2. Загружаем сцену меню через твой SceneLoader
         // Убедись, что сцена называется именно так, как в Build Settings
-        SceneLoader.LoadLevel("MainMenu");
+        _sceneLoader.LoadLevel("MainMenu");
     }
 }

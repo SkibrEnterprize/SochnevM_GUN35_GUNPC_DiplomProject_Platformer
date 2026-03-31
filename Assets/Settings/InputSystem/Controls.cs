@@ -71,6 +71,24 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SlowMo"",
+                    ""type"": ""Button"",
+                    ""id"": ""d5f2ade5-284b-4aba-83fb-13b9ac8a59f4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Restart"",
+                    ""type"": ""Button"",
+                    ""id"": ""67d632da-21b2-4f8e-a3b2-ed3fa86a357d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Hold(duration=5)"",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -172,6 +190,28 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""Escape"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""64ded563-ca00-4ad0-a29a-9578084a7097"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SlowMo"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""51995e80-859c-4f7d-8746-525f2bfa0ed4"",
+                    ""path"": ""<Keyboard>/backquote"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Restart"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -185,6 +225,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Player_Fly = m_Player.FindAction("Fly", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_Escape = m_Player.FindAction("Escape", throwIfNotFound: true);
+        m_Player_SlowMo = m_Player.FindAction("SlowMo", throwIfNotFound: true);
+        m_Player_Restart = m_Player.FindAction("Restart", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -251,6 +293,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Fly;
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_Escape;
+    private readonly InputAction m_Player_SlowMo;
+    private readonly InputAction m_Player_Restart;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -260,6 +304,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @Fly => m_Wrapper.m_Player_Fly;
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
         public InputAction @Escape => m_Wrapper.m_Player_Escape;
+        public InputAction @SlowMo => m_Wrapper.m_Player_SlowMo;
+        public InputAction @Restart => m_Wrapper.m_Player_Restart;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -284,6 +330,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Escape.started += instance.OnEscape;
             @Escape.performed += instance.OnEscape;
             @Escape.canceled += instance.OnEscape;
+            @SlowMo.started += instance.OnSlowMo;
+            @SlowMo.performed += instance.OnSlowMo;
+            @SlowMo.canceled += instance.OnSlowMo;
+            @Restart.started += instance.OnRestart;
+            @Restart.performed += instance.OnRestart;
+            @Restart.canceled += instance.OnRestart;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -303,6 +355,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Escape.started -= instance.OnEscape;
             @Escape.performed -= instance.OnEscape;
             @Escape.canceled -= instance.OnEscape;
+            @SlowMo.started -= instance.OnSlowMo;
+            @SlowMo.performed -= instance.OnSlowMo;
+            @SlowMo.canceled -= instance.OnSlowMo;
+            @Restart.started -= instance.OnRestart;
+            @Restart.performed -= instance.OnRestart;
+            @Restart.canceled -= instance.OnRestart;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -327,5 +385,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnFly(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnEscape(InputAction.CallbackContext context);
+        void OnSlowMo(InputAction.CallbackContext context);
+        void OnRestart(InputAction.CallbackContext context);
     }
 }

@@ -10,5 +10,6 @@ public class GameFlowInstaller : MonoInstaller
 
         Container.BindInterfacesAndSelfTo<GameManager>().AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<PauseController>().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<SceneLoader>().AsSingle().NonLazy();
     }
 }

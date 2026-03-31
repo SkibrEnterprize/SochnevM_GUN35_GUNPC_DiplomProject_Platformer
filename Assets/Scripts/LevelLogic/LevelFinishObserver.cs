@@ -22,7 +22,6 @@ public class LevelFinishObserver : IInitializable, IDisposable
 
     private void HandleLevelFinished()
     {
-        Debug.Log("Level Finish");
         _soundBus.Play(SoundType.Finish);
     }
 

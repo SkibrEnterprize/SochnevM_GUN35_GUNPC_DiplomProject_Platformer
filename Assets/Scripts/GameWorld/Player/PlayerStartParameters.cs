@@ -19,8 +19,6 @@ public class PlayerStartParameters
         _characterController = controller;
         _defaultHeight = _characterController.height;
         _defaultRadius = _characterController.radius;
-        Debug.Log($"_defaultHeight = {_defaultHeight}");
-        Debug.Log($"_defaultRadius = {_defaultRadius}");
         _viewTransform=_characterController.GetComponentInChildren<ViewTransform>().transform;
         _combatVFXPoint = _characterController.GetComponentInChildren<CombatVFXPoint>().transform;
     }
