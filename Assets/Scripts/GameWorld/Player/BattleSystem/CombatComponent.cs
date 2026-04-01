@@ -13,6 +13,7 @@ namespace Player
         private readonly SoundEventBus _soundBus;
         private readonly VFXEventBus _vfxBus;
         private PlayerStartParameters _startParameters;
+        private readonly PlayerAnimator _playerAnimator;
 
         private bool _isCharged;       // Флаг: накопили ли мы тяжелый удар
         private float _nextAttackTime; // Таймер кулдауна
@@ -22,7 +23,8 @@ namespace Player
             CombatConfig config,
             SoundEventBus soundEventBus,
             VFXEventBus vfxEventBus,
-            PlayerStartParameters startParameters)
+            PlayerStartParameters startParameters,
+            PlayerAnimator playerAnimator)
         {
             _controller = controller;
             _controls = controls;
@@ -30,6 +32,7 @@ namespace Player
             _soundBus = soundEventBus;
             _vfxBus = vfxEventBus;
             _startParameters = startParameters;
+            _playerAnimator = playerAnimator;
         }
 
         public void Initialize()
@@ -75,24 +78,29 @@ namespace Player
             if (_isCharged)
             {
                 // Тяжелый удар
-                PerformAttack(_config.HeavyAttack, SoundType.HeavyAttack, VFXType.HeavyAttack);
+                PerformAttack(_config.HeavyAttack, SoundType.HeavyAttack, VFXType.HeavyAttack, true);
                 Debug.Log("ВЫПОЛНЕН: Тяжелый удар");
             }
             else
             {
                 // Обычный удар
-                PerformAttack(_config.LightAttack, SoundType.Attack, VFXType.Attack);
+                PerformAttack(_config.LightAttack, SoundType.Attack, VFXType.Attack, false);
                 Debug.Log("ВЫПОЛНЕН: Обычный удар");
             }
 
             _isCharged = false; // Сбрасываем заряд после любого удара
         }
 
-        private void PerformAttack(AttackData data, SoundType sound, VFXType vfxType)
+        private void PerformAttack(AttackData data, SoundType sound, VFXType vfxType, bool isHeavy)
         {
             _nextAttackTime = Time.time + data.Cooldown;
 
+            _playerAnimator.PlayAttack(isHeavy);
             _soundBus.Play(sound);
+
+            Vector3 vfxPosition = _startParameters.CombatVFXPoint.position;
+            Quaternion vfxRotation = _startParameters.CombatVFXPoint.rotation * Quaternion.Euler(25, -90, 45);
+            _vfxBus.Play(vfxType, vfxPosition, vfxRotation, _controller.gameObject.transform);
 
             Vector3 origin = _controller.bounds.center;
 
@@ -126,10 +134,6 @@ namespace Player
                 }
             }
 
-            Vector3 vfxPosition = _startParameters.CombatVFXPoint.position;
-            Quaternion vfxRotation = _startParameters.CombatVFXPoint.rotation * Quaternion.Euler(25, -90, 45);
-            _vfxBus.Play(vfxType, vfxPosition, vfxRotation, _controller.gameObject.transform);
-            
         }
     }
 }

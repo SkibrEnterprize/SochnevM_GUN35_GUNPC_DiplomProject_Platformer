@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a1d32759ff857e45869cabf0981e4c0, type: 3}
   m_Name: TestPlayerConfig
   m_EditorClassIdentifier: 
-  MoveSpeed: 8
-  MoveSpeedGround: 8
-  MoveSpeedAir: 6
+  MoveSpeed: 5
+  MoveSpeedGround: 5
+  MoveSpeedAir: 2
   SmoothTime: 0.5
   DampAir: 0.1
   DampGround: 0.082

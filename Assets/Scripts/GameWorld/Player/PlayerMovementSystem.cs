@@ -16,6 +16,7 @@ namespace Player
         private readonly PlayerConfig _playerConfig;
         private readonly ISoundEventBus _soundBus;
         private readonly ICheckPointEventBus _checkPointEventBus;
+        private readonly PlayerAnimator _playerAnimator;
 
         private int _jumpCount;
         private bool _flyPressed;
@@ -43,7 +44,8 @@ namespace Player
             PlayerConfig playerConfig,
             ISoundEventBus soundBus,
             ICheckPointEventBus checkPointEventBus,
-            PlayerStartParameters playerStartParameters)
+            PlayerStartParameters playerStartParameters,
+            PlayerAnimator playerAnimator)
         {
             _controller = controller;
             _controls = controls;
@@ -51,6 +53,7 @@ namespace Player
             _soundBus = soundBus;
             _checkPointEventBus = checkPointEventBus;
             _startParameters = playerStartParameters;
+            _playerAnimator = playerAnimator;
         }
 
         public void Initialize()
@@ -93,7 +96,19 @@ namespace Player
         {
             ApplyMovement();
             ApplyRotation();
+            ApplyAnimation();
             UpdateFallState();
+        }
+
+        private void ApplyAnimation()
+        {
+            bool isWallSliding = !_controller.isGrounded && IsWallClinging() && _velocity.y < 0;
+            _playerAnimator.UpdateMovementStates(isWallSliding, _flyPressed);
+        }
+        private bool CheckWallContact()
+        {
+            // Пускаем короткий луч в сторону взгляда персонажа
+            return Physics.Raycast(_controller.transform.position, _controller.transform.forward, 0.6f);
         }
 
         private void OnJumpStarted(InputAction.CallbackContext context)
@@ -225,7 +240,11 @@ namespace Player
 
         private void ApplyMovement()
         {
-            if (IsMovementFrozen) return;
+            if (IsMovementFrozen)
+            {
+                _moveInput = Vector3.zero;                
+                return;
+            }
 
             float baseSpeed = IsGrounded() ? _playerConfig.MoveSpeedGround : _playerConfig.MoveSpeedAir;
             float targetMaxSpeed = _moveInput.x * baseSpeed * _externalSpeedModifier;
@@ -278,6 +297,7 @@ namespace Player
                     _velocity.y -= _playerConfig.Gravity * Time.fixedDeltaTime;
                 }
             }
+
            
             Vector3 move = new Vector3(_velocity.x, _velocity.y, 0) * Time.fixedDeltaTime;
             _controller.Move(move);

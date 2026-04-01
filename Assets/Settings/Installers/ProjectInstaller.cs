@@ -45,5 +45,7 @@ public class ProjectInstaller : MonoInstaller
            .FromComponentInNewPrefab(_settingsManagerPrefab)
            .AsSingle()
            .NonLazy();
+
+        //Container.BindInterfacesAndSelfTo<Animator>().AsSingle().NonLazy();
     }
 }
