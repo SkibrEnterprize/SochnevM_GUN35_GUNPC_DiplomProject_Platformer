@@ -2856,6 +2856,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poolSize: 10
+  _sfxGroup: {fileID: 8226354230093285540, guid: 75905141c10887245ad27776fd9d2c37, type: 2}
 --- !u!4 &1557927198
 Transform:
   m_ObjectHideFlags: 0
@@ -4232,14 +4233,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 854063142522394452, guid: 7fbc1f1890d568e46b9c1b29f685c5b2, type: 3}
-      propertyPath: m_Name
-      value: PausePanelCanvas
-      objectReference: {fileID: 0}
-    - target: {fileID: 854063142522394452, guid: 7fbc1f1890d568e46b9c1b29f685c5b2, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 1882326173924257371, guid: 7fbc1f1890d568e46b9c1b29f685c5b2, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -4251,14 +4244,6 @@ PrefabInstance:
     - target: {fileID: 2104064700288611153, guid: 7fbc1f1890d568e46b9c1b29f685c5b2, type: 3}
       propertyPath: m_Name
       value: '[UI]'
-      objectReference: {fileID: 0}
-    - target: {fileID: 3960388025760227987, guid: 7fbc1f1890d568e46b9c1b29f685c5b2, type: 3}
-      propertyPath: m_Name
-      value: MainPausePanel
-      objectReference: {fileID: 0}
-    - target: {fileID: 3960388025760227987, guid: 7fbc1f1890d568e46b9c1b29f685c5b2, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5961256371429587074, guid: 7fbc1f1890d568e46b9c1b29f685c5b2, type: 3}
       propertyPath: m_Pivot.x

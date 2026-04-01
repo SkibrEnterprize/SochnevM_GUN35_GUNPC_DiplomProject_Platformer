@@ -29,8 +29,8 @@ public class GameManager:  IInitializable
         {
             case GameState.MainMenu:
                 Time.timeScale = 1f;
-                Cursor.visible = true;             // Показываем курсор
-                Cursor.lockState = CursorLockMode.None; // Разблокируем его
+                Cursor.visible = true;             
+                Cursor.lockState = CursorLockMode.None; 
                 break;
             case GameState.Playing:
                 Time.timeScale = 1f;

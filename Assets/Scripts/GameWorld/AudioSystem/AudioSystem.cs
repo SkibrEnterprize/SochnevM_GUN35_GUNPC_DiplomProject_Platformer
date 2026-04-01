@@ -5,12 +5,15 @@ public class AudioSystem : MonoBehaviour, IAudioSystem
 {
     [SerializeField] private int poolSize = 10;
     private List<AudioSource> _pool = new List<AudioSource>();
+    [SerializeField]
+    private UnityEngine.Audio.AudioMixerGroup _sfxGroup;
 
     void Awake()
     {
         for (int i = 0; i < poolSize; i++)
         {
             var s = new GameObject("Source_" + i).AddComponent<AudioSource>();
+            s.outputAudioMixerGroup = _sfxGroup;
             s.transform.SetParent(transform);
             _pool.Add(s);
         }

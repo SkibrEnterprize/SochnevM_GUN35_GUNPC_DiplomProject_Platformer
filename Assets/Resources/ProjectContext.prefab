@@ -76,3 +76,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _loadingViewPrefab: {fileID: 4998060966161955938, guid: 5b70ac5881c697249b57be18d3ed4490, type: 3}
   _restartViewPrefab: {fileID: -630762873488008338, guid: 313453c0051cb444297ba0cbb294961e, type: 3}
+  _musicManagerPrefab: {fileID: 7826807694313800687, guid: a2bbbc5d0b60448448f681f1d60672eb, type: 3}
+  _musicConfig: {fileID: 11400000, guid: 4f976f3ef48735341a3e2c55f1d9b3e0, type: 2}
+  _settingsManagerPrefab: {fileID: 1732951679764555816, guid: 77bc5a166c860264483ae94172fc84e3, type: 3}

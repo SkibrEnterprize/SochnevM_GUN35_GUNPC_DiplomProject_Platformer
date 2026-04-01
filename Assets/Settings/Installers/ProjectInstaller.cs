@@ -5,6 +5,10 @@ public class ProjectInstaller : MonoInstaller
 {
     [SerializeField] private LoadingView _loadingViewPrefab;
     [SerializeField] private RestartView _restartViewPrefab;
+    [SerializeField] private GameObject _musicManagerPrefab;
+    [SerializeField] private MusicConfig _musicConfig;
+    [SerializeField] private GameObject _settingsManagerPrefab;
+
     public override void InstallBindings()
     {        
         Container.BindInterfacesAndSelfTo<GameManager>().AsSingle().NonLazy();
@@ -19,8 +23,7 @@ public class ProjectInstaller : MonoInstaller
                  Object.DontDestroyOnLoad(view.transform.root.gameObject);
                  view.InitialHide();
              })
-             .NonLazy(); // Создаем сразу при старте игры
-
+             .NonLazy();
 
         Container.Bind<RestartView>()
             .FromComponentInNewPrefab(_restartViewPrefab)
@@ -31,11 +34,16 @@ public class ProjectInstaller : MonoInstaller
         Container.Bind<SceneLoader>().AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<PauseController>().AsSingle().NonLazy();
 
-        //// Биндим шину событий (если она еще не там)
-        //Container.BindInterfacesAndSelfTo<LevelEventBus>().AsSingle();
+        Container
+            .Bind<MusicManager>()
+            .FromComponentInNewPrefab(_musicManagerPrefab)
+            .AsSingle()
+            .NonLazy();
 
-        //// Биндим наш навигатор
-        //Container.BindInterfacesAndSelfTo<LevelNavigationController>().AsSingle().NonLazy();
-
+        Container
+           .Bind<SettingsManager>()
+           .FromComponentInNewPrefab(_settingsManagerPrefab)
+           .AsSingle()
+           .NonLazy();
     }
 }

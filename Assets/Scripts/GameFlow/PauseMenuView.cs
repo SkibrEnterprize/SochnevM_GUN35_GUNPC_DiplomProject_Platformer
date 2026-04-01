@@ -1,45 +1,74 @@
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 public class PauseMenuView : MonoBehaviour
 {
-    [SerializeField] private GameObject _pausePanel; // Твоя панелька с кнопками
+    [SerializeField] private GameObject _pausePanel;
+    [SerializeField] private GameObject _settingsPanel; // Ссылка на вложенную панель настроек
+
+    [Header("Audio Sliders")]
+    [SerializeField] private Slider _musicSlider;
+    [SerializeField] private Slider _sfxSlider;
+
     private GameManager _gameManager;
     private SceneLoader _sceneLoader;
+    private SettingsManager _settingsManager; // Глобальный менеджер из ProjectContext
+
+    public Slider SfxSlider { get => _sfxSlider; set => _sfxSlider = value; }
 
     [Inject]
-    public void Construct(GameManager gameManager, SceneLoader sceneLoader)
+    public void Construct(GameManager gameManager, SceneLoader sceneLoader, SettingsManager settingsManager)
     {
         _gameManager = gameManager;
         _sceneLoader = sceneLoader;
+        _settingsManager = settingsManager;
     }
+
+    private void Start()
+    {
+        _musicSlider.value = _settingsManager.GetMusicVolume();
+        _sfxSlider.value = _settingsManager.GetSFXVolume();
+
+        // Подписываем слайдеры на изменения
+        _musicSlider.onValueChanged.AddListener(val => _settingsManager.SetMusicVolume(val));
+        SfxSlider.onValueChanged.AddListener(val => _settingsManager.SetSFXVolume(val));
+                
+    }
+
     private void OnEnable() => _gameManager.OnStateChanged += HandleStateChange;
     private void OnDisable() => _gameManager.OnStateChanged -= HandleStateChange;
 
     private void HandleStateChange(GameState state)
     {
-        // Показываем панель только если игра на паузе
-        _pausePanel.SetActive(state == GameState.Paused);
+        bool isPaused = (state == GameState.Paused);
+        _pausePanel.SetActive(isPaused);
 
-        // Если пауза — включаем курсор, если игра — выключаем
-        Cursor.lockState = (state == GameState.Paused) ? CursorLockMode.None : CursorLockMode.Locked;
-        Cursor.visible = (state == GameState.Paused);
+        // Если выходим из паузы, закрываем и настройки тоже
+        if (!isPaused) _settingsPanel.SetActive(false);
+
+        Cursor.lockState = isPaused ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = isPaused;
     }
 
-    // Метод для кнопки "Resume" (Продолжить) в UI
-    public void OnResumeClicked()
+    // Методы для переключения между основным меню паузы и настройками
+    public void OpenSettings()
     {
-        // Находим GameManager через Zenject или синглтон и переключаем стейт
-        // Здесь можно просто найти его на сцене для теста:
-        _gameManager.UpdateState(GameState.Playing);
+        _pausePanel.SetActive(false);
+        _settingsPanel.SetActive(true);
     }
+
+    public void CloseSettings()
+    {
+        _settingsPanel.SetActive(false);
+        _pausePanel.SetActive(true);
+    }
+
+    public void OnResumeClicked() => _gameManager.UpdateState(GameState.Playing);
+
     public void OnExitToMenuClicked()
     {
-        // 1. Обязательно возвращаем время в норму, иначе в меню всё "замрет"
-        _gameManager.UpdateState(GameState.MainMenu);
-
-        // 2. Загружаем сцену меню через твой SceneLoader
-        // Убедись, что сцена называется именно так, как в Build Settings
+        Time.timeScale = 1f; // Важно: возвращаем время в норму перед выходом
         _sceneLoader.LoadLevel("MainMenu");
     }
 }

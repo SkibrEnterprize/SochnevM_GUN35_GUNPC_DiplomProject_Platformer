@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Rendering;
 using Zenject;
 
 [RequireComponent(typeof(CharacterController))]
@@ -11,15 +10,15 @@ public class Enemy : MonoBehaviour, IHealthAffected
     [SerializeField] private LayerMask _wallLayer;
     [SerializeField] private float _checkDistance = 0.5f;
 
-    [SerializeField] private float _knockbackResistance = 5f; // Насколько быстро гасится отскок
+    [SerializeField] private float _knockbackResistance = 5f; 
 
     [Header("Detection")]
     [SerializeField] private Transform _enemyEyesForDebug;
     [SerializeField] private float _detectionRange = 7f;
     [SerializeField] private float _lostRange = 10f;
     [SerializeField] private float _attackRange = 1.5f;
-    [SerializeField] private LayerMask _obstacleLayer; // Слой стен и препятствий
-    [SerializeField] private float _viewAngle = 90f; // Угол обзора
+    [SerializeField] private LayerMask _obstacleLayer; 
+    [SerializeField] private float _viewAngle = 90f;
     private Transform _player;
 
     [Header("Attack")]
@@ -30,11 +29,11 @@ public class Enemy : MonoBehaviour, IHealthAffected
     [SerializeField] private int _attackDamage = 15;
     [SerializeField] private float _attackCooldown = 1.2f;
     [SerializeField] private LayerMask _attackMask;
-    private float _lastAttackTime;                        // Таймер последнего удара
+    private float _lastAttackTime;                       
 
     [Header("Ranged Attack")]
     [SerializeField] private GameObject _projectilePrefab;
-    private Transform _firePoint; // Точка, откуда вылетает пуля
+    private Transform _firePoint; 
 
     [SerializeField] private bool _showGizmos = true;
     [SerializeField] private bool _showDetectRadius = true;
@@ -86,7 +85,6 @@ public class Enemy : MonoBehaviour, IHealthAffected
 
     public bool IsGroundAhead()
     {
-        // Проверяем сферу в точке GroundCheck. Если она НЕ касается земли — впереди обрыв.
         return Physics.CheckSphere(_groundCheck.position, 0.2f, _groundLayer);
     }
 
@@ -94,11 +92,9 @@ public class Enemy : MonoBehaviour, IHealthAffected
     {
         Vector3 velocity = direction * _moveSpeed;
 
-        // Добавляем влияние отскока
         if (_impactVelocity.magnitude > 0.2f)
         {
             velocity += _impactVelocity;
-            // Плавно гасим импульс со временем
             _impactVelocity = Vector3.Lerp(_impactVelocity, Vector3.zero, _knockbackResistance * Time.deltaTime);
         }
         else
@@ -118,11 +114,7 @@ public class Enemy : MonoBehaviour, IHealthAffected
 
     public void ApplyKnockback(Vector3 direction, float force)
     {
-        // Направление отскока (обычно от игрока) * силу
         _impactVelocity = direction.normalized * force;
-
-        // Переключаем стейт в Hit (если есть), чтобы прервать патруль
-        // _stateMachine.ChangeState(new HitState(this)); 
     }
 
     public bool CanSeePlayer()
@@ -130,18 +122,13 @@ public class Enemy : MonoBehaviour, IHealthAffected
 
         if (_player == null || _enemyEyes == null) return false;
 
-        // Вектор от ГЛАЗ врага к игроку
         Vector3 dirToPlayer = (_player.position - _enemyEyes.position).normalized;
         float distance = Vector3.Distance(_enemyEyes.position, _player.position);
 
-        // 1. Проверка дистанции
         if (distance <= _detectionRange)
         {
-            // 2. Проверка угла обзора (используем направление глаз _enemyEyes.right)
             if (Vector3.Angle(_enemyEyes.right, dirToPlayer) < _viewAngle / 2f)
             {
-
-                // 3. Raycast на препятствия
                 if (Physics.Raycast(_enemyEyes.position, dirToPlayer, out RaycastHit hit, _detectionRange))
                 {
                     if (hit.collider.TryGetComponent<PlayerHealth>(out PlayerHealth playerDetect))
@@ -154,7 +141,6 @@ public class Enemy : MonoBehaviour, IHealthAffected
         return false;
     }
 
-    // Реализация интерфейса IHealthAffected
     public void ApplyHealthChange(int delta, Vector3 sourcePosition = default)
     {
         _health += delta;
@@ -162,7 +148,6 @@ public class Enemy : MonoBehaviour, IHealthAffected
         if (delta < 0) // Если это урон
         {
             ApplyKnockback((transform.position - sourcePosition).normalized, 5f);
-            // Если HP <= 0, переходим в DeathState (создадим позже)
             if (_health <= 0) _stateMachine.ChangeState(new EnemyDeathState(this));
         }
     }
@@ -170,9 +155,7 @@ public class Enemy : MonoBehaviour, IHealthAffected
     public bool CanAttackPlayer()
     {
         if (_player == null) return false;
-        // Считаем расстояние от врага до игрока
         float distance = Vector3.Distance(transform.position, _player.position);
-        // Возвращаем true, если игрок в радиусе атаки
         return distance <= _attackRange;
     }
 
@@ -181,11 +164,9 @@ public class Enemy : MonoBehaviour, IHealthAffected
     {
         _lastAttackTime = Time.time;
 
-        // Поиск цели в радиусе атаки (Physics или Physics2D в зависимости от проекта)
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, _attackRange, _attackMask);
         foreach (var hit in hitColliders)
         {
-            // Ищем наш новый интерфейс на цели (Игроке)
             if (hit.TryGetComponent(out IHealthAffected target))
             {
                 target.ApplyHealthChange(-_attackDamage, transform.position);
@@ -201,18 +182,14 @@ public class Enemy : MonoBehaviour, IHealthAffected
 
         _lastAttackTime = Time.time;
 
-        // Создаем пулю
         GameObject bullet = Instantiate(_projectilePrefab, _firePoint.position, Quaternion.identity);
 
-        // 1. Вычисляем направление: (Куда - Откуда)
         Vector3 direction = (_player.position - _firePoint.position).normalized;
 
-        // 2. Если пуля 3D, можно развернуть её «лицом» к игроку
         bullet.transform.right = direction;
 
         if (bullet.TryGetComponent(out EnemyProjectile projectile))
         {
-            // Передаем вычисленное направление в метод Launch
             projectile.Launch(direction);
         }
     }
@@ -224,7 +201,7 @@ public class Enemy : MonoBehaviour, IHealthAffected
         // радиус обнаружения
         if (_showDetectRadius)
         {
-            Gizmos.color = new Color(0, 1, 0, 0.2f); // Прозрачно-зеленый
+            Gizmos.color = new Color(0, 1, 0, 0.2f); 
             Gizmos.DrawWireSphere(_enemyEyesForDebug.position, _detectionRange);
         }
         // радиус атаки 
@@ -244,7 +221,6 @@ public class Enemy : MonoBehaviour, IHealthAffected
             Gizmos.DrawRay(_enemyEyesForDebug.position, topBoundary * _detectionRange);
             Gizmos.DrawRay(_enemyEyesForDebug.position, bottomBoundary * _detectionRange);
 
-            // Соединяем концы лучей линией, чтобы получился треугольник (сектор)
             Gizmos.DrawLine(_enemyEyesForDebug.position + topBoundary * _detectionRange,
                             _enemyEyesForDebug.position + bottomBoundary * _detectionRange);
         }

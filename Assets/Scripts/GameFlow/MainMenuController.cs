@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 public class MainMenuController : MonoBehaviour
@@ -6,18 +7,46 @@ public class MainMenuController : MonoBehaviour
     [Header("Panels")]
     [SerializeField] private GameObject _mainPanel;
     [SerializeField] private GameObject _levelSelectPanel;
+    [SerializeField] private GameObject _settingsPanel;
+
+    [Header("Audio Sliders")]
+    [SerializeField] private Slider _musicSlider;
+    [SerializeField] private Slider _sfxSlider;
+
     private SceneLoader _sceneLoader;
+    private SettingsManager _settingsManager;
 
     [Inject]
-    public void Construct(SceneLoader sceneLoader) => _sceneLoader = sceneLoader;
+    public void Construct(SceneLoader sceneLoader, 
+        SettingsManager settingsManager)
+    {
+        _sceneLoader = sceneLoader;
+        _settingsManager = settingsManager;
+    }
     private void Start()
     {
-        // Гарантируем, что в главном меню мышь всегда видна и свободна
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        _musicSlider.value = _settingsManager.GetMusicVolume();
+        _sfxSlider.value = _settingsManager.GetSFXVolume();
+
+        _musicSlider.onValueChanged.AddListener(val => _settingsManager.SetMusicVolume(val));
+        _sfxSlider.onValueChanged.AddListener(val => _settingsManager.SetSFXVolume(val));
+
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        
     }
 
-    // Метод для перехода к выбору уровней
+    public void OpenSettings()
+    {
+        _mainPanel.SetActive(false);
+        _settingsPanel.SetActive(true);
+    }
+
+    public void CloseSettings()
+    {
+        _settingsPanel.SetActive(false);
+        _mainPanel.SetActive(true);
+    }
     public void OpenLevelSelect()
     {
         _mainPanel.SetActive(false);
@@ -29,14 +58,12 @@ public class MainMenuController : MonoBehaviour
         _levelSelectPanel.SetActive(false);
     }
 
-    // Метод для возврата в главное меню
     public void CloseLevelSelect()
     {
         _levelSelectPanel.SetActive(false);
         _mainPanel.SetActive(true);
     }
 
-    // Универсальный метод загрузки по имени (для кнопок)
     public void LoadLevelByName(string levelName)
     {
         Debug.Log($"Загрузка уровня: {levelName}");

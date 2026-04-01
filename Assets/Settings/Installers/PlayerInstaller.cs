@@ -13,11 +13,6 @@ namespace Player
         {
             var character = _player.GetComponent<CharacterController>();
 
-            //// 2. Биндим Управление
-            //var controls = new Controls();
-            //controls.Enable();                     // включаем все action‑maps
-            //Container.Bind<Controls>().FromInstance(controls).AsSingle();
-
             Container.Bind<PlayerConfig>().FromInstance(_playerConfig);
 
             Container.BindInterfacesAndSelfTo<PlayerStartParameters>()
