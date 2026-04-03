@@ -17,6 +17,7 @@ MonoBehaviour:
     Range: 1
     Cooldown: 1
     KnockbackForce: 0
+  HeavyAttackChargeTime: 3
   HeavyAttack:
     Damage: 100
     Range: 10

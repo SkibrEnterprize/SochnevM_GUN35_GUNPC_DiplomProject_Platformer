@@ -179,19 +179,16 @@ public class Enemy : MonoBehaviour, IHealthAffected
     public void Shoot()
     {
         if (_player == null) return;
-
         _lastAttackTime = Time.time;
 
         GameObject bullet = Instantiate(_projectilePrefab, _firePoint.position, Quaternion.identity);
-
         Vector3 direction = (_player.position - _firePoint.position).normalized;
-
-        bullet.transform.right = direction;
 
         if (bullet.TryGetComponent(out EnemyProjectile projectile))
         {
-            projectile.Launch(direction);
+            projectile.Launch(direction, transform.position);
         }
+        
     }
 
     private void OnDrawGizmos()

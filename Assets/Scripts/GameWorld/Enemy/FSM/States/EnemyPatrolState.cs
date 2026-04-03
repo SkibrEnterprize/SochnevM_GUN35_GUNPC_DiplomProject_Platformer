@@ -40,7 +40,6 @@ public class EnemyPatrolState : IEnemyState
     {
         _movingRight = !_movingRight;
 
-        // разворачиваем на 180 градусов
         float targetY = _movingRight ? 0f : -180f;
         _enemy.transform.rotation = Quaternion.Euler(0, targetY, 0);
     }

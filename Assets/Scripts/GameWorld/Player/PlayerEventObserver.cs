@@ -6,16 +6,13 @@ using Zenject;
 public class PlayerEventObserver : IInitializable, IDisposable
 {
     private HealthModel _healthModel;
-    private PlayerDeathObserver _playerDeathHandler;
     private PlayerMovementSystem _movementComponent;
 
 
-    public PlayerEventObserver(HealthModel healthModel,
-                                PlayerDeathObserver playerDeathHandler,                                
+    public PlayerEventObserver(HealthModel healthModel,                                                                
                                 PlayerMovementSystem movementComponent)
     {
         _healthModel = healthModel;
-        _playerDeathHandler = playerDeathHandler;
         _movementComponent = movementComponent;
     }
     public void Initialize()

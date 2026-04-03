@@ -60,14 +60,37 @@ namespace Player
                 Debug.Log($"Health = {_health} because of FallDistance is {fallDistance}");
             }
         }
-                
+
         public void ApplyHealthChange(int delta, Vector3 sourcePosition = default)
         {
             Health += delta;
-            _healthEventBus.HealthUpdated(delta);
-            if (delta < 0) _playerAnimator.PlayHit();
+
+            if (delta < 0) // Получили урон
+            {
+                // 1. Запускаем анимацию вздрагивания
+                _playerAnimator.PlayHit();
+                _playerAnimator.PlayHitFlash();
+
+                // 2. Если передан источник урона — делаем отскок
+                if (sourcePosition != default)
+                {
+                    // Силу отброса можно вынести в PlayerConfig (например, 8f - 12f)
+                    float knockbackForce = 10f;
+                    _movementComponent.ApplyKnockback(sourcePosition, knockbackForce);
+                }
+
+                _healthEventBus.HealthUpdated(delta);
+            }
+
             CheckHealthValue();
         }
+        //public void ApplyHealthChange(int delta, Vector3 sourcePosition = default)
+        //{
+        //    Health += delta;
+        //    _healthEventBus.HealthUpdated(delta);
+        //    if (delta < 0) _playerAnimator.PlayHit();
+        //    CheckHealthValue();
+        //}
 
         private void TakeDamage(int value) => Health -= value;
         private void TakeHealing(int value) => Health += value;
@@ -75,7 +98,7 @@ namespace Player
         {
             if (_health <= 0)
             {
-                _playerAnimator.PlayDeath(); // Запускаем анимацию
+                //_playerAnimator.PlayDeath(); // Запускаем анимацию
                 _movementComponent.IsMovementFrozen = true; // Замораживаем ввод
                 _healthEventBus.HealthIsOver();
             }

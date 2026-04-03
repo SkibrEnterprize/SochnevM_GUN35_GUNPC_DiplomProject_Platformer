@@ -18,7 +18,7 @@ public class EnemyHitState : IEnemyState
     public void Update()
     {
         _timer -= Time.deltaTime;
-        _enemy.Move(Vector3.zero); // Только гравитация и импульс работают внутри Move
+        _enemy.Move(Vector3.zero); 
 
         if (_timer <= 0)
         {

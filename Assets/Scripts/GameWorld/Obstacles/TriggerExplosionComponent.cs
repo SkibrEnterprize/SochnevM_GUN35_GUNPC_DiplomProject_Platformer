@@ -49,7 +49,6 @@ public class TriggerExplosionComponent : MonoBehaviour
     {
         _isTriggered = true;
 
-        // заставить объект изменить цвет
         float elapsed = 0;
         while (elapsed < _activationDelay)
         {
@@ -63,7 +62,6 @@ public class TriggerExplosionComponent : MonoBehaviour
             ApplyEffects(controller);
         }
 
-        // После срабатывания возвращаем всё как было
         yield return new WaitForSeconds(0.5f);
         _renderer.material.color = _originalColor;
         _isTriggered = false;
@@ -72,7 +70,7 @@ public class TriggerExplosionComponent : MonoBehaviour
     private void ApplyEffects(CharacterController controller)
     {     
         Vector3 direction = (controller.transform.position - transform.position).normalized;
-        direction.y = _knockupForce; // Немного подбрасываем вверх
+        direction.y = _knockupForce; 
 
         _movementComponent.ApplyImpulse(direction * _knockbackForce);
         _healthModel.ApplyHealthChange(-_damage);
@@ -82,11 +80,9 @@ public class TriggerExplosionComponent : MonoBehaviour
     {
         if (_showGizmos)
         {
-            // Прозрачный красный для заливки
             Gizmos.color = new Color(1, 0, 0, 0.2f);
             Gizmos.DrawSphere(transform.position, _explosionRadius);
 
-            // Яркий красный для контура
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, _explosionRadius);
 

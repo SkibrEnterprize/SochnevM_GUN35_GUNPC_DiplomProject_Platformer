@@ -29,7 +29,6 @@ public class SpringTrigger : MonoBehaviour
                                    ? transform.TransformDirection(_impulse).normalized * _impulse.magnitude
                                    : _impulse.normalized * _impulse.magnitude;
 
-            // Мгновенно «толкнуть» игрока
             _movementComponent.ApplyImpulse(worldImpulse);
             Debug.Log("TriggerSpring!!!");
         }

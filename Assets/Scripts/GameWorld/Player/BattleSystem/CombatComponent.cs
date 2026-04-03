@@ -12,11 +12,17 @@ namespace Player
         private readonly CharacterController _controller;
         private readonly SoundEventBus _soundBus;
         private readonly VFXEventBus _vfxBus;
-        private PlayerStartParameters _startParameters;
+        private readonly PlayerStartParameters _startParameters;
         private readonly PlayerAnimator _playerAnimator;
+        private readonly CombatUI _combatUI;
+        
 
-        private bool _isCharged;       // Флаг: накопили ли мы тяжелый удар
-        private float _nextAttackTime; // Таймер кулдауна
+        private bool _isCharged;
+        private float _nextAttackTime;
+
+
+        private bool _isCharging;      // Флаг процесса зажатия
+        private float _currentChargeTimer;
 
         public CombatComponent(CharacterController controller,
             Controls controls,
@@ -24,7 +30,8 @@ namespace Player
             SoundEventBus soundEventBus,
             VFXEventBus vfxEventBus,
             PlayerStartParameters startParameters,
-            PlayerAnimator playerAnimator)
+            PlayerAnimator playerAnimator,
+            CombatUI combatUI)
         {
             _controller = controller;
             _controls = controls;
@@ -33,13 +40,14 @@ namespace Player
             _vfxBus = vfxEventBus;
             _startParameters = startParameters;
             _playerAnimator = playerAnimator;
+            _combatUI = combatUI;
         }
 
         public void Initialize()
         {
-            _controls.Player.Attack.started += OnAttackStarted;     // Нажали кнопку
-            _controls.Player.Attack.performed += OnHoldCharged;     // Удержали (зарядили)
-            _controls.Player.Attack.canceled += OnAttackReleased;   // Отпустили (ударили)
+            _controls.Player.Attack.started += OnAttackStarted;
+            _controls.Player.Attack.performed += OnHoldCharged;
+            _controls.Player.Attack.canceled += OnAttackReleased;
         }
 
         public void Dispose()
@@ -49,12 +57,30 @@ namespace Player
             _controls.Player.Attack.canceled -= OnAttackReleased;
         }
 
+        // Метод из ITickable, будет работать каждый кадр
+        public void Tick()
+        {
+            if (_isCharging)
+            {
+                _currentChargeTimer += Time.deltaTime;
+
+                float progress = Mathf.Clamp01(_currentChargeTimer / _config.HeavyAttackChargeTime);
+
+                _combatUI.UpdateProgress(progress);
+            }
+        }
+
         private void OnAttackStarted(InputAction.CallbackContext context)
         {
             if (Time.time < _nextAttackTime) return;
 
-            // тут анимация замаха или звук
-            Debug.Log("Замах начался...");
+            _isCharging = true;
+            _isCharged = false;
+
+            _currentChargeTimer = 0f;
+
+            _combatUI.Show(true);
+            _combatUI.UpdateProgress(0f);
         }
 
         private void OnHoldCharged(InputAction.CallbackContext context)
@@ -62,44 +88,42 @@ namespace Player
             if (Time.time < _nextAttackTime) return;
 
             _isCharged = true;
-            // можно включить визуальный эффект (свечение)
-            Debug.Log("Удар ЗАРЯЖЕН (Heavy ready)");
+            _combatUI.UpdateProgress(1f); // Сразу заполняем до конца???
+            Debug.Log("Удар ЗАРЯЖЕН");
         }
 
         private void OnAttackReleased(InputAction.CallbackContext context)
         {
-            // Проверяем кулдаун только в момент финального действия
+            _isCharging = false;
+            _combatUI.Show(false);
+
             if (Time.time < _nextAttackTime)
             {
-                _isCharged = false; // Сбрасываем флаг, если нажали слишком рано
+                _isCharged = false;
                 return;
             }
 
             if (_isCharged)
             {
-                // Тяжелый удар
                 PerformAttack(_config.HeavyAttack, SoundType.HeavyAttack, VFXType.HeavyAttack, true);
-                Debug.Log("ВЫПОЛНЕН: Тяжелый удар");
             }
             else
             {
-                // Обычный удар
                 PerformAttack(_config.LightAttack, SoundType.Attack, VFXType.Attack, false);
-                Debug.Log("ВЫПОЛНЕН: Обычный удар");
             }
 
-            _isCharged = false; // Сбрасываем заряд после любого удара
-        }
-
+            _isCharged = false;
+        }       
         private void PerformAttack(AttackData data, SoundType sound, VFXType vfxType, bool isHeavy)
         {
             _nextAttackTime = Time.time + data.Cooldown;
 
+            
             _playerAnimator.PlayAttack(isHeavy);
             _soundBus.Play(sound);
 
             Vector3 vfxPosition = _startParameters.CombatVFXPoint.position;
-            Quaternion vfxRotation = _startParameters.CombatVFXPoint.rotation * Quaternion.Euler(25, -90, 45);
+            Quaternion vfxRotation = _startParameters.CombatVFXPoint.rotation;
             _vfxBus.Play(vfxType, vfxPosition, vfxRotation, _controller.gameObject.transform);
 
             Vector3 origin = _controller.bounds.center;
@@ -129,11 +153,10 @@ namespace Player
                     if (enemy.TryGetComponent<IHealthAffected>(out var target))
                     {
                         target.ApplyHealthChange(-data.Damage, origin);
-                        Debug.Log($"[Combat] Удар по {enemy.name}. Направление: {directionX}");
+                        Debug.Log($"[Combat] Удар по {enemy.name}. Направление: {directionX}");                        
                     }
                 }
-            }
-
-        }
+            }            
+        }        
     }
 }

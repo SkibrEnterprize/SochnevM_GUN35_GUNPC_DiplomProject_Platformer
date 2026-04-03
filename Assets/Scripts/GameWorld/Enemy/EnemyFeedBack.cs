@@ -19,10 +19,8 @@ public class EnemyFeedback : MonoBehaviour
 
     private void PlayHitEffect(float damage)
     {
-        // Вспышка красным через DOTween
         _material.DOColor(Color.red, 0.1f).OnComplete(() => _material.DOColor(_originalColor, 0.1f));
 
-        // Маленькая тряска
         transform.DOShakePosition(0.2f, 0.2f);
     }
 }

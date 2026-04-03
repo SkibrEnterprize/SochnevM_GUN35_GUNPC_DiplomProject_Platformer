@@ -2,13 +2,24 @@ using UnityEngine;
 
 public class EnemyProjectile : MonoBehaviour
 {
-    [SerializeField] private float _speed = 10f;
+    [SerializeField] private float _speed = 15f; 
     [SerializeField] private int _damage = -10;
     [SerializeField] private float _lifetime = 3f;
 
-    public void Launch(Vector3 direction)
+    private Vector3 _originPosition; 
+
+    public void Launch(Vector3 direction, Vector3 shooterPosition)
     {
-        GetComponent<Rigidbody>().velocity = direction * _speed;
+        _originPosition = shooterPosition; 
+
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.velocity = direction * _speed;
+        }
+
+        transform.right = direction;
+
         Destroy(gameObject, _lifetime);
     }
 
@@ -16,11 +27,10 @@ public class EnemyProjectile : MonoBehaviour
     {
         if (other.TryGetComponent(out IHealthAffected target))
         {
-            target.ApplyHealthChange(_damage, transform.position);
+            target.ApplyHealthChange(_damage, _originPosition);
             Destroy(gameObject);
         }
-        // Удали пулю при столкновении со стеной
-        else if (((1 << other.gameObject.layer) & LayerMask.GetMask("Ground")) != 0)
+        else if (((1 << other.gameObject.layer) & LayerMask.GetMask("Ground", "Wall")) != 0)
         {
             Destroy(gameObject);
         }

@@ -42,7 +42,6 @@ public class TriggerChangeOfForceComponent : MonoBehaviour
 
     private void ChangeForceByZone(bool isAddForce)
     {
-        // Обрабатываем выбор через switch
         switch (_typeZoneOfForce)
         {
             case TypeZoneOfAirForce.AirFlowUp:

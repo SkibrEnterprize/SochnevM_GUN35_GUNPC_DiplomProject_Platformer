@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -18,6 +19,7 @@ namespace Player
         private readonly ICheckPointEventBus _checkPointEventBus;
         private readonly PlayerAnimator _playerAnimator;
 
+
         private int _jumpCount;
         private bool _flyPressed;
         private float _flyAdvancedSpeed;
@@ -35,6 +37,7 @@ namespace Player
         private float _deceleration = 25f;    // Скорость торможения (инерция)
         private float _currentTraction = 1f; // 1.0 — асфальт, 0.2 — лед, 0.05 — супер-лед
         private float _defaultModifire = 1f;
+        private Quaternion _faceRight = Quaternion.Euler(0, 90, 0);
         public bool IsMovementFrozen { get; set; }
 
         private PlayerStartParameters _startParameters;
@@ -97,7 +100,7 @@ namespace Player
             ApplyMovement();
             ApplyRotation();
             ApplyAnimation();
-            UpdateFallState();
+            UpdateFallState();            
         }
 
         private void ApplyAnimation()
@@ -105,12 +108,7 @@ namespace Player
             bool isWallSliding = !_controller.isGrounded && IsWallClinging() && _velocity.y < 0;
             _playerAnimator.UpdateMovementStates(isWallSliding, _flyPressed);
         }
-        private bool CheckWallContact()
-        {
-            // Пускаем короткий луч в сторону взгляда персонажа
-            return Physics.Raycast(_controller.transform.position, _controller.transform.forward, 0.6f);
-        }
-
+       
         private void OnJumpStarted(InputAction.CallbackContext context)
         {
             if (IsWallClinging()) // Прыжок от стены
@@ -154,8 +152,6 @@ namespace Player
             if (!IsGrounded())
                 _velocity.y = 0f;
 
-            // Применяем модификатор к силе прыжка. 
-            // Если _externalSpeedModifier = 0.5 (болото), прыжок станет заметно ниже.
             float effectiveJumpForce = _playerConfig.JumpForce * _externalSpeedModifier;
 
             _velocity.y += Mathf.Sqrt(2 * effectiveJumpForce);
@@ -165,24 +161,26 @@ namespace Player
 
         }
 
-        // Прыжок от стены — отталкиваемся по диагонали в противоположную сторону от стены
         private void WallJump()
         {
             bool wallOnRight = IsWallAtSide(1);
             bool wallOnLeft = IsWallAtSide(-1);
 
-            // Направление отталкивания — противоположно стене
             float horizontalForce = 0f;
-            if (wallOnRight) horizontalForce = -_playerConfig.WallJumpForceX;
-            else if (wallOnLeft) horizontalForce = _playerConfig.WallJumpForceX;
+            if (wallOnRight)
+            {
+                horizontalForce = -_playerConfig.WallJumpForceX;               
+            }
+            else if (wallOnLeft)
+            {
+                horizontalForce = _playerConfig.WallJumpForceX;               
+            }
 
             _velocity.x = horizontalForce;
             _velocity.y = _playerConfig.WallJumpForceY;
 
-            _jumpCount++; // Замечаем прыжок
+            _jumpCount++;
             _soundBus.Play(SoundType.WallJump);
-            //_soundLibrary.RequestPlay(SoundType.SideJump);
-
         }
 
         private bool IsGrounded()
@@ -195,21 +193,15 @@ namespace Player
             return false;
         }
 
-        // проверяем наличие стены слева и справа возле персонажа
         private bool IsWallAtSide(float directionX)
         {
-            // 1. Центр физической капсулы в мировых координатах
-            // Это всегда будет "середина" игрока, как бы ты ни менял масштаб или центр
             Vector3 origin = _controller.bounds.center;
 
-            // 2. Направление (влево или вправо)
-            Vector3 dir = _controller.transform.right * directionX;
+           // направление (влево или вправо)
+            Vector3 dir = Vector3.right * directionX;
 
-            // 3. Дистанция: Берем текущий горизонтальный размер (extents.x — это радиус в мире)
-            // + небольшой запас 0.1f наружу
             float dynamicDistance = _controller.bounds.extents.x + 0.1f;
 
-            // Рисуем луч из центра игрока сквозь плечо наружу
             Debug.DrawRay(origin, dir * dynamicDistance, Color.red);
 
             return Physics.Raycast(origin, dir, dynamicDistance, _playerConfig.LayerMaskForWall);
@@ -226,18 +218,25 @@ namespace Player
 
         }
 
-        // определяем, облокотился ли персонаж на стену (стена слева или справа + не на земле)
+        private bool IsWallInFront()
+        {
+            Vector3 origin = _controller.bounds.center;
+
+            Vector3 dir = _controller.transform.forward;
+
+            float dynamicDistance = _controller.bounds.extents.x + 0.2f;
+
+            Debug.DrawRay(origin, dir * dynamicDistance, Color.cyan);
+
+            return Physics.Raycast(origin, dir, dynamicDistance, _playerConfig.LayerMaskForWall);
+        }
         private bool IsWallClinging()
         {
-            if (IsGrounded())
-                return false;
+            if (IsGrounded()) return false;
 
-            bool wallLeft = IsWallAtSide(-1);
-            bool wallRight = IsWallAtSide(1);
-
-            return wallLeft || wallRight;
+            // Цепляемся, только если стена ПРЯМО ПЕРЕД НАМИ
+            return IsWallInFront();
         }
-
         private void ApplyMovement()
         {
             if (IsMovementFrozen)
@@ -268,10 +267,8 @@ namespace Player
                 }
             }
 
-            // применяем горизонтальную силу
             _velocity.x = Mathf.MoveTowards(_velocity.x, targetMaxSpeed, currentForce * Time.fixedDeltaTime);
 
-            // проверка стен (чтобы инерция не толкала сквозь стены)
             bool wallLeft = IsWallAtSide(-1);
             bool wallRight = IsWallAtSide(1);
             if (wallLeft && _velocity.x < 0) _velocity.x = 0;
@@ -315,9 +312,9 @@ namespace Player
         }
         private void ApplyRotation()
         {
-            if (Mathf.Abs(_moveInput.x) > 0.05f)
+            if (Mathf.Abs(_moveInput.x) > 0.1f)
             {
-                float targetY = (_moveInput.x > 0) ? 0f : 180f;
+                float targetY = (_moveInput.x > 0) ? 90f : 270f;
                 _startParameters.ViewTransform.localRotation = Quaternion.Euler(0, targetY, 0);
             }
         }
@@ -354,10 +351,26 @@ namespace Player
             }
         }
 
-        public void MoveToCheckPoint(Vector3 positoin, Quaternion rotation)
+        public void SetMovementLock(bool isLocked)
+        {
+            IsMovementFrozen = isLocked;
+            if (isLocked)
+            {
+                _velocity.x = 0; // Мгновенно обнуляем горизонтальную инерцию
+            }
+        }
+        public void StopImmediately()
+        {
+            _velocity = Vector3.zero;      // Обнуляем вектор скорости
+            _moveInput = Vector2.zero;     // Сбрасываем ввод игрока
+            IsMovementFrozen = true;       // Блокируем дальнейшие расчеты
+        }
+
+
+        public void MoveToCheckPoint(Vector3 positoin)
         {
             _controller.transform.position = positoin;
-            _controller.transform.rotation = rotation;
+            _controller.transform.rotation = _faceRight;
         }
 
         public void ApplyImpulse(Vector3 impulse)
@@ -374,6 +387,22 @@ namespace Player
         {
             _externalSpeedModifier = _defaultModifire;
             _currentTraction = _defaultModifire;
+        }
+
+        public async void ApplyKnockback(Vector3 sourcePosition, float force)
+        {
+            float direction = _controller.transform.position.x > sourcePosition.x ? 1f : -1f;
+            _velocity.x = direction * force;
+            _velocity.y = Mathf.Sqrt(2 * _playerConfig.JumpForce * 0.2f);
+
+            // Блокируем ввод
+            IsMovementFrozen = true;
+
+            // Ждем 200 миллисекунд (0.2 сек)
+            await Task.Delay(200);
+
+            // Разблокируем ввод
+            IsMovementFrozen = false;
         }
     }
 }

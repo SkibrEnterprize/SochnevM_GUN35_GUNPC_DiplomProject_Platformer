@@ -10,7 +10,6 @@ namespace VFX
     {
         private VFXLibrary _library;
 
-        // Словарь для хранения списков объектов под каждый префикс
         private readonly Dictionary<GameObject, List<GameObject>> _pools =
             new Dictionary<GameObject, List<GameObject>>();
 
@@ -55,14 +54,11 @@ namespace VFX
             GameObject instance = GetFromPool(vfxEvent);
             if (instance == null) return;
 
-            // Если объект был активен (мы его "украли"), принудительно выключаем и включаем
             instance.SetActive(false);
 
-            // Настраиваем позицию и запускаем
             vfxEvent.Play(instance, position, rotation, parent);
             instance.SetActive(true);
 
-            // Запускаем таймер возврата
             StartCoroutine(ReturnToPoolAfterTime(instance, vfxEvent.lifetime));
         }
 
@@ -73,22 +69,19 @@ namespace VFX
 
             var pool = _pools[prefab];
 
-            // 1. Ищем свободный
             for (int i = 0; i < pool.Count; i++)
             {
                 if (!pool[i].activeSelf) return pool[i];
             }
 
-            // 2. Если свободных нет, пробуем расширить (лимит: x2 от базового)
             if (pool.Count < vfxEvent.poolSize * 2)
             {
                 return CreateNewInstance(prefab);
             }
 
-            // 3. Если расширять нельзя, "воруем" самый старый (первый в списке)
             var oldest = pool[0];
             pool.RemoveAt(0);
-            pool.Add(oldest); // Перемещаем в конец, чтобы в следующий раз взять другой
+            pool.Add(oldest);
             return oldest;
         }
 

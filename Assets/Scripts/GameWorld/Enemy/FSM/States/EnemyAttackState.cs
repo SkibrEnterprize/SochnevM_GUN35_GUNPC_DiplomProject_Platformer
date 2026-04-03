@@ -3,7 +3,7 @@ using UnityEngine;
 public class AttackState : IEnemyState
 {
     private Enemy _enemy;
-    private float _attackWindow = 0.5f; // Время "замаха"
+    private float _attackWindow = 0.5f;
     private float _timer;
 
     public AttackState(Enemy enemy) => _enemy = enemy;
@@ -22,7 +22,6 @@ public class AttackState : IEnemyState
 
         if (_timer <= 0)
         {
-            // После удара возвращаемся в погоню
             _enemy.ChangeState(new EnemyChaseState(_enemy));
         }
     }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class CombatConfig : ScriptableObject
 {
     public AttackData LightAttack;
+    public float HeavyAttackChargeTime;
     public AttackData HeavyAttack;
     public LayerMask EnemyLayer; // Слой врагов
 }
