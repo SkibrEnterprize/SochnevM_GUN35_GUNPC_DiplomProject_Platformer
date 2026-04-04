@@ -14,19 +14,16 @@ public class EnemyHealth : MonoBehaviour, IHealthAffected
     {
         if (_currentHealth <= 0) return;
 
-        _currentHealth -= delta;
+        _currentHealth += delta;
+
         OnTakeDamage?.Invoke(delta);
 
-        Debug.Log($"{gameObject.name} получил урон: {delta}. Осталось: {_currentHealth}");
+        Debug.Log($"{gameObject.name} получил урон. Осталось: {_currentHealth}");
 
-        if (_currentHealth <= 0) Die();
+        if (_currentHealth <= 0)
+        {
+            _currentHealth = 0;
+            OnDeath?.Invoke();
+        }
     }
-
-    private void Die()
-    {
-        OnDeath?.Invoke();
-        // логика смерти: частицы, звук, удаление
-        Destroy(gameObject, 0.1f);
-    }
-
 }

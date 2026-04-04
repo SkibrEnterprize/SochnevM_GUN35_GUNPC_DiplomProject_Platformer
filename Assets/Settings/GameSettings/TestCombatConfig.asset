@@ -14,13 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LightAttack:
     Damage: 50
-    Range: 1
     Cooldown: 1
     KnockbackForce: 0
-  HeavyAttackChargeTime: 3
+  HeavyAttackChargeTime: 1
   HeavyAttack:
     Damage: 100
-    Range: 10
     Cooldown: 1
     KnockbackForce: 10
   EnemyLayer:

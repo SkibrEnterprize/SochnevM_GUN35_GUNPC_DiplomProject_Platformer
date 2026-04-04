@@ -12,14 +12,29 @@ public class EnemyPatrolState : IEnemyState
 
     public void Update()
     {
-        bool wall = _enemy.IsWallAhead();
-        bool ground = _enemy.IsGroundAhead();
+        Vector3 targetDirection = _movingRight ? Vector3.right : Vector3.left;
+        Vector3 lookAtPoint = _enemy.transform.position + targetDirection;
 
+        _enemy.RotateTowards(lookAtPoint);
+
+        float angleToTarget = Vector3.Angle(_enemy.transform.right, targetDirection);
+
+        if (angleToTarget > 30f)
+        {
+            _enemy.Move(Vector3.zero);
+            return;
+        }
+
+        bool wall = _enemy.IsObstacleAhead();
+        bool ground = _enemy.IsGroundAhead();
 
         if (wall || !ground)
         {
-            Flip();
+            _movingRight = !_movingRight;
+            _enemy.Move(Vector3.zero);
+            return;
         }
+
         _enemy.Move(_enemy.transform.right);
 
         if (_enemy.CanSeePlayer())
@@ -27,20 +42,14 @@ public class EnemyPatrolState : IEnemyState
             if (_enemy.EnemyTypeAttack == EnemyTypeAttack.CloseAttack)
             {
                 _enemy.ChangeState(new EnemyChaseState(_enemy));
-                Debug.Log("Change state to chase");
+                Debug.Log("Заметил игрока! Начинаю преследование.");
             }
             else if (_enemy.EnemyTypeAttack == EnemyTypeAttack.RangeAttack)
             {
                 _enemy.ChangeState(new EnemyRangedAttackState(_enemy));
+                Debug.Log("Заметил игрока! Готовлюсь к выстрелу.");
             }
         }
     }
 
-    private void Flip()
-    {
-        _movingRight = !_movingRight;
-
-        float targetY = _movingRight ? 0f : -180f;
-        _enemy.transform.rotation = Quaternion.Euler(0, targetY, 0);
-    }
 }

@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MoveSpeed: 5
   MoveSpeedGround: 5
-  MoveSpeedAir: 2
+  MoveSpeedAir: 4
   SmoothTime: 0.5
   DampAir: 0.1
   DampGround: 0.082
   Gravity: 40
   SlowClingFallSpeed: 0.5
-  JumpForce: 140
+  JumpForce: 150
   WallJumpForceX: 20
   WallJumpForceY: 20
   WallHorizontalPush: 50

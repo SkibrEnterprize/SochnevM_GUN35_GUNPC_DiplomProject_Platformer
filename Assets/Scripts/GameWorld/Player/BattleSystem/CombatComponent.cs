@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
 
 namespace Player
 {
-    public sealed class CombatComponent : IInitializable, IDisposable
+    public sealed class CombatComponent : IInitializable, IDisposable, ITickable
     {
         private readonly Controls _controls;
         private readonly CombatConfig _config;
@@ -15,8 +16,11 @@ namespace Player
         private readonly PlayerStartParameters _startParameters;
         private readonly PlayerAnimator _playerAnimator;
         private readonly CombatUI _combatUI;
-        
 
+        private readonly AttackZoneDetector _attackZoneDetector;
+        private readonly HeavyAttackZoneDetector _heavyAttackZoneDetector;
+        private readonly Transform _attackVFXPoint;
+        private readonly Transform _heavyAttackVFXPoint;
         private bool _isCharged;
         private float _nextAttackTime;
 
@@ -41,32 +45,38 @@ namespace Player
             _startParameters = startParameters;
             _playerAnimator = playerAnimator;
             _combatUI = combatUI;
+            _attackZoneDetector = _controller.GetComponentInChildren<AttackZoneDetector>();
+            _heavyAttackZoneDetector = _controller.GetComponentInChildren<HeavyAttackZoneDetector>();
+            _attackVFXPoint = _controller.GetComponentInChildren<AttackVFXPoint>().transform;
+            _heavyAttackVFXPoint = _controller.GetComponentInChildren<HeavyAttackVFXPoint>().transform;
         }
 
         public void Initialize()
         {
             _controls.Player.Attack.started += OnAttackStarted;
-            _controls.Player.Attack.performed += OnHoldCharged;
             _controls.Player.Attack.canceled += OnAttackReleased;
         }
 
         public void Dispose()
         {
             _controls.Player.Attack.started -= OnAttackStarted;
-            _controls.Player.Attack.performed -= OnHoldCharged;
             _controls.Player.Attack.canceled -= OnAttackReleased;
         }
 
-        // ћетод из ITickable, будет работать каждый кадр
         public void Tick()
         {
-            if (_isCharging)
+            if (!_isCharging) return;
+
+            _currentChargeTimer += Time.deltaTime;
+
+            float progress = Mathf.Clamp01(_currentChargeTimer / _config.HeavyAttackChargeTime);
+            _combatUI.UpdateProgress(progress);
+
+            if (progress >= 1f && !_isCharged)
             {
-                _currentChargeTimer += Time.deltaTime;
-
-                float progress = Mathf.Clamp01(_currentChargeTimer / _config.HeavyAttackChargeTime);
-
-                _combatUI.UpdateProgress(progress);
+                _isCharged = true;
+                _combatUI.SetChargedColor(true); 
+                Debug.Log("”дар ѕќЋЌќ—“№ё «ј–я∆≈Ќ (из скрипта)");
             }
         }
 
@@ -81,15 +91,6 @@ namespace Player
 
             _combatUI.Show(true);
             _combatUI.UpdateProgress(0f);
-        }
-
-        private void OnHoldCharged(InputAction.CallbackContext context)
-        {
-            if (Time.time < _nextAttackTime) return;
-
-            _isCharged = true;
-            _combatUI.UpdateProgress(1f); // —разу заполн€ем до конца???
-            Debug.Log("”дар «ј–я∆≈Ќ");
         }
 
         private void OnAttackReleased(InputAction.CallbackContext context)
@@ -113,50 +114,44 @@ namespace Player
             }
 
             _isCharged = false;
-        }       
+            _currentChargeTimer = 0f; 
+        }
         private void PerformAttack(AttackData data, SoundType sound, VFXType vfxType, bool isHeavy)
         {
             _nextAttackTime = Time.time + data.Cooldown;
+            DrawViewInInspector(isHeavy);
 
-            
             _playerAnimator.PlayAttack(isHeavy);
             _soundBus.Play(sound);
+            var vfxPoint = isHeavy? _heavyAttackVFXPoint : _attackVFXPoint;
+            // VFX...
+            _vfxBus.Play(vfxType,
+                vfxPoint.position,
+                vfxPoint.rotation, 
+                _controller.gameObject.transform);
 
-            Vector3 vfxPosition = _startParameters.CombatVFXPoint.position;
-            Quaternion vfxRotation = _startParameters.CombatVFXPoint.rotation;
-            _vfxBus.Play(vfxType, vfxPosition, vfxRotation, _controller.gameObject.transform);
+            var detector = isHeavy ? _heavyAttackZoneDetector : _attackZoneDetector;
+            var targets = detector.GetTargets();
 
-            Vector3 origin = _controller.bounds.center;
-
-            float yRot = _startParameters.ViewTransform.eulerAngles.y;
-            float directionX = (Mathf.Abs(Mathf.DeltaAngle(yRot, 180f)) < 10f) ? -1f : 1f;
-            Vector3 attackDir = new Vector3(directionX, 0, 0);
-
-            float playerScale = Mathf.Abs(_controller.transform.localScale.x);
-            float currentRadius = data.Range * playerScale;
-
-            // —двигаем на 70% от радиуса, чтобы бить "в упор", но не спиной
-            Vector3 attackCenter = origin + attackDir * (currentRadius * 0.7f);
-
-            Debug.DrawRay(attackCenter, Vector3.up * currentRadius, Color.red, 0.5f);
-            Debug.DrawRay(attackCenter, attackDir * currentRadius, Color.red, 0.5f);
-            Debug.DrawRay(attackCenter, attackDir * currentRadius * -1, Color.red, 0.5f);
-
-            Collider[] hitEnemies = Physics.OverlapSphere(attackCenter, currentRadius, _config.EnemyLayer);
-
-            foreach (var enemy in hitEnemies)
+            foreach (var target in targets)
             {
-                Vector3 dirToEnemy = (enemy.transform.position - origin).normalized;
-
-                if (Vector3.Dot(attackDir, dirToEnemy) > 0.1f)
+                if (target != null && target is MonoBehaviour mb && mb != null)
                 {
-                    if (enemy.TryGetComponent<IHealthAffected>(out var target))
-                    {
-                        target.ApplyHealthChange(-data.Damage, origin);
-                        Debug.Log($"[Combat] ”дар по {enemy.name}. Ќаправление: {directionX}");                        
-                    }
+                    target.ApplyHealthChange(-data.Damage, _controller.transform.position);
                 }
-            }            
-        }        
+            }
+        }
+
+        private void DrawViewInInspector(bool isHeavy)
+        {
+            var detector = isHeavy ? _heavyAttackZoneDetector : _attackZoneDetector;
+
+            if (detector.TryGetComponent<BoxCollider>(out var box))
+            {
+                Vector3 forward = detector.transform.forward;
+                float attackDistance = box.size.z * detector.transform.lossyScale.z;
+                Debug.DrawRay(detector.transform.position, forward * attackDistance, Color.red, 1f);
+            }
+        }
     }
 }

@@ -11,7 +11,8 @@ public class EnemyHitState : IEnemyState
     public void Enter()
     {
         _timer = _stunDuration;
-        _enemy.ApplyKnockback(Vector3.up + Vector3.back, 5f); // импульс
+        _enemy.SetTrigger("Hit");
+        _enemy.ApplyKnockback(Vector3.up + (-_enemy.transform.right), 5f); // импульс
         Debug.Log("Враг в ступоре!");
     }
 

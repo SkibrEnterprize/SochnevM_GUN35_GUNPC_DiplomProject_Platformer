@@ -11,6 +11,7 @@ public class AttackState : IEnemyState
     public void Enter()
     {
         _timer = _attackWindow;
+        _enemy.SetTrigger("Attack");
         _enemy.Move(Vector3.zero); // Останавливаемся для удара
         _enemy.PerformAttack();
         Debug.Log("Враг атакует!");

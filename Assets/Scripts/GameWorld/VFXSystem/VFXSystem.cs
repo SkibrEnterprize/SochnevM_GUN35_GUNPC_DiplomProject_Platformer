@@ -41,9 +41,15 @@ namespace VFX
         private GameObject CreateNewInstance(GameObject prefab)
         {
             var instance = Instantiate(prefab, transform);
+            // Принудительно устанавливаем масштаб как у префаба
+            instance.transform.localScale = prefab.transform.localScale;
             instance.SetActive(false);
             _pools[prefab].Add(instance);
             return instance;
+            //var instance = Instantiate(prefab, transform);
+            //instance.SetActive(false);
+            //_pools[prefab].Add(instance);
+            //return instance;
         }
         
         public void Play(VFXType type, Vector3 position, Quaternion rotation, Transform parent)
@@ -56,10 +62,26 @@ namespace VFX
 
             instance.SetActive(false);
 
+            // 1. Сначала применяем логику из vfxEvent (позиция, поворот, родитель)
             vfxEvent.Play(instance, position, rotation, parent);
-            instance.SetActive(true);
 
+            // 2. ВАЖНО: После смены родителя возвращаем масштаб префаба
+            instance.transform.localScale = vfxEvent.effectPrefab.transform.localScale;
+
+            instance.SetActive(true);
             StartCoroutine(ReturnToPoolAfterTime(instance, vfxEvent.lifetime));
+            //var vfxEvent = _library.GetEvent(type);
+            //if (vfxEvent == null || vfxEvent.effectPrefab == null) return;
+
+            //GameObject instance = GetFromPool(vfxEvent);
+            //if (instance == null) return;
+
+            //instance.SetActive(false);
+
+            //vfxEvent.Play(instance, position, rotation, parent);
+            //instance.SetActive(true);
+
+            //StartCoroutine(ReturnToPoolAfterTime(instance, vfxEvent.lifetime));
         }
 
         private GameObject GetFromPool(VFXEvent vfxEvent)

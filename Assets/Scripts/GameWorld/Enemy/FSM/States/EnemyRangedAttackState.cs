@@ -11,7 +11,11 @@ public class EnemyRangedAttackState : IEnemyState
         _player = enemy.GetPlayer();
     }
 
-    public void Enter() => Debug.Log("Дальний бой активирован!");
+    public void Enter()
+    {
+        Debug.Log("Дальний бой активирован!");
+        _enemy.SetTrigger("RangeAttack");
+    }
 
     public void Update()
     {
@@ -26,7 +30,11 @@ public class EnemyRangedAttackState : IEnemyState
 
         if (_enemy.CanAttackReady())
         {
-            _enemy.Shoot();
+            if (_enemy.HasClearLineOfSight())
+            {
+                _enemy.SetTrigger("RangeAttack");
+                _enemy.Shoot();
+            }
         }
 
         _enemy.Move(Vector3.zero);

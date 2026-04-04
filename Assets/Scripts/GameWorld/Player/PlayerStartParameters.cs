@@ -20,7 +20,7 @@ public class PlayerStartParameters
         _defaultHeight = _characterController.height;
         _defaultRadius = _characterController.radius;
         _viewTransform=_characterController.GetComponentInChildren<ViewTransform>().transform;
-        _combatVFXPoint = _characterController.GetComponentInChildren<CombatVFXPoint>().transform;
+        _combatVFXPoint = _characterController.GetComponentInChildren<AttackVFXPoint>().transform;
     }
    
 }

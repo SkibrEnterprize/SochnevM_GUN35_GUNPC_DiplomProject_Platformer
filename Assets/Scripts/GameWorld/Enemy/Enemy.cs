@@ -1,23 +1,28 @@
+using DG.Tweening;
 using UnityEngine;
 using Zenject;
 
 [RequireComponent(typeof(CharacterController))]
-public class Enemy : MonoBehaviour, IHealthAffected
+[RequireComponent(typeof(EnemyHealth))]
+public class Enemy : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float _moveSpeed = 2f;
+    [SerializeField] private float _runSpeed = 4f;
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private LayerMask _wallLayer;
+    [SerializeField] private LayerMask _enemyLayer;
     [SerializeField] private float _checkDistance = 0.5f;
-
-    [SerializeField] private float _knockbackResistance = 5f; 
+    [SerializeField] private float _turnSpeed = 10f;
+    [SerializeField] private float _knockbackResistance = 5f;
 
     [Header("Detection")]
     [SerializeField] private Transform _enemyEyesForDebug;
     [SerializeField] private float _detectionRange = 7f;
     [SerializeField] private float _lostRange = 10f;
+    [SerializeField] private float _closeAwarenessRange = 2f; // Радиус "чутья"
     [SerializeField] private float _attackRange = 1.5f;
-    [SerializeField] private LayerMask _obstacleLayer; 
+    [SerializeField] private LayerMask _obstacleLayer;
     [SerializeField] private float _viewAngle = 90f;
     private Transform _player;
 
@@ -29,19 +34,20 @@ public class Enemy : MonoBehaviour, IHealthAffected
     [SerializeField] private int _attackDamage = 15;
     [SerializeField] private float _attackCooldown = 1.2f;
     [SerializeField] private LayerMask _attackMask;
-    private float _lastAttackTime;                       
+    private float _lastAttackTime;
 
     [Header("Ranged Attack")]
     [SerializeField] private GameObject _projectilePrefab;
-    private Transform _firePoint; 
+    private Transform _firePoint;
 
     [SerializeField] private bool _showGizmos = true;
     [SerializeField] private bool _showDetectRadius = true;
     [SerializeField] private bool _showAttackRadius = true;
     [SerializeField] private bool _showEyeVision = true;
+    [SerializeField] private bool _showAwarenessRange = true;
 
-    [Header("VFX Settings")]
-    [SerializeField] private Transform _combatVFXPoint;
+    //VFX config
+    private Transform _combatVFXPoint;
     private VFXEventBus _vfxBus;
 
 
@@ -54,31 +60,40 @@ public class Enemy : MonoBehaviour, IHealthAffected
 
     private CharacterController _controller;
     private EnemyStateMachine _stateMachine;
+    private Animator _animator;
 
     [Inject]
     public void Construct(VFXEventBus vfxBus) => _vfxBus = vfxBus;
     private void Awake()
     {
-        _controller = GetComponent<CharacterController>();
         _stateMachine = new EnemyStateMachine();
         _player = GameObject.FindGameObjectWithTag("Player")?.transform;
         _stateMachine.ChangeState(new EnemyPatrolState(this));
 
         _firePoint = GetComponentInChildren<FirePoint>().transform;
-        _combatVFXPoint = GetComponentInChildren<CombatVFXPoint>().transform;
+        _combatVFXPoint = GetComponentInChildren<AttackVFXPoint>().transform;
         _enemyEyes = GetComponentInChildren<EnemyEyesPoint>().transform;
         _groundCheck = GetComponentInChildren<EnemyGroundCheck>().transform;
         _wallCheck = GetComponentInChildren<EnemyWallCheck>().transform;
     }
 
+    private void Start()
+    {
+        _controller = GetComponent<CharacterController>();
+        _animator = GetComponent<Animator>();
+        var health = GetComponent<EnemyHealth>();
+        health.OnTakeDamage += (damage) => ChangeState(new EnemyHitState(this, Vector3.zero));
+        health.OnDeath += () => ChangeState(new EnemyDeathState(this));
+    }
 
     private void Update() => _stateMachine.Update();
     public void ChangeState(IEnemyState newState) => _stateMachine.ChangeState(newState);
     public Transform GetPlayer() => _player;
 
-    public bool IsWallAhead()
+    public bool IsObstacleAhead()
     {
-        bool hit = Physics.Raycast(_wallCheck.position, transform.right, _checkDistance, _wallLayer);
+        LayerMask combinedLayer = _wallLayer | _enemyLayer;
+        bool hit = Physics.Raycast(_wallCheck.position, transform.right, _checkDistance, combinedLayer);
         Debug.DrawRay(_wallCheck.position, transform.right * _checkDistance, hit ? Color.red : Color.green);
         return hit;
     }
@@ -88,9 +103,10 @@ public class Enemy : MonoBehaviour, IHealthAffected
         return Physics.CheckSphere(_groundCheck.position, 0.2f, _groundLayer);
     }
 
-    public void Move(Vector3 direction)
+    public void Move(Vector3 direction, float speedMultiplier = 1f)
     {
-        Vector3 velocity = direction * _moveSpeed;
+        direction.z = 0;
+        Vector3 velocity = direction * (_moveSpeed * speedMultiplier);
 
         if (_impactVelocity.magnitude > 0.2f)
         {
@@ -102,8 +118,22 @@ public class Enemy : MonoBehaviour, IHealthAffected
             _impactVelocity = Vector3.zero;
         }
 
+        if (_animator != null)
+        {
+            float animValue = direction.magnitude * speedMultiplier;
+            _animator.SetFloat("Speed", animValue, 0.1f, Time.deltaTime);
+        }
+
+        velocity.z = 0;
         velocity.y -= 9.81f; // Гравитация
         _controller.Move(velocity * Time.deltaTime);
+
+        Vector3 pos = transform.position;
+        if (Mathf.Abs(pos.z) > 0.001f) 
+        {
+            pos.z = 0;
+            transform.position = pos;
+        }
     }
 
     public void TakeDamage(float damage, Vector3 attackerPosition)
@@ -119,19 +149,23 @@ public class Enemy : MonoBehaviour, IHealthAffected
 
     public bool CanSeePlayer()
     {
-
         if (_player == null || _enemyEyes == null) return false;
 
-        Vector3 dirToPlayer = (_player.position - _enemyEyes.position).normalized;
         float distance = Vector3.Distance(_enemyEyes.position, _player.position);
 
+        if (distance <= _closeAwarenessRange)
+        {
+            return true;
+        }
+
+        Vector3 dirToPlayer = (_player.position - _enemyEyes.position).normalized;
         if (distance <= _detectionRange)
         {
             if (Vector3.Angle(_enemyEyes.right, dirToPlayer) < _viewAngle / 2f)
             {
                 if (Physics.Raycast(_enemyEyes.position, dirToPlayer, out RaycastHit hit, _detectionRange))
                 {
-                    if (hit.collider.TryGetComponent<PlayerHealth>(out PlayerHealth playerDetect))
+                    if (hit.collider.TryGetComponent<PlayerHealth>(out _))
                     {
                         return true;
                     }
@@ -141,22 +175,27 @@ public class Enemy : MonoBehaviour, IHealthAffected
         return false;
     }
 
-    public void ApplyHealthChange(int delta, Vector3 sourcePosition = default)
+    public void RotateTowards(Vector3 targetPosition)
     {
-        _health += delta;
+        float targetY = targetPosition.x > transform.position.x ? 0f : -180f;
+        Quaternion targetRotation = Quaternion.Euler(0, targetY, 0);
 
-        if (delta < 0) // Если это урон
-        {
-            ApplyKnockback((transform.position - sourcePosition).normalized, 5f);
-            if (_health <= 0) _stateMachine.ChangeState(new EnemyDeathState(this));
-        }
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _turnSpeed * Time.deltaTime);
     }
+
     public bool CanAttackReady() => Time.time >= _lastAttackTime + _attackCooldown;
     public bool CanAttackPlayer()
     {
         if (_player == null) return false;
-        float distance = Vector3.Distance(transform.position, _player.position);
-        return distance <= _attackRange;
+
+        Vector3 enemyPos = transform.position;
+        Vector3 playerPos = _player.position;
+
+        float horizontalDistance = Vector2.Distance(new Vector2(enemyPos.x, enemyPos.z), new Vector2(playerPos.x, playerPos.z));
+
+        float verticalDistance = Mathf.Abs(enemyPos.y - playerPos.y);
+
+        return horizontalDistance <= _attackRange && verticalDistance < 1.0f;
     }
 
 
@@ -169,7 +208,11 @@ public class Enemy : MonoBehaviour, IHealthAffected
         {
             if (hit.TryGetComponent(out IHealthAffected target))
             {
+                float verticalDiff = Mathf.Abs(hit.transform.position.y - transform.position.y);
+                if (verticalDiff > 1.0f) continue;
+
                 target.ApplyHealthChange(-_attackDamage, transform.position);
+
                 Vector3 vfxPosition = _combatVFXPoint.position;
                 Quaternion vfxRotation = _combatVFXPoint.rotation * Quaternion.Euler(25, -90, 45);
                 _vfxBus.Play(VFXType.Attack, vfxPosition, vfxRotation, _controller.gameObject.transform);
@@ -188,9 +231,35 @@ public class Enemy : MonoBehaviour, IHealthAffected
         {
             projectile.Launch(direction, transform.position);
         }
-        
+    }
+    public void StartDespawn(float delay)
+    {
+        Invoke(nameof(FadeOut), delay - 1f);
     }
 
+    private void FadeOut()
+    {
+        transform.DOMoveY(transform.position.y - 0.5f, 1f).OnComplete(() => Destroy(gameObject));
+    }
+    public void SetTrigger(string name) => _animator.SetTrigger(name);
+    public void SetBool(string name, bool value) => _animator.SetBool(name, value);
+
+    public bool HasClearLineOfSight()
+    {
+        if (_player == null || _enemyEyes == null) return false;
+
+        Vector3 direction = (_player.position - _enemyEyes.position).normalized;
+        float distance = Vector3.Distance(_enemyEyes.position, _player.position);
+
+        if (Physics.Raycast(_enemyEyes.position, direction, out RaycastHit hit, distance, _obstacleLayer | _groundLayer | _wallLayer))
+        {
+            if (!hit.collider.CompareTag("Player"))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
     private void OnDrawGizmos()
     {
         if (!_showGizmos || _enemyEyesForDebug == null) return;
@@ -198,7 +267,7 @@ public class Enemy : MonoBehaviour, IHealthAffected
         // радиус обнаружения
         if (_showDetectRadius)
         {
-            Gizmos.color = new Color(0, 1, 0, 0.2f); 
+            Gizmos.color = new Color(0, 1, 0, 0.2f);
             Gizmos.DrawWireSphere(_enemyEyesForDebug.position, _detectionRange);
         }
         // радиус атаки 
@@ -229,6 +298,11 @@ public class Enemy : MonoBehaviour, IHealthAffected
             Gizmos.DrawLine(_enemyEyesForDebug.position, _player.position);
 
             Gizmos.DrawSphere(_player.position, 0.2f);
+        }
+        if (_showAwarenessRange)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(transform.position, _closeAwarenessRange);
         }
     }
 }
