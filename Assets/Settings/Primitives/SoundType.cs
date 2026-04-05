@@ -1,14 +1,23 @@
 public enum SoundType 
 { 
+    Step,
     Jump,
     WallJump,
+    Land,
     Damage,
     Die,
     Healing,
     CollectItem, 
-    CheckPoint,
+    CheckPointReached,
+    CheckPointUse,
     EndPoint,
     Finish,
     Attack,
-    HeavyAttack
+    HeavyAttack,
+    EnemyStep,
+    EnemyAttack,
+    EnemyRangeAttack,
+    EnemyHit,
+    EnemyDeath,
+    
 }

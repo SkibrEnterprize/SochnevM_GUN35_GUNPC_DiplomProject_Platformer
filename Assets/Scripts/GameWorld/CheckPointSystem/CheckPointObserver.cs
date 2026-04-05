@@ -10,8 +10,8 @@ public class CheckPointObserver : IInitializable, IDisposable
     private ISoundEventBus _soundBus;
 
     private Vector3 _position;
-    public CheckPointObserver(PlayerMovementSystem movementComponent, 
-        ISoundEventBus soundBus, 
+    public CheckPointObserver(PlayerMovementSystem movementComponent,
+        ISoundEventBus soundBus,
         ICheckPointEventBus checkPointEventBus)
     {
         _movementComponent = movementComponent;
@@ -28,9 +28,13 @@ public class CheckPointObserver : IInitializable, IDisposable
     private void SetCheckPoint(Vector3 position, Quaternion quaternion)
     {
         _position = position;
-        _soundBus.Play(SoundType.CheckPoint);
-    }    
-    private void MoveToCheckPoint() => _movementComponent.MoveToCheckPoint(_position);
+        _soundBus.Play(SoundType.CheckPointReached);
+    }
+    private void MoveToCheckPoint()
+    {
+        _movementComponent.MoveToCheckPoint(_position);
+        _soundBus.Play(SoundType.CheckPointUse);
+    }
 
     public void Dispose()
     {

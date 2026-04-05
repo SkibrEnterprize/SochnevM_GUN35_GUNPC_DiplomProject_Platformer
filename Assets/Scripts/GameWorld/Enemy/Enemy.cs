@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using UnityEngine;
 using Zenject;
 
@@ -40,6 +41,10 @@ public class Enemy : MonoBehaviour
     [SerializeField] private GameObject _projectilePrefab;
     private Transform _firePoint;
 
+    [Header("Audio Settings")]
+    private float _stepTimer;
+    [SerializeField] private float _baseStepInterval = 0.5f; // Интервал при animValue = 1
+
     [SerializeField] private bool _showGizmos = true;
     [SerializeField] private bool _showDetectRadius = true;
     [SerializeField] private bool _showAttackRadius = true;
@@ -49,6 +54,7 @@ public class Enemy : MonoBehaviour
     //VFX config
     private Transform _combatVFXPoint;
     private VFXEventBus _vfxBus;
+    private SoundEventBus _soundBus;
 
 
     public float LostRange => _lostRange;
@@ -63,7 +69,11 @@ public class Enemy : MonoBehaviour
     private Animator _animator;
 
     [Inject]
-    public void Construct(VFXEventBus vfxBus) => _vfxBus = vfxBus;
+    public void Construct(VFXEventBus vfxBus, SoundEventBus soundEventBus)
+    {
+        _vfxBus = vfxBus;
+        _soundBus = soundEventBus;
+    }
     private void Awake()
     {
         _stateMachine = new EnemyStateMachine();
@@ -83,7 +93,13 @@ public class Enemy : MonoBehaviour
         _animator = GetComponent<Animator>();
         var health = GetComponent<EnemyHealth>();
         health.OnTakeDamage += (damage) => ChangeState(new EnemyHitState(this, Vector3.zero));
-        health.OnDeath += () => ChangeState(new EnemyDeathState(this));
+        health.OnDeath += () => OnDeathLogic(); 
+    }
+
+    private void OnDeathLogic()
+    {
+        ChangeState(new EnemyDeathState(this));
+        _soundBus.Play(SoundType.EnemyDeath);
     }
 
     private void Update() => _stateMachine.Update();
@@ -108,6 +124,7 @@ public class Enemy : MonoBehaviour
         direction.z = 0;
         Vector3 velocity = direction * (_moveSpeed * speedMultiplier);
 
+        // Расчет отбрасывания (Knockback)
         if (_impactVelocity.magnitude > 0.2f)
         {
             velocity += _impactVelocity;
@@ -118,18 +135,46 @@ public class Enemy : MonoBehaviour
             _impactVelocity = Vector3.zero;
         }
 
+        // Вычисляем значение для аниматора и звука
+        float animValue = direction.magnitude * speedMultiplier;
+
+        // --- ЛОГИКА ЗВУКА ШАГОВ ПРОТИВНИКА ---
+        // Проверяем: приземлен ли контроллер и есть ли движение
+        if (_controller.isGrounded && animValue > 0.1f)
+        {
+            // Таймер уменьшается быстрее, если враг бежит (animValue > 1)
+            _stepTimer -= Time.deltaTime * animValue;
+
+            if (_stepTimer <= 0)
+            {
+                // Передаем transform.position, чтобы AudioSystem проиграла звук в 3D
+                _soundBus.Play(SoundType.EnemyStep, transform.position);
+                _stepTimer = _baseStepInterval; // Сброс таймера
+            }
+        }
+        else
+        {
+            _stepTimer = 0; // Сбрасываем, чтобы первый шаг при движении звучал сразу
+        }
+        // -------------------------------------
+
         if (_animator != null)
         {
-            float animValue = direction.magnitude * speedMultiplier;
             _animator.SetFloat("Speed", animValue, 0.1f, Time.deltaTime);
         }
 
         velocity.z = 0;
-        velocity.y -= 9.81f; // Гравитация
-        _controller.Move(velocity * Time.deltaTime);
+        velocity.y -= 9.81f; // Гравитация (стандартная для CharacterController)
 
+        // ПРОВЕРКА: предотвращаем ошибку на неактивном контроллере
+        if (_controller.enabled)
+        {
+            _controller.Move(velocity * Time.deltaTime);
+        }
+
+        // Фиксация оси Z (чтобы враг не улетал вглубь 3D сцены)
         Vector3 pos = transform.position;
-        if (Mathf.Abs(pos.z) > 0.001f) 
+        if (Mathf.Abs(pos.z) > 0.001f)
         {
             pos.z = 0;
             transform.position = pos;
@@ -140,6 +185,7 @@ public class Enemy : MonoBehaviour
     {
         Vector3 pushDirection = (transform.position - attackerPosition).normalized;
         _stateMachine.ChangeState(new EnemyHitState(this, pushDirection));
+        _soundBus.Play(SoundType.EnemyHit);
     }
 
     public void ApplyKnockback(Vector3 direction, float force)
@@ -216,6 +262,7 @@ public class Enemy : MonoBehaviour
                 Vector3 vfxPosition = _combatVFXPoint.position;
                 Quaternion vfxRotation = _combatVFXPoint.rotation * Quaternion.Euler(25, -90, 45);
                 _vfxBus.Play(VFXType.Attack, vfxPosition, vfxRotation, _controller.gameObject.transform);
+                _soundBus.Play(SoundType.EnemyAttack);
             }
         }
     }
@@ -230,6 +277,7 @@ public class Enemy : MonoBehaviour
         if (bullet.TryGetComponent(out EnemyProjectile projectile))
         {
             projectile.Launch(direction, transform.position);
+            _soundBus.Play(SoundType.EnemyRangeAttack, transform.position);
         }
     }
     public void StartDespawn(float delay)

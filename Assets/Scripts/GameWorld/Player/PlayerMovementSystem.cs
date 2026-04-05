@@ -34,6 +34,9 @@ namespace Player
         private bool _isFalling;
         private float _fallDistance;
 
+        private float _airTime;
+        private const float _landThreshold = 0.15f; // Порог времени для "настоящего" падения
+
         private float _acceleration = 40f;    // Скорость разгона
         private float _deceleration = 25f;    // Скорость торможения (инерция)
         private float _currentTraction = 1f; // 1.0 — асфальт, 0.2 — лед, 0.05 — супер-лед
@@ -42,6 +45,9 @@ namespace Player
         public bool IsMovementFrozen { get; set; }
 
         private float _animSpeedVelocity;
+
+        private float _stepTimer;
+        [SerializeField] private float _stepInterval = 0.4f; // Базовая задержка между шагами
 
         private PlayerStartParameters _startParameters;
         public PlayerMovementSystem(
@@ -122,22 +128,98 @@ namespace Player
             bool grounded = IsGrounded();
             bool wallSliding = !grounded && IsWallClinging() && _velocity.y < 0;
 
-            // Нормализация скорости для Blend Tree (0-1-2)
+            // Расчет нормализованной скорости (нужен нам для частоты шагов)
             float walkSpeed = _playerConfig.MoveSpeedGround;
             float sprintSpeed = walkSpeed * _playerConfig.SprintSpeedMultiplayer;
             float normalizedSpeed;
 
             if (currentHorizontalSpeed <= walkSpeed)
             {
-                normalizedSpeed = currentHorizontalSpeed / walkSpeed; // 0...1
+                normalizedSpeed = currentHorizontalSpeed / walkSpeed;
             }
             else
             {
                 float runProgress = (currentHorizontalSpeed - walkSpeed) / (sprintSpeed - walkSpeed);
-                normalizedSpeed = 1f + Mathf.Clamp01(runProgress); // 1...2
+                normalizedSpeed = 1f + Mathf.Clamp01(runProgress);
             }
 
+            // --- ЛОГИКА ЗЕМЛИ, ПРИЗЕМЛЕНИЯ И ШАГОВ ---
+            if (grounded)
+            {
+                // 1. Звук и анимация приземления
+                if (_airTime > _landThreshold)
+                {
+                    _playerAnimator.PlayLanding();
+                    _soundBus.Play(SoundType.Land); // Проигрываем звук приземления
+                }
+                _airTime = 0;
+
+                // 2. Звук шагов
+                if (currentHorizontalSpeed > 0.1f)
+                {
+                    // Умножаем на normalizedSpeed, чтобы при беге шаги звучали чаще
+                    _stepTimer -= Time.deltaTime * normalizedSpeed;
+
+                    if (_stepTimer <= 0)
+                    {
+                        _soundBus.Play(SoundType.Step); // Проигрываем звук шага
+                        _stepTimer = _stepInterval;     // Сброс таймера
+                    }
+                }
+                else
+                {
+                    _stepTimer = 0; // Сброс таймера при остановке
+                }
+            }
+            else
+            {
+                _airTime += Time.deltaTime;
+                _stepTimer = 0; // Не шагаем в воздухе
+            }
+            // -------------------------------------------
+
+            // Передаем данные в аниматор
             _playerAnimator.UpdateMovementStates(normalizedSpeed, grounded, wallSliding, _flyPressed);
+
+            //float currentHorizontalSpeed = Mathf.Abs(_velocity.x);
+            //bool grounded = IsGrounded();
+            //bool wallSliding = !grounded && IsWallClinging() && _velocity.y < 0;
+
+            //// --- НОВАЯ ЛОГИКА ФИЛЬТРАЦИИ ПРИЗЕМЛЕНИЯ ---
+            //if (grounded)
+            //{
+            //    // Если мы коснулись земли и были в воздухе достаточно долго (не кочка)
+            //    if (_airTime > _landThreshold)
+            //    {
+            //        _playerAnimator.PlayLanding(); // Вызываем анимацию приземления
+            //    }
+            //    _airTime = 0; // Сбрасываем таймер на земле
+            //}
+            //else
+            //{
+            //    _airTime += Time.deltaTime; // Копим время, пока мы в воздухе
+            //}
+            //// -------------------------------------------
+
+            //// Нормализация скорости для Blend Tree (твой код без изменений)
+            //float walkSpeed = _playerConfig.MoveSpeedGround;
+            //float sprintSpeed = walkSpeed * _playerConfig.SprintSpeedMultiplayer;
+            //float normalizedSpeed;
+
+            //if (currentHorizontalSpeed <= walkSpeed)
+            //{
+            //    normalizedSpeed = currentHorizontalSpeed / walkSpeed;
+            //}
+            //else
+            //{
+            //    float runProgress = (currentHorizontalSpeed - walkSpeed) / (sprintSpeed - walkSpeed);
+            //    normalizedSpeed = 1f + Mathf.Clamp01(runProgress);
+            //}
+
+            //// Передаем отфильтрованные данные в аниматор
+            //_playerAnimator.UpdateMovementStates(normalizedSpeed, grounded, wallSliding, _flyPressed);
+
+
         }
 
         private void OnJumpStarted(InputAction.CallbackContext context)
@@ -321,7 +403,10 @@ namespace Player
             }
 
             Vector3 move = new Vector3(_velocity.x, _velocity.y, 0) * Time.fixedDeltaTime;
-            _controller.Move(move);
+            if (_controller != null && _controller.enabled)
+            {
+                _controller.Move(move);
+            }
 
             if (_controller.isGrounded && _velocity.y < -0.1f)
             {

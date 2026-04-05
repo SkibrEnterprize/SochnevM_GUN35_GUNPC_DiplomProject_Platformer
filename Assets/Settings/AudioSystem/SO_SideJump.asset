@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SO_SideJump
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: 3801dea314808451ca9704bcffd75ef7, type: 3}
+  - {fileID: 8300000, guid: 4e349dc959014a845b9aa317d1c2b7f0, type: 3}
   volume: 0.5
   pitch: 1.1

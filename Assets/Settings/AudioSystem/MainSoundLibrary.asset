@@ -35,3 +35,7 @@ MonoBehaviour:
     audioEvent: {fileID: 11400000, guid: e0ef7c6c67560ab40917356ee186bbeb, type: 2}
   - type: 10
     audioEvent: {fileID: 11400000, guid: 6550fc726355e264eb33e5516b14ff67, type: 2}
+  - type: 0
+    audioEvent: {fileID: 11400000, guid: 2f626f8e89f58854ca8122e7928de6ec, type: 2}
+  - type: 14
+    audioEvent: {fileID: 11400000, guid: ddaf416178393fd42bf9620df5ae7318, type: 2}
