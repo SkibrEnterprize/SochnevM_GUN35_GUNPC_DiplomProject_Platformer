@@ -23,6 +23,7 @@ public abstract class BaseEnemy : MonoBehaviour, IHealthAffected
     {
         StateMachine.Update();
     }
-    public abstract void ApplyHealthChange(int delta, Vector3 sourcePosition = default);
-    
+    public abstract void ApplyHealthChange(int delta, Vector3 sourcePosition = default,
+                              DamageType type = DamageType.Default, float knockbackForce = 0f);
+
 }

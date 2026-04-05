@@ -10,8 +10,10 @@ public class PlayerHealth : MonoBehaviour, IHealthAffected
     {
         _healthComponent = healthComponent;
     }
-    public void ApplyHealthChange(int delta, Vector3 sourcePosition = default)
+
+    public void ApplyHealthChange(int delta, Vector3 sourcePosition = default,
+                              DamageType type = DamageType.Default, float knockbackForce = 0f)
     {
-        _healthComponent.ApplyHealthChange(delta);
+        _healthComponent.ApplyHealthChange(delta, sourcePosition, type, knockbackForce);
     }
 }

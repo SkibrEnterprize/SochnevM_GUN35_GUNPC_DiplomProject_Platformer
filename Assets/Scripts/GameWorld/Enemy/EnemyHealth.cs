@@ -10,15 +10,22 @@ public class EnemyHealth : MonoBehaviour, IHealthAffected
     public event Action<float> OnTakeDamage;
 
     private void Awake() => _currentHealth = _maxHealth;
-    public void ApplyHealthChange(int delta, Vector3 sourcePosition = default)
+    public void ApplyHealthChange(int delta, Vector3 sourcePosition = default,
+                              DamageType type = DamageType.Default, float knockbackForce = 0f)
     {
         if (_currentHealth <= 0) return;
 
         _currentHealth += delta;
 
-        OnTakeDamage?.Invoke(delta);
-
-        Debug.Log($"{gameObject.name} получил урон. Осталось: {_currentHealth}");
+        if (delta < 0 && type != DamageType.Fall)
+        {
+            OnTakeDamage?.Invoke(delta);
+        }
+        else if (delta < 0)
+        {
+            // to do
+        }
+        Debug.Log($"{gameObject.name} получил урон ({type}). Осталось: {_currentHealth}");
 
         if (_currentHealth <= 0)
         {

@@ -5,6 +5,7 @@ public class EnemyProjectile : MonoBehaviour
     [SerializeField] private float _speed = 15f; 
     [SerializeField] private int _damage = -10;
     [SerializeField] private float _lifetime = 3f;
+    [SerializeField] private float _knockbackForce = 8f;
 
     private Vector3 _originPosition; 
 
@@ -27,7 +28,7 @@ public class EnemyProjectile : MonoBehaviour
     {
         if (other.TryGetComponent(out IHealthAffected target))
         {
-            target.ApplyHealthChange(_damage, _originPosition);
+            target.ApplyHealthChange(_damage, _originPosition, DamageType.Default, _knockbackForce);
             Destroy(gameObject);
         }
         else if (((1 << other.gameObject.layer) & LayerMask.GetMask("Ground", "Wall")) != 0)

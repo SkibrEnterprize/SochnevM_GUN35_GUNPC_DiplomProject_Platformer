@@ -15,19 +15,20 @@ MonoBehaviour:
   MoveSpeed: 5
   MoveSpeedGround: 5
   MoveSpeedAir: 4
+  SprintSpeedMultiplayer: 2
   SmoothTime: 0.5
   DampAir: 0.1
   DampGround: 0.082
   Gravity: 40
   SlowClingFallSpeed: 0.5
-  JumpForce: 150
+  JumpForce: 140
   WallJumpForceX: 20
   WallJumpForceY: 20
   WallHorizontalPush: 50
   WallSlideSpeed: -2
   LayerMaskForWall:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 576
   JumpCountInAir: 1
   SlowFallAirSpeed: 0.5
   JumpHoldFallAirSpeed: 2.51

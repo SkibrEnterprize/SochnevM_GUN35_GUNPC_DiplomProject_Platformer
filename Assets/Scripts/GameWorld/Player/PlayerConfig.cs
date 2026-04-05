@@ -7,6 +7,7 @@ public class PlayerConfig : ScriptableObject
     public float MoveSpeed = 1;
     public float MoveSpeedGround = 1;
     public float MoveSpeedAir = 0.5f;
+    public float SprintSpeedMultiplayer = 2f;
     public float SmoothTime = 0.5f;
 
 

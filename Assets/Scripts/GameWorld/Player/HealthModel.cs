@@ -4,14 +4,16 @@ using Zenject;
 
 namespace Player
 {
-    public sealed class HealthModel : IInitializable, IDisposable, IHealthAffected
+    public sealed class HealthModel : IInitializable, IDisposable, ITickable, IHealthAffected
     {
         private IHealthEventBus _healthEventBus;
         private readonly PlayerMovementSystem _movementComponent;
         private readonly PlayerConfig _playerConfig;
         private readonly PlayerAnimator _playerAnimator;
         private int _health;
-        
+
+        private bool _isWaitingForDeathLanding;
+        public bool IsWaitingForDeathLanding => _isWaitingForDeathLanding;
 
 
         public event Action<int> OnHealthChanged;
@@ -49,64 +51,71 @@ namespace Player
 
         public void FallDistanceReceived(float fallDistance)
         {
-            TakeFallDamage(fallDistance);
-        }
-
-        private void TakeFallDamage(float fallDistance)
-        {
             if (fallDistance > _playerConfig.MinHeightForDamage)
             {
-                ApplyHealthChange(-_playerConfig.DamageOfFall);
-                Debug.Log($"Health = {_health} because of FallDistance is {fallDistance}");
-            }
-        }
+                ApplyHealthChange(-_playerConfig.DamageOfFall, type: DamageType.Fall);
 
-        public void ApplyHealthChange(int delta, Vector3 sourcePosition = default)
+                Debug.Log($"Health = {Health} (Fall damage: {fallDistance}m)");
+            }
+        }       
+
+        public void ApplyHealthChange(int delta, Vector3 sourcePosition = default,
+                              DamageType type = DamageType.Default, float knockbackForce = 0f)
         {
             Health += delta;
 
-            if (delta < 0) // Получили урон
+            if (delta < 0)
             {
-                // 1. Запускаем анимацию вздрагивания
-                _playerAnimator.PlayHit();
-                _playerAnimator.PlayHitFlash();
+                bool shouldAnimate = (type != DamageType.Fall);
+                _playerAnimator.PlayHit(shouldAnimate);
 
-                // 2. Если передан источник урона — делаем отскок
-                if (sourcePosition != default)
+                if (sourcePosition != default && type != DamageType.Fall)
                 {
-                    // Силу отброса можно вынести в PlayerConfig (например, 8f - 12f)
-                    float knockbackForce = 10f;
                     _movementComponent.ApplyKnockback(sourcePosition, knockbackForce);
                 }
 
                 _healthEventBus.HealthUpdated(delta);
             }
-
             CheckHealthValue();
         }
-        //public void ApplyHealthChange(int delta, Vector3 sourcePosition = default)
-        //{
-        //    Health += delta;
-        //    _healthEventBus.HealthUpdated(delta);
-        //    if (delta < 0) _playerAnimator.PlayHit();
-        //    CheckHealthValue();
-        //}
+
+
 
         private void TakeDamage(int value) => Health -= value;
         private void TakeHealing(int value) => Health += value;
+
         private void CheckHealthValue()
         {
-            if (_health <= 0)
+            if (Health <= 0)
             {
-                //_playerAnimator.PlayDeath(); // Запускаем анимацию
-                _movementComponent.IsMovementFrozen = true; // Замораживаем ввод
+                Health = 0;
+
+                if (!_movementComponent.IsGrounded())
+                {
+                    _isWaitingForDeathLanding = true;
+                    _movementComponent.SetMovementLock(true); 
+                    return;
+                }
                 _healthEventBus.HealthIsOver();
             }
         }
+        private void TriggerActualDeath()
+        {
+            _isWaitingForDeathLanding = false;
+            _healthEventBus.HealthIsOver();
+        }
+        
         public void HealthAllRepair()
         {
             Health = _playerConfig.MaxHealth;
         }
-        
+
+        public void Tick()
+        {
+            if (_isWaitingForDeathLanding && _movementComponent.IsGrounded())
+            {
+                TriggerActualDeath();
+            }
+        }
     }
 }
