@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: SO_EnemyStep
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: 3801dea314808451ca9704bcffd75ef7, type: 3}
+  - {fileID: 8300000, guid: 4592faa68ba26c5439e18d946dbfb23e, type: 3}
+  - {fileID: 8300000, guid: 3a2dd48e71b375a4380470b9a056fd24, type: 3}
+  - {fileID: 8300000, guid: ab3a2c3c21920ab448ca0dd3700d33f9, type: 3}
+  - {fileID: 8300000, guid: f4922beb5ee3f204089e5c3a9ea763f2, type: 3}
+  - {fileID: 8300000, guid: fe4869190281d0c4295fdf620b7541d9, type: 3}
   volume: 0.5
   pitch: 1.1

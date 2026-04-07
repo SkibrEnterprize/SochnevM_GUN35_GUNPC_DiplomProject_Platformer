@@ -1,5 +1,4 @@
-using DG.Tweening;
-using System;
+п»їusing DG.Tweening;
 using UnityEngine;
 using Zenject;
 
@@ -21,9 +20,9 @@ public class Enemy : MonoBehaviour
     [SerializeField] private Transform _enemyEyesForDebug;
     [SerializeField] private float _detectionRange = 7f;
     [SerializeField] private float _lostRange = 10f;
-    [SerializeField] private float _closeAwarenessRange = 2f; // Радиус "чутья"
+    [SerializeField] private float _closeAwarenessRange = 2f;
     [SerializeField] private float _attackRange = 1.5f;
-    [SerializeField] private LayerMask _obstacleLayer;
+    [SerializeField] private LayerMask _layersForVision;
     [SerializeField] private float _viewAngle = 90f;
     private Transform _player;
 
@@ -43,7 +42,7 @@ public class Enemy : MonoBehaviour
 
     [Header("Audio Settings")]
     private float _stepTimer;
-    [SerializeField] private float _baseStepInterval = 0.5f; // Интервал при animValue = 1
+    [SerializeField] private float _baseStepInterval = 0.5f;
 
     [SerializeField] private bool _showGizmos = true;
     [SerializeField] private bool _showDetectRadius = true;
@@ -62,7 +61,7 @@ public class Enemy : MonoBehaviour
     private Transform _enemyEyes;
     private Transform _groundCheck;
     private Transform _wallCheck;
-    private Vector3 _impactVelocity = Vector3.zero; // Текущий импульс отскока
+    private Vector3 _impactVelocity = Vector3.zero; 
 
     private CharacterController _controller;
     private EnemyStateMachine _stateMachine;
@@ -93,7 +92,7 @@ public class Enemy : MonoBehaviour
         _animator = GetComponent<Animator>();
         var health = GetComponent<EnemyHealth>();
         health.OnTakeDamage += (damage) => ChangeState(new EnemyHitState(this, Vector3.zero));
-        health.OnDeath += () => OnDeathLogic(); 
+        health.OnDeath += () => OnDeathLogic();
     }
 
     private void OnDeathLogic()
@@ -124,7 +123,6 @@ public class Enemy : MonoBehaviour
         direction.z = 0;
         Vector3 velocity = direction * (_moveSpeed * speedMultiplier);
 
-        // Расчет отбрасывания (Knockback)
         if (_impactVelocity.magnitude > 0.2f)
         {
             velocity += _impactVelocity;
@@ -135,26 +133,21 @@ public class Enemy : MonoBehaviour
             _impactVelocity = Vector3.zero;
         }
 
-        // Вычисляем значение для аниматора и звука
         float animValue = direction.magnitude * speedMultiplier;
 
-        // --- ЛОГИКА ЗВУКА ШАГОВ ПРОТИВНИКА ---
-        // Проверяем: приземлен ли контроллер и есть ли движение
         if (_controller.isGrounded && animValue > 0.1f)
         {
-            // Таймер уменьшается быстрее, если враг бежит (animValue > 1)
             _stepTimer -= Time.deltaTime * animValue;
 
             if (_stepTimer <= 0)
             {
-                // Передаем transform.position, чтобы AudioSystem проиграла звук в 3D
                 _soundBus.Play(SoundType.EnemyStep, transform.position);
-                _stepTimer = _baseStepInterval; // Сброс таймера
+                _stepTimer = _baseStepInterval; 
             }
         }
         else
         {
-            _stepTimer = 0; // Сбрасываем, чтобы первый шаг при движении звучал сразу
+            _stepTimer = 0;
         }
         // -------------------------------------
 
@@ -164,15 +157,13 @@ public class Enemy : MonoBehaviour
         }
 
         velocity.z = 0;
-        velocity.y -= 9.81f; // Гравитация (стандартная для CharacterController)
+        velocity.y -= 9.81f;
 
-        // ПРОВЕРКА: предотвращаем ошибку на неактивном контроллере
         if (_controller.enabled)
         {
             _controller.Move(velocity * Time.deltaTime);
         }
 
-        // Фиксация оси Z (чтобы враг не улетал вглубь 3D сцены)
         Vector3 pos = transform.position;
         if (Mathf.Abs(pos.z) > 0.001f)
         {
@@ -198,18 +189,21 @@ public class Enemy : MonoBehaviour
         if (_player == null || _enemyEyes == null) return false;
 
         float distance = Vector3.Distance(_enemyEyes.position, _player.position);
+        Vector3 dirToPlayer = (_player.position - _enemyEyes.position).normalized;
 
         if (distance <= _closeAwarenessRange)
         {
-            return true;
+            if (Physics.Raycast(_enemyEyes.position, dirToPlayer, out RaycastHit hit, _closeAwarenessRange, _layersForVision))
+            {
+                if (hit.collider.TryGetComponent<PlayerHealth>(out _)) return true;
+            }
         }
 
-        Vector3 dirToPlayer = (_player.position - _enemyEyes.position).normalized;
         if (distance <= _detectionRange)
         {
             if (Vector3.Angle(_enemyEyes.right, dirToPlayer) < _viewAngle / 2f)
             {
-                if (Physics.Raycast(_enemyEyes.position, dirToPlayer, out RaycastHit hit, _detectionRange))
+                if (Physics.Raycast(_enemyEyes.position, dirToPlayer, out RaycastHit hit, _detectionRange, _layersForVision))
                 {
                     if (hit.collider.TryGetComponent<PlayerHealth>(out _))
                     {
@@ -218,7 +212,32 @@ public class Enemy : MonoBehaviour
                 }
             }
         }
+
         return false;
+        //if (_player == null || _enemyEyes == null) return false;
+
+        //float distance = Vector3.Distance(_enemyEyes.position, _player.position);
+
+        //if (distance <= _closeAwarenessRange)
+        //{
+        //    return true;
+        //}
+
+        //Vector3 dirToPlayer = (_player.position - _enemyEyes.position).normalized;
+        //if (distance <= _detectionRange)
+        //{
+        //    if (Vector3.Angle(_enemyEyes.right, dirToPlayer) < _viewAngle / 2f)
+        //    {
+        //        if (Physics.Raycast(_enemyEyes.position, dirToPlayer, out RaycastHit hit, _detectionRange))
+        //        {
+        //            if (hit.collider.TryGetComponent<PlayerHealth>(out _))
+        //            {
+        //                return true;
+        //            }
+        //        }
+        //    }
+        //}
+        //return false;
     }
 
     public void RotateTowards(Vector3 targetPosition)
@@ -241,7 +260,7 @@ public class Enemy : MonoBehaviour
 
         float verticalDistance = Mathf.Abs(enemyPos.y - playerPos.y);
 
-        return horizontalDistance <= _attackRange && verticalDistance < 1.0f;
+        return horizontalDistance <= _attackRange && verticalDistance < 1f;
     }
 
 
@@ -249,13 +268,13 @@ public class Enemy : MonoBehaviour
     {
         _lastAttackTime = Time.time;
 
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, _attackRange, _attackMask);
+        Collider[] hitColliders = Physics.OverlapSphere(_enemyEyes.position, _attackRange, _attackMask);
         foreach (var hit in hitColliders)
         {
             if (hit.TryGetComponent(out IHealthAffected target))
             {
-                float verticalDiff = Mathf.Abs(hit.transform.position.y - transform.position.y);
-                if (verticalDiff > 1.0f) continue;
+                float verticalDiff = Mathf.Abs(hit.transform.position.y - _enemyEyes.position.y);
+                if (verticalDiff > 1f) continue;
 
                 target.ApplyHealthChange(-_attackDamage, transform.position);
 
@@ -299,7 +318,7 @@ public class Enemy : MonoBehaviour
         Vector3 direction = (_player.position - _enemyEyes.position).normalized;
         float distance = Vector3.Distance(_enemyEyes.position, _player.position);
 
-        if (Physics.Raycast(_enemyEyes.position, direction, out RaycastHit hit, distance, _obstacleLayer | _groundLayer | _wallLayer))
+        if (Physics.Raycast(_enemyEyes.position, direction, out RaycastHit hit, distance, _layersForVision | _groundLayer | _wallLayer))
         {
             if (!hit.collider.CompareTag("Player"))
             {
@@ -312,20 +331,17 @@ public class Enemy : MonoBehaviour
     {
         if (!_showGizmos || _enemyEyesForDebug == null) return;
 
-        // радиус обнаружения
         if (_showDetectRadius)
         {
             Gizmos.color = new Color(0, 1, 0, 0.2f);
             Gizmos.DrawWireSphere(_enemyEyesForDebug.position, _detectionRange);
         }
-        // радиус атаки 
         if (_showAttackRadius)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, _attackRange);
+            Gizmos.DrawWireSphere(_enemyEyesForDebug.position, _attackRange);
         }
 
-        // конус обзора
         if (_showEyeVision)
         {
             Gizmos.color = Color.yellow;
@@ -339,7 +355,6 @@ public class Enemy : MonoBehaviour
                             _enemyEyesForDebug.position + bottomBoundary * _detectionRange);
         }
 
-        // линия до игрока (только если он увиден)
         if (CanSeePlayer() && _player != null)
         {
             Gizmos.color = Color.red;

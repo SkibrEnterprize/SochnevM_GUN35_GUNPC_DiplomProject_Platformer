@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SO_HeavyAttack
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: fe5934257a11d4d759d00c172d283042, type: 3}
+  - {fileID: 8300000, guid: c7b3b2d275c095c4bbdfd7b7a8fdd323, type: 3}
   volume: 0.5
   pitch: 1.1

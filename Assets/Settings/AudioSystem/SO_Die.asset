@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SO_Die
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: c1bc40e9075534f9883915554a92020f, type: 3}
+  - {fileID: 8300000, guid: aa967a280457c054bb646d57611f5bd0, type: 3}
   volume: 1
   pitch: 1.1

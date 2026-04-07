@@ -36,4 +36,4 @@ MonoBehaviour:
   MaxHealth: 100
   CriticalHealth: 20
   DamageOfFall: 10
-  MinHeightForDamage: 5
+  MinHeightForDamage: 8

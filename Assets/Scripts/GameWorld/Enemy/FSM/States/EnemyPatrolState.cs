@@ -1,13 +1,14 @@
-using UnityEngine;
+п»їusing UnityEngine;
 
 public class EnemyPatrolState : IEnemyState
 {
+
     private readonly Enemy _enemy;
     private bool _movingRight = true;
 
     public EnemyPatrolState(Enemy enemy) => _enemy = enemy;
 
-    public void Enter() => Debug.Log("Начало патрулирования");
+    public void Enter() => Debug.Log("РџР°С‚СЂСѓР»РёСЂРѕРІР°РЅРёРµ РЅР°С‡Р°С‚Рѕ");
     public void Exit() { }
 
     public void Update()
@@ -42,14 +43,13 @@ public class EnemyPatrolState : IEnemyState
             if (_enemy.EnemyTypeAttack == EnemyTypeAttack.CloseAttack)
             {
                 _enemy.ChangeState(new EnemyChaseState(_enemy));
-                Debug.Log("Заметил игрока! Начинаю преследование.");
+                Debug.Log("РРіСЂРѕРєР° РІРёР¶Сѓ, РЅРµ РјРѕРіСѓ РґРѕСЃС‚Р°С‚СЊ - РїРѕРґР¶РёРґР°СЋ...");
             }
             else if (_enemy.EnemyTypeAttack == EnemyTypeAttack.RangeAttack)
             {
                 _enemy.ChangeState(new EnemyRangedAttackState(_enemy));
-                Debug.Log("Заметил игрока! Готовлюсь к выстрелу.");
+                Debug.Log("РџРµСЂРµС…РѕРґ РІ Р”Р°Р»СЊРЅСЋСЋ Р°С‚Р°РєСѓ");
             }
         }
     }
-
 }

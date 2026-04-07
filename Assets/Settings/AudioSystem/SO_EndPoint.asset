@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SO_EndPoint
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: f0304227573024abb878a0435f77db98, type: 3}
+  - {fileID: 8300000, guid: a8e06c300f9ced8448c786451f911ed0, type: 3}
   volume: 0.5
   pitch: 1.1

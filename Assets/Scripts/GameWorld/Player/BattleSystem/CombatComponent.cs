@@ -122,7 +122,7 @@ namespace Player
             DrawViewInInspector(isHeavy);
 
             _playerAnimator.PlayAttack(isHeavy);
-            _soundBus.Play(sound);
+            _soundBus.Play(sound, _controller.transform.position);
             var vfxPoint = isHeavy? _heavyAttackVFXPoint : _attackVFXPoint;
             // VFX...
             _vfxBus.Play(vfxType,

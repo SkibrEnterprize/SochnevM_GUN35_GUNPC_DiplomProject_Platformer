@@ -10,10 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 705dbf6ebab3e5449bc342fea2a2c7b8, type: 3}
-  m_Name: SO_Damage
+  m_Name: SO_CheckPointUse
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: 1844492d481c01e409b21cc3ff50be85, type: 3}
-  - {fileID: 8300000, guid: 08b7e2f4b8a4a834eb2866115074662d, type: 3}
+  - {fileID: 8300000, guid: b8da7f4e8910f4f41be040e69a9fbb80, type: 3}
   volume: 0.5
   pitch: 1.1

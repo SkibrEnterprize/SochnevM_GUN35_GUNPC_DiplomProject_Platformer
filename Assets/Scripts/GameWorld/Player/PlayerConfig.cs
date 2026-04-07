@@ -19,7 +19,7 @@ public class PlayerConfig : ScriptableObject
 
 
     [Header("Gravitatio Configuration")]
-    public float Gravity = 0.5f;
+    public float Gravity = 9.8f;
     [field: SerializeField, Range(0, 1)]
     public float SlowClingFallSpeed = 0.5f;
 

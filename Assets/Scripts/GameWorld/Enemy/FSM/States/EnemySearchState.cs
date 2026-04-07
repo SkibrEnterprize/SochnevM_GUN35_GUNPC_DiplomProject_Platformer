@@ -1,11 +1,11 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class EnemySearchState : IEnemyState
 {
     private readonly Enemy _enemy;
     private readonly Vector3 _targetPos;
 
-    private float _searchTimer = 2.5f; // Âðåìÿ îæèäàíèÿ íà òî÷êå
+    private float _searchTimer = 2.5f; // Ã‚Ã°Ã¥Ã¬Ã¿ Ã®Ã¦Ã¨Ã¤Ã Ã­Ã¨Ã¿ Ã­Ã  Ã²Ã®Ã·ÃªÃ¥
     private bool _hasReachedDestination = false;
 
     public EnemySearchState(Enemy enemy, Vector3 targetPos)
@@ -16,7 +16,7 @@ public class EnemySearchState : IEnemyState
 
     public void Enter()
     {
-        Debug.Log("Âðàã: Ïîòåðÿë öåëü, ïðîâåðÿþ ïîñëåäíþþ ïîçèöèþ...");
+        Debug.Log("Ð’Ñ€Ð°Ð³: ÐŸÐ¾Ñ‚ÐµÑ€ÑÐ» Ñ†ÐµÐ»ÑŒ, Ð¿Ñ€Ð¾Ð²ÐµÑ€ÑÑŽ Ð¿Ð¾ÑÐ»ÐµÐ´Ð½ÑŽÑŽ Ð¿Ð¾Ð·Ð¸Ñ†Ð¸ÑŽ...");
     }
 
     public void Update()
@@ -31,7 +31,7 @@ public class EnemySearchState : IEnemyState
 
         if (!_hasReachedDestination && distanceX > 0.5f)
         {
-            _enemy.RotateTowards(_targetPos); 
+            _enemy.RotateTowards(_targetPos);
             _enemy.Move(_enemy.transform.right);
 
             if (_enemy.IsGroundAhead() && !_enemy.IsObstacleAhead())
@@ -46,13 +46,13 @@ public class EnemySearchState : IEnemyState
         else
         {
             _hasReachedDestination = true;
-            _enemy.Move(Vector3.zero); 
+            _enemy.Move(Vector3.zero);
 
             _searchTimer -= Time.deltaTime;
 
             if (_searchTimer <= 0)
             {
-                // Âðåìÿ âûøëî, èãðîê íå íàéäåí — âîçâðàùàåìñÿ ê ïàòðóëþ
+                // Ð’Ñ€ÐµÐ¼Ñ Ð²Ñ‹ÑˆÐ»Ð¾, Ð¸Ð³Ñ€Ð¾Ðº Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½ â€” Ð²Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÐ¼ÑÑ Ðº Ð¿Ð°Ñ‚Ñ€ÑƒÐ»ÑŽ
                 _enemy.ChangeState(new EnemyPatrolState(_enemy));
             }
         }
@@ -60,6 +60,6 @@ public class EnemySearchState : IEnemyState
 
     public void Exit()
     {
-        Debug.Log("Âðàã: Ïîèñê çàâåðøåí.");
+        Debug.Log("Ð’Ñ€Ð°Ð³: ÐŸÐ¾Ð¸ÑÐº Ð·Ð°Ð²ÐµÑ€ÑˆÐµÐ½.");
     }
 }

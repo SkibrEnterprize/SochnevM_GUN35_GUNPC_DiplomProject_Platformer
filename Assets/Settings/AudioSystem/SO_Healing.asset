@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SO_Healing
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: 34c638d8d99ccfd44a261f13505ab317, type: 3}
+  - {fileID: 8300000, guid: fd384fbeae6d47a4885da9baa2413a69, type: 3}
   volume: 0.5
   pitch: 1.1

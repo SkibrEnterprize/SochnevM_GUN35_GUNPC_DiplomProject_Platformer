@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: SO_Jump
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: ac3cc996109c14de6a801d1809ac5029, type: 3}
-  - {fileID: 8300000, guid: 89c23c0f00aba42daab13371654384b4, type: 3}
+  - {fileID: 8300000, guid: 4e349dc959014a845b9aa317d1c2b7f0, type: 3}
+  - {fileID: 8300000, guid: e21b39e07fa70d746b3ffc2ecb47fe5f, type: 3}
+  - {fileID: 8300000, guid: 2794a6e3440ebaf4aae5fc6ae298bce1, type: 3}
   volume: 0.5
   pitch: 1.1

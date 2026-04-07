@@ -26,6 +26,6 @@ public class HealthChangeObserver : IInitializable, IDisposable
 
     private void HealthUpdatedHandler(int obj)
     {
-        _soundEventBus.Play(obj > 0 ? SoundType.Healing : SoundType.Damage);
+        _soundEventBus.Play(obj > 0 ? SoundType.Healing : SoundType.Hit);
     }
 }

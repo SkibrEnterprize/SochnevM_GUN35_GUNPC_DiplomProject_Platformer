@@ -1,4 +1,4 @@
-using UnityEngine;
+п»їusing UnityEngine;
 
 public class EnemyChaseState : IEnemyState
 {
@@ -12,7 +12,7 @@ public class EnemyChaseState : IEnemyState
         _player = enemy.GetPlayer();
     }
 
-    public void Enter() => Debug.Log("Начинаю погоню! Бегу к цели.");
+    public void Enter() => Debug.Log("РќР°С‡РёРЅР°СЋ РїРѕРіРѕРЅСЋ! Р‘РµРіСѓ Рє С†РµР»Рё.");
 
     public void Update()
     {
@@ -30,7 +30,7 @@ public class EnemyChaseState : IEnemyState
 
         if (distanceY > 1.2f)
         {
-            _enemy.Move(Vector3.zero); // Стоим в Idle
+            _enemy.Move(Vector3.zero);
             return;
         }
 
@@ -61,7 +61,6 @@ public class EnemyChaseState : IEnemyState
         }
         else
         {
-            // Если впереди тупик — стоим и смотрим на игрока
             _enemy.Move(Vector3.zero);
         }
     }

@@ -1,4 +1,4 @@
-using UnityEngine;
+п»їusing UnityEngine;
 
 public class EnemyRangedAttackState : IEnemyState
 {
@@ -13,7 +13,7 @@ public class EnemyRangedAttackState : IEnemyState
 
     public void Enter()
     {
-        Debug.Log("Дальний бой активирован!");
+        Debug.Log("РџРµСЂРµС…РѕРґ РІ РґР°Р»СЊРЅРёР№ Р±РѕР№!");
         _enemy.SetTrigger("RangeAttack");
     }
 
@@ -41,4 +41,5 @@ public class EnemyRangedAttackState : IEnemyState
     }
 
     public void Exit() { }
+    
 }

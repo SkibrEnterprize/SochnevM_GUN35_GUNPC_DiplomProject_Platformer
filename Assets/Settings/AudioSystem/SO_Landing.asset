@@ -10,9 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 705dbf6ebab3e5449bc342fea2a2c7b8, type: 3}
-  m_Name: SO_SideJump
+  m_Name: SO_Landing
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: 4e349dc959014a845b9aa317d1c2b7f0, type: 3}
+  - {fileID: 8300000, guid: eaae8fe8d600e1f459f34aa5757fa3b8, type: 3}
+  - {fileID: 8300000, guid: 85908edd2af11674a97536a4707d9c73, type: 3}
+  - {fileID: 8300000, guid: c6d98b9c515a006478ffa838848f4325, type: 3}
   volume: 0.5
   pitch: 1.1

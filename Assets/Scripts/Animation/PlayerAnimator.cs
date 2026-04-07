@@ -39,12 +39,14 @@ public class PlayerAnimator
     /// </summary>
     public void UpdateMovementStates(float normalizedSpeed, bool isGrounded, bool isWallSliding, bool isFlying)
     {
-        if (_isDead || _isHurt) return;
+        if (_isDead) return;
 
-        _animator.SetFloat(SpeedHash, normalizedSpeed);
+        float finalSpeed = _isHurt ? 0f : normalizedSpeed;
+
+        _animator.SetFloat(SpeedHash, finalSpeed);
         _animator.SetBool(IsGroundedHash, isGrounded);
         _animator.SetBool(IsWallSlidingHash, isWallSliding);
-        _animator.SetBool(IsFlyingHash, isFlying);
+        _animator.SetBool(IsFlyingHash, isFlying);        
     }
 
     public void PlayLanding()
@@ -116,6 +118,7 @@ public class PlayerAnimator
         _isHurt = true;
         await Task.Delay(400);
         _isHurt = false;
+        _animator.ResetTrigger(HitTrigger);
     }
 }
     

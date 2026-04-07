@@ -1,4 +1,4 @@
-using UnityEngine;
+п»їusing UnityEngine;
 
 public class AttackState : IEnemyState
 {
@@ -12,9 +12,9 @@ public class AttackState : IEnemyState
     {
         _timer = _attackWindow;
         _enemy.SetTrigger("Attack");
-        _enemy.Move(Vector3.zero); // Останавливаемся для удара
+        _enemy.Move(Vector3.zero);
         _enemy.PerformAttack();
-        Debug.Log("Враг атакует!");
+        Debug.Log("Р’СЂР°Рі Р°С‚Р°РєСѓРµС‚!");
     }
 
     public void Update()
@@ -28,4 +28,5 @@ public class AttackState : IEnemyState
     }
 
     public void Exit() { }
+   
 }

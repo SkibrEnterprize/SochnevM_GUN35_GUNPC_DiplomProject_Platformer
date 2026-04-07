@@ -149,4 +149,4 @@ MonoBehaviour:
   _speed: 4
   _damage: -10
   _lifetime: 10
-  _knockbackForce: 1
+  _knockbackForce: 5

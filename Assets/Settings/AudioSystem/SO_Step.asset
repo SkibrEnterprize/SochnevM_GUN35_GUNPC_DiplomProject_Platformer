@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: SO_Step
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: 3801dea314808451ca9704bcffd75ef7, type: 3}
-  volume: 0.132
+  - {fileID: 8300000, guid: da8184f18986b1640900bbdc3e1775f3, type: 3}
+  - {fileID: 8300000, guid: 6db3969ab763a5d43b61aaeecd668151, type: 3}
+  - {fileID: 8300000, guid: 8481ea09c1cd9fb44b13c87357b04f75, type: 3}
+  - {fileID: 8300000, guid: a47cd8c1d3f899e46a2754c1fc9b23a2, type: 3}
+  - {fileID: 8300000, guid: 000281cc363e8574196ee19213d02d79, type: 3}
+  volume: 0.5
   pitch: 1.1

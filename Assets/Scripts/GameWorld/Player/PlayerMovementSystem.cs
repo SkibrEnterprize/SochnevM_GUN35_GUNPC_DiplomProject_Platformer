@@ -128,7 +128,6 @@ namespace Player
             bool grounded = IsGrounded();
             bool wallSliding = !grounded && IsWallClinging() && _velocity.y < 0;
 
-            // Расчет нормализованной скорости (нужен нам для частоты шагов)
             float walkSpeed = _playerConfig.MoveSpeedGround;
             float sprintSpeed = walkSpeed * _playerConfig.SprintSpeedMultiplayer;
             float normalizedSpeed;
@@ -143,26 +142,22 @@ namespace Player
                 normalizedSpeed = 1f + Mathf.Clamp01(runProgress);
             }
 
-            // --- ЛОГИКА ЗЕМЛИ, ПРИЗЕМЛЕНИЯ И ШАГОВ ---
             if (grounded)
             {
-                // 1. Звук и анимация приземления
                 if (_airTime > _landThreshold)
                 {
                     _playerAnimator.PlayLanding();
-                    _soundBus.Play(SoundType.Land); // Проигрываем звук приземления
+                    _soundBus.Play(SoundType.Landing, _controller.transform.position); // Проигрываем звук приземления
                 }
                 _airTime = 0;
 
-                // 2. Звук шагов
                 if (currentHorizontalSpeed > 0.1f)
                 {
-                    // Умножаем на normalizedSpeed, чтобы при беге шаги звучали чаще
                     _stepTimer -= Time.deltaTime * normalizedSpeed;
 
                     if (_stepTimer <= 0)
                     {
-                        _soundBus.Play(SoundType.Step); // Проигрываем звук шага
+                        _soundBus.Play(SoundType.Step, _controller.transform.position); // Проигрываем звук шага
                         _stepTimer = _stepInterval;     // Сброс таймера
                     }
                 }
@@ -176,50 +171,8 @@ namespace Player
                 _airTime += Time.deltaTime;
                 _stepTimer = 0; // Не шагаем в воздухе
             }
-            // -------------------------------------------
 
-            // Передаем данные в аниматор
             _playerAnimator.UpdateMovementStates(normalizedSpeed, grounded, wallSliding, _flyPressed);
-
-            //float currentHorizontalSpeed = Mathf.Abs(_velocity.x);
-            //bool grounded = IsGrounded();
-            //bool wallSliding = !grounded && IsWallClinging() && _velocity.y < 0;
-
-            //// --- НОВАЯ ЛОГИКА ФИЛЬТРАЦИИ ПРИЗЕМЛЕНИЯ ---
-            //if (grounded)
-            //{
-            //    // Если мы коснулись земли и были в воздухе достаточно долго (не кочка)
-            //    if (_airTime > _landThreshold)
-            //    {
-            //        _playerAnimator.PlayLanding(); // Вызываем анимацию приземления
-            //    }
-            //    _airTime = 0; // Сбрасываем таймер на земле
-            //}
-            //else
-            //{
-            //    _airTime += Time.deltaTime; // Копим время, пока мы в воздухе
-            //}
-            //// -------------------------------------------
-
-            //// Нормализация скорости для Blend Tree (твой код без изменений)
-            //float walkSpeed = _playerConfig.MoveSpeedGround;
-            //float sprintSpeed = walkSpeed * _playerConfig.SprintSpeedMultiplayer;
-            //float normalizedSpeed;
-
-            //if (currentHorizontalSpeed <= walkSpeed)
-            //{
-            //    normalizedSpeed = currentHorizontalSpeed / walkSpeed;
-            //}
-            //else
-            //{
-            //    float runProgress = (currentHorizontalSpeed - walkSpeed) / (sprintSpeed - walkSpeed);
-            //    normalizedSpeed = 1f + Mathf.Clamp01(runProgress);
-            //}
-
-            //// Передаем отфильтрованные данные в аниматор
-            //_playerAnimator.UpdateMovementStates(normalizedSpeed, grounded, wallSliding, _flyPressed);
-
-
         }
 
         private void OnJumpStarted(InputAction.CallbackContext context)
@@ -269,7 +222,7 @@ namespace Player
             _velocity.y += Mathf.Sqrt(2 * effectiveJumpForce);
 
             _jumpCount++;
-            _soundBus.Play(SoundType.Jump);
+            _soundBus.Play(SoundType.Jump, _controller.transform.position);
 
         }
 
@@ -292,7 +245,7 @@ namespace Player
             _velocity.y = _playerConfig.WallJumpForceY;
 
             _jumpCount++;
-            _soundBus.Play(SoundType.WallJump);
+            _soundBus.Play(SoundType.WallJump, _controller.transform.position);
         }
 
         public bool IsGrounded()
@@ -350,67 +303,158 @@ namespace Player
         }
         private void ApplyMovement()
         {
-            Vector2 effectiveInput = IsMovementFrozen ? Vector2.zero : _moveInput;
+            //Vector2 effectiveInput = IsMovementFrozen ? Vector2.zero : _moveInput;
 
+            //float walkSpeed = _playerConfig.MoveSpeedGround;
+            //float sprintSpeed = walkSpeed * _playerConfig.SprintSpeedMultiplayer;
+            //float speedLimit = IsGrounded() ? (_isSprinting ? sprintSpeed : walkSpeed) : _playerConfig.MoveSpeedAir;
+
+            //float targetMaxSpeed = effectiveInput.x * speedLimit * _externalSpeedModifier;
+
+            //if (!IsMovementFrozen)
+            //{
+            //    bool isTryingToMove = Mathf.Abs(effectiveInput.x) > 0.01f;
+            //    float currentForce = isTryingToMove ? (_acceleration * _currentTraction) : (_deceleration * _currentTraction);
+
+            //    if (!isTryingToMove && _externalSpeedModifier < 0.9f) currentForce *= 2f;
+
+            //    _velocity.x = Mathf.MoveTowards(_velocity.x, targetMaxSpeed, currentForce * Time.fixedDeltaTime);
+
+            //    if ((IsWallAtSide(-1) && _velocity.x < 0) || (IsWallAtSide(1) && _velocity.x > 0))
+            //    {
+            //        _velocity.x = 0;
+            //    }
+
+            //    if (!isTryingToMove && Mathf.Abs(_velocity.x) < 0.1f)
+            //    {
+            //        _velocity.x = 0f;
+            //    }
+            //}
+            //else
+            //{
+            //    Debug.Log($"FROZEN! Velocity X is: {_velocity.x}");
+            //}
+
+            //if (IsWallClinging() && _velocity.y < _playerConfig.WallSlideSpeed)
+            //{
+            //    _velocity.y = Mathf.Lerp(_velocity.y, _playerConfig.WallSlideSpeed, _playerConfig.SlowClingFallSpeed);
+            //}
+            //else if (_flyPressed && _velocity.y < 0 && !IsMovementFrozen)
+            //{
+            //    _velocity.y = Mathf.Lerp(_velocity.y - _flyAdvancedSpeed, -_playerConfig.JumpHoldFallAirSpeed, _playerConfig.SlowFallAirSpeed);
+
+            //    _velocity.x += effectiveInput.x * _moveAdvancedSpeed * Time.fixedDeltaTime;
+            //}
+            //else
+            //{
+            //    _velocity.y -= _playerConfig.Gravity * Time.fixedDeltaTime;
+            //}
+
+            //if (IsWallAtHead() && _velocity.y > 0)
+            //{
+            //    _velocity.y = -0.1f;
+            //}
+
+            //// затухание скорости по X
+            //if (IsMovementFrozen || !IsGrounded())
+            //{                
+            //    _velocity.x = Mathf.Lerp(_velocity.x, 0, Time.fixedDeltaTime * 2f);
+            //}
+
+            //Vector3 move = new Vector3(_velocity.x, _velocity.y, 0) * Time.fixedDeltaTime;
+
+            //CollisionFlags flags = _controller.Move(move);
+
+            //if ((flags & CollisionFlags.Above) != 0)
+            //{
+            //    if (_velocity.y > 0)
+            //    {
+            //        _velocity.y = -0.1f; // Гасим вертикальную инерцию
+            //    }
+            //}
+
+            //if ((flags & CollisionFlags.Sides) != 0)
+            //{
+            //    _velocity.x = 0;
+            //}
+
+            //if ((flags & CollisionFlags.Below) != 0)
+            //{
+            //    _jumpCount = 0;
+            //    if (_velocity.y < 0)
+            //    {
+            //        _velocity.y = -1f; // "прижимное" усилие
+            //    }
+
+            //}
+            // 1. Считаем целевую скорость от кнопок
+            Vector2 effectiveInput = IsMovementFrozen ? Vector2.zero : _moveInput;
             float walkSpeed = _playerConfig.MoveSpeedGround;
             float sprintSpeed = walkSpeed * _playerConfig.SprintSpeedMultiplayer;
             float speedLimit = IsGrounded() ? (_isSprinting ? sprintSpeed : walkSpeed) : _playerConfig.MoveSpeedAir;
 
             float targetMaxSpeed = effectiveInput.x * speedLimit * _externalSpeedModifier;
 
-            if (!IsMovementFrozen)
+            // 2. Горизонтальная логика (X)
+            bool isTryingToMove = Mathf.Abs(effectiveInput.x) > 0.01f;
+
+            // Если управление заблокировано, используем пониженное трение (сопротивление воздуха)
+            float accelRate = isTryingToMove ? (_acceleration * _currentTraction) : (_deceleration * _currentTraction);
+
+            // Если мы в воздухе или заморожены, гасим инерцию медленнее (воздушный drag)
+            if (!IsGrounded() || IsMovementFrozen)
             {
-                bool isTryingToMove = Mathf.Abs(effectiveInput.x) > 0.01f;
-                float currentForce = isTryingToMove ? (_acceleration * _currentTraction) : (_deceleration * _currentTraction);
-
-                if (!isTryingToMove && _externalSpeedModifier < 0.9f) currentForce *= 2f;
-
-                _velocity.x = Mathf.MoveTowards(_velocity.x, targetMaxSpeed, currentForce * Time.fixedDeltaTime);
-
-                if ((IsWallAtSide(-1) && _velocity.x < 0) || (IsWallAtSide(1) && _velocity.x > 0))
-                {
-                    _velocity.x = 0;
-                }
-
-                if (!isTryingToMove && Mathf.Abs(_velocity.x) < 0.1f)
-                {
-                    _velocity.x = 0f;
-                }
-            }
-            else
-            {
-                Debug.Log($"FROZEN! Velocity X is: {_velocity.x}");
+                accelRate = _deceleration * 0.5f;
             }
 
+            // Плавно приближаем текущую скорость к целевой
+            _velocity.x = Mathf.MoveTowards(_velocity.x, targetMaxSpeed, accelRate * Time.fixedDeltaTime);
+
+            // Столкновения со стенами
+            if ((IsWallAtSide(-1) && _velocity.x < 0) || (IsWallAtSide(1) && _velocity.x > 0))
+            {
+                _velocity.x = 0;
+            }
+
+            // 3. Вертикальная логика (Y)
             if (IsWallClinging() && _velocity.y < _playerConfig.WallSlideSpeed)
             {
                 _velocity.y = Mathf.Lerp(_velocity.y, _playerConfig.WallSlideSpeed, _playerConfig.SlowClingFallSpeed);
             }
             else if (_flyPressed && _velocity.y < 0 && !IsMovementFrozen)
             {
+                // Полет (плавное падение)
                 _velocity.y = Mathf.Lerp(_velocity.y - _flyAdvancedSpeed, -_playerConfig.JumpHoldFallAirSpeed, _playerConfig.SlowFallAirSpeed);
-
+                // Добавляем импульс по X при полете
                 _velocity.x += effectiveInput.x * _moveAdvancedSpeed * Time.fixedDeltaTime;
             }
             else
             {
+                // Обычная гравитация
                 _velocity.y -= _playerConfig.Gravity * Time.fixedDeltaTime;
             }
 
+            // Удар головой об потолок
             if (IsWallAtHead() && _velocity.y > 0)
             {
                 _velocity.y = -0.1f;
             }
 
-            Vector3 move = new Vector3(_velocity.x, _velocity.y, 0) * Time.fixedDeltaTime;
-            if (_controller != null && _controller.enabled)
-            {
-                _controller.Move(move);
-            }
+            // 4. Применяем движение
+            Vector3 move = _velocity * Time.fixedDeltaTime;
+            CollisionFlags flags = _controller.Move(move);
 
-            if (_controller.isGrounded && _velocity.y < -0.1f)
+            // Обработка столкновений через флаги
+            if ((flags & CollisionFlags.Above) != 0 && _velocity.y > 0)
+                _velocity.y = -0.1f;
+
+            if ((flags & CollisionFlags.Sides) != 0)
+                _velocity.x = 0;
+
+            if ((flags & CollisionFlags.Below) != 0)
             {
-                _velocity.y = 0f;
+                _jumpCount = 0;
+                if (_velocity.y < 0) _velocity.y = -1f; // Прижим к земле
             }
         }
         private void ApplyRotation()
@@ -476,7 +520,9 @@ namespace Player
 
         public void SetMovementLock(bool isLocked)
         {
-            IsMovementFrozen = isLocked;
+            
+               IsMovementFrozen = isLocked;
+            
         }
         public void StopImmediately()
         {
@@ -510,13 +556,18 @@ namespace Player
 
         public async void ApplyKnockback(Vector3 sourcePosition, float force)
         {
-            _controller.Move(Vector3.up * 0.1f);
-            float diffX = _controller.transform.position.x - sourcePosition.x;
-            float direction = Mathf.Sign(diffX);
-            _velocity.x = direction * force;
-            _velocity.y = force * 0.8f;
+            //IsMovementFrozen = true;
 
-            await Task.Delay(250);
+            float diffX = _controller.transform.position.x - sourcePosition.x;
+            float direction = (diffX == 0) ? 1 : Mathf.Sign(diffX);
+
+            _velocity.x = direction * force;
+            _velocity.y = force * 0.6f; // Подброс
+
+            await System.Threading.Tasks.Task.Delay(250);
+
+            //IsMovementFrozen = false;
+            
         }
     }
 }

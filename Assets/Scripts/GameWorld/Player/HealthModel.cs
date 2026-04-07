@@ -1,15 +1,18 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 using Zenject;
 
 namespace Player
 {
     public sealed class HealthModel : IInitializable, IDisposable, ITickable, IHealthAffected
     {
+        private readonly CharacterController _controller;
         private IHealthEventBus _healthEventBus;
         private readonly PlayerMovementSystem _movementComponent;
         private readonly PlayerConfig _playerConfig;
         private readonly PlayerAnimator _playerAnimator;
+        private readonly SoundEventBus _soundBus;
         private int _health;
 
         private bool _isWaitingForDeathLanding;
@@ -32,12 +35,16 @@ namespace Player
         public HealthModel(PlayerConfig playerConfig,
             PlayerMovementSystem movementComponent,
             IHealthEventBus healthEventBus,
-            PlayerAnimator playerAnimator)
+            PlayerAnimator playerAnimator,
+            SoundEventBus soundBus,
+            CharacterController controller)
         {
             _playerConfig = playerConfig;
             _movementComponent = movementComponent;
             _healthEventBus = healthEventBus;
             _playerAnimator = playerAnimator;
+            _soundBus = soundBus;
+            _controller = controller;
         }
 
         public void Initialize()
@@ -57,27 +64,67 @@ namespace Player
 
                 Debug.Log($"Health = {Health} (Fall damage: {fallDistance}m)");
             }
-        }       
+        }
 
         public void ApplyHealthChange(int delta, Vector3 sourcePosition = default,
-                              DamageType type = DamageType.Default, float knockbackForce = 0f)
+                      DamageType type = DamageType.Default, float knockbackForce = 0f)
         {
-            Health += delta;
-
             if (delta < 0)
             {
-                bool shouldAnimate = (type != DamageType.Fall);
-                _playerAnimator.PlayHit(shouldAnimate);
+                // 1. Проверяем, стоит ли игрок на земле (нужно вызвать метод из контроллера)
+                bool isGrounded = _movementComponent.IsGrounded();
 
+                // 2. Решаем, играть ли анимацию тела (Hit Trigger)
+                // Не играем, если это урон от падения ИЛИ если игрок в воздухе
+                bool playFullAnimation = (type != DamageType.Fall) && isGrounded;
+
+                // Вызываем PlayHit. Внутри него FlashRoutine сработает всегда, 
+                // а анимация и блокировка _isHurt — только если playFullAnimation == true.
+                _playerAnimator.PlayHit(playFullAnimation);
+
+                TakeDamage(delta);
+                _soundBus.Play(SoundType.Hit, _controller.transform.position);
+
+                // 3. Применяем отброс (теперь он работает и в воздухе благодаря правкам выше)
                 if (sourcePosition != default && type != DamageType.Fall)
                 {
                     _movementComponent.ApplyKnockback(sourcePosition, knockbackForce);
                 }
-
-                _healthEventBus.HealthUpdated(delta);
             }
+            else if (delta > 0)
+            {
+                TakeHealing(delta);
+                _soundBus.Play(SoundType.Healing, _controller.transform.position);
+            }
+
+            _healthEventBus.HealthUpdated(delta);
             CheckHealthValue();
         }
+        //public void ApplyHealthChange(int delta, Vector3 sourcePosition = default,
+        //                      DamageType type = DamageType.Default, float knockbackForce = 0f)
+        //{
+        //    //Health += delta;
+
+        //    if (delta < 0)
+        //    {
+        //        bool shouldAnimate = (type != DamageType.Fall);
+        //        _playerAnimator.PlayHit(shouldAnimate);
+        //        TakeDamage(delta);
+        //        _soundBus.Play(SoundType.Hit, _controller.transform.position);
+        //        if (sourcePosition != default && type != DamageType.Fall)
+        //        {
+        //            _movementComponent.ApplyKnockback(sourcePosition, knockbackForce);
+        //        }
+        //    }
+        //    else if (delta > 0)
+        //    {
+        //        TakeHealing(delta); 
+        //        _soundBus.Play(SoundType.Healing, _controller.transform.position);
+        //    }
+        //        _healthEventBus.HealthUpdated(delta);
+
+        //    CheckHealthValue();
+        //}
 
 
 
@@ -93,7 +140,7 @@ namespace Player
                 if (!_movementComponent.IsGrounded())
                 {
                     _isWaitingForDeathLanding = true;
-                    _movementComponent.SetMovementLock(true); 
+                    _movementComponent.SetMovementLock(true);
                     return;
                 }
                 _healthEventBus.HealthIsOver();
@@ -104,7 +151,7 @@ namespace Player
             _isWaitingForDeathLanding = false;
             _healthEventBus.HealthIsOver();
         }
-        
+
         public void HealthAllRepair()
         {
             Health = _playerConfig.MaxHealth;
