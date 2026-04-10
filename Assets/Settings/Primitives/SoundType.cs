@@ -20,5 +20,8 @@ public enum SoundType
     EnemyHit,
     EnemyDeath,
     Explode,
-    FireBall    
+    FireBall,
+    Spring,
+    UpScale,
+    DownScale
 }

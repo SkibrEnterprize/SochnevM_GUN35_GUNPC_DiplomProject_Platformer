@@ -127,6 +127,7 @@ namespace Player
             // VFX...
             _vfxBus.Play(vfxType,
                 vfxPoint.position,
+                default,
                 vfxPoint.rotation, 
                 _controller.gameObject.transform);
 

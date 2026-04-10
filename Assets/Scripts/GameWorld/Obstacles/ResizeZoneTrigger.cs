@@ -6,7 +6,7 @@ using Player;
 
 public class ResizeZoneTrigger : MonoBehaviour
 {
-    [Range(0.1f, 2f)]
+    [Range(0.1f, 1f)]
     public float TargetObjectScale = 1.0f;
     public bool ResetToDefaultScale;
 
@@ -50,9 +50,10 @@ public class ResizeZoneTrigger : MonoBehaviour
 
             controller.center = new Vector3(0, newHeight / 2f, 0);
 
-            visual.localPosition = new Vector3(0, newHeight / 2f, 0);
+            visual.localPosition = new Vector3(0, 0, 0);
 
         }, finalScale, _duration).SetTarget(controller).SetEase(Ease.Linear);
+        
     }
 }
 

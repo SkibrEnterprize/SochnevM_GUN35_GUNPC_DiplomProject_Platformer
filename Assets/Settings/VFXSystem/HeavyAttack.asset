@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 867f67bb11b32c54f8a22aca47aa2de5, type: 3}
   m_Name: HeavyAttack
   m_EditorClassIdentifier: 
-  effectPrefab: {fileID: 1000011113172478, guid: 4b9e1e5074422484cb2d2aca777ef525, type: 3}
+  effectPrefab: {fileID: 1000014171092238, guid: a6ec862180486724b9f49060502edbf7, type: 3}
   lifetime: 2
   offset: {x: 0, y: 0, z: 0}
   followPlayer: 0

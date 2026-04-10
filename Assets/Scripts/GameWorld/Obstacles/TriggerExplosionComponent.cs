@@ -59,7 +59,6 @@ public class TriggerExplosionComponent : MonoBehaviour, IHealthAffected
         }
     }
 
-
     private void OnTriggerEnter(Collider other)
     {
         if (!_isActivatedOfContact) return;

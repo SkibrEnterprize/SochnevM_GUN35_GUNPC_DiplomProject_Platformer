@@ -6,5 +6,6 @@ public enum VFXType
     HeavyHit,
     JumpDust,
     Explode,
-    FlameUp
+    FlameUp,
+    Healing
 }

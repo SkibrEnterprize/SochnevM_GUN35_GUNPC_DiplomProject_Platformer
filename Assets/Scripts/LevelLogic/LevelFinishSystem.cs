@@ -13,7 +13,6 @@ public class LevelFinishSystem
     public void EndPointReached()
     {
         _finishCount++;
-        // Проверяем достижение цели из нашего ScriptableObject
         if (_finishCount >= _config.CollectObjectsForGoal)
             _levelEventBus.FinishLevel();
         else

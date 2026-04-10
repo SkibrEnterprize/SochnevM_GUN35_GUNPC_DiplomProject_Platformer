@@ -362,9 +362,9 @@ MonoBehaviour:
   _lostRange: 20
   _closeAwarenessRange: 1.9
   _attackRange: 8.13
-  _obstacleLayer:
+  _layersForVision:
     serializedVersion: 2
-    m_Bits: 576
+    m_Bits: 8
   _viewAngle: 128.9
   _enemyTypeAttack: 1
   _health: 10
@@ -373,7 +373,8 @@ MonoBehaviour:
   _attackMask:
     serializedVersion: 2
     m_Bits: 8
-  _projectilePrefab: {fileID: 2463057493673292024, guid: ce15e5206eb2fa049bc77f6780f71b4d, type: 3}
+  _projectilePrefab: {fileID: 1959240556077027061, guid: 7833b2cb53a109d45828165e21e6370c, type: 3}
+  _baseStepInterval: 0.5
   _showGizmos: 1
   _showDetectRadius: 1
   _showAttackRadius: 1

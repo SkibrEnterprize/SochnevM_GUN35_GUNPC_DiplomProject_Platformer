@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3626841040251820438}
   - component: {fileID: 8432362224516444533}
   - component: {fileID: 6517378809573645198}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CheckPoint_circle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48,6 +48,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isActivate: 0
+  _targetIntensity: 5
+  _fadeDuration: 1.5
 --- !u!65 &6517378809573645198
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -67,8 +69,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4.624634, y: 0.97752213, z: 4.737273}
-  m_Center: {x: -0.0045318604, y: -0.011238933, z: 0.27076197}
+  m_Size: {x: 4.624634, y: 0.7169447, z: 4.737273}
+  m_Center: {x: -0.0045318604, y: 0.35389757, z: 0.27076197}
 --- !u!1 &7372378480156562242
 GameObject:
   m_ObjectHideFlags: 0
@@ -81,7 +83,7 @@ GameObject:
   - component: {fileID: 4496551810717867969}
   - component: {fileID: 3926683644454204096}
   - component: {fileID: 6113700243436560631}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: View
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -186,7 +188,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3872396230195538184}
   - component: {fileID: 2903253743324959829}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Spot Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -215,18 +217,18 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8084904471530667181}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_Range: 30
-  m_SpotAngle: 64.6
-  m_InnerSpotAngle: 21.80208
+  m_SpotAngle: 50.7
+  m_InnerSpotAngle: 21.5
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 0
+    m_Type: 1
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -259,7 +261,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 2
+  m_Lightmapping: 1
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1

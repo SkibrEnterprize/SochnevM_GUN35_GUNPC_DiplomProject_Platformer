@@ -258,7 +258,7 @@ public class Enemy : MonoBehaviour
 
                 Vector3 vfxPosition = _combatVFXPoint.position;
                 Quaternion vfxRotation = _combatVFXPoint.rotation * Quaternion.Euler(25, -90, 45);
-                _vfxBus.Play(VFXType.Attack, vfxPosition, vfxRotation, _controller.gameObject.transform);
+                _vfxBus.Play(VFXType.Attack, vfxPosition, default, vfxRotation, _controller.gameObject.transform);
                 _soundBus.Play(SoundType.EnemyAttack);
             }
         }

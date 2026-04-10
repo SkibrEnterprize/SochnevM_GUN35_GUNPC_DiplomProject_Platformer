@@ -311,6 +311,8 @@ namespace Player
         }
         private void ApplyMovement()
         {
+
+
             if (_controller == null || !_controller.enabled || !_controller.gameObject.activeInHierarchy)
                 return;
             bool isGrounded = IsGrounded();
@@ -356,11 +358,17 @@ namespace Player
 
             if (IsWallClinging() && _velocity.y < _playerConfig.WallSlideSpeed)
             {
-                _velocity.y = Mathf.Lerp(_velocity.y, _playerConfig.WallSlideSpeed, _playerConfig.SlowClingFallSpeed);
+                _velocity.y = Mathf.Lerp(_velocity.y, 
+                    _playerConfig.WallSlideSpeed, 
+                    _playerConfig.SlowClingFallSpeed);
             }
-            else if (_flyPressed && _velocity.y < 0 && !IsMovementFrozen)
+
+            else if (_flyPressed && !IsMovementFrozen /*&& (_velocity.y < 0 || _flyAdvancedSpeed > 0)*/)
+            //else if (_flyPressed && _velocity.y < 0 && !IsMovementFrozen)
             {
-                _velocity.y = Mathf.Lerp(_velocity.y - _flyAdvancedSpeed, -_playerConfig.JumpHoldFallAirSpeed, _playerConfig.SlowFallAirSpeed);
+                _velocity.y = Mathf.Lerp(_velocity.y - _flyAdvancedSpeed, 
+                    -_playerConfig.JumpHoldFallAirSpeed, 
+                    _playerConfig.SlowFallAirSpeed);
                 _velocity.x += effectiveInput.x * _moveAdvancedSpeed * Time.fixedDeltaTime;
             }
             else
@@ -386,7 +394,7 @@ namespace Player
             {
                 _jumpCount = 0;
                 if (_velocity.y < 0) _velocity.y = -1f; // Прижим к земле, чтобы не "дрожать" на склонах
-            }            
+            }
         }
         private void ApplyRotation()
         {
@@ -418,7 +426,6 @@ namespace Player
 
                         OnFallDistanceEvent?.Invoke(_fallDistance);
 
-                        //Debug.Log($"Fall Distance Success: {_fallDistance}");
                     }
                     _isFalling = false;
                 }

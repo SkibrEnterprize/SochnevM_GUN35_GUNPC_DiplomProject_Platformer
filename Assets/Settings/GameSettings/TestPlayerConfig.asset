@@ -22,9 +22,9 @@ MonoBehaviour:
   Gravity: 40
   SlowClingFallSpeed: 0.5
   JumpForce: 140
-  WallJumpForceX: 20
-  WallJumpForceY: 20
-  WallHorizontalPush: 50
+  WallJumpForceX: 13
+  WallJumpForceY: 13
+  WallHorizontalPush: 0
   WallSlideSpeed: -2
   LayerMaskForWall:
     serializedVersion: 2
@@ -33,7 +33,7 @@ MonoBehaviour:
   SlowFallAirSpeed: 0.5
   JumpHoldFallAirSpeed: 2.51
   ForceAtFlyByTrigger: 16.5
-  MaxHealth: 30
+  MaxHealth: 100
   CriticalHealth: 20
   DamageOfFall: 10
   MinHeightForDamage: 8
