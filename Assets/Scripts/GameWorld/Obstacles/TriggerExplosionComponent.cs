@@ -6,6 +6,9 @@ using Zenject;
 
 public class TriggerExplosionComponent : MonoBehaviour, IHealthAffected
 {
+    [Header("General")]
+    [SerializeField] private bool _isActivatedOfContact = true;
+
     [Header("Config Delay for Explode")]
     [SerializeField] private float _activationDelay = 1.5f;
     [SerializeField] private Color _warningColor = Color.red;
@@ -52,19 +55,25 @@ public class TriggerExplosionComponent : MonoBehaviour, IHealthAffected
     {
         if (delta < 0 && !_isTriggered)
         {
-            ActivateTrapAsync().Forget();
+            ActivateExplosionWithDelay();
         }
     }
+
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!_isActivatedOfContact) return;
         if (!_isTriggered && other.TryGetComponent<CharacterController>(out _))
         {
-            _vfxBus.Play(VFXType.FlameUp, transform.position);
-            ActivateTrapAsync().Forget();
+            ActivateExplosionWithDelay();
         }
     }
 
+    private void ActivateExplosionWithDelay()
+    {
+        _vfxBus.Play(VFXType.FlameUp, transform.position);
+        ActivateTrapAsync().Forget();
+    }
     private async UniTaskVoid ActivateTrapAsync()
     {
         _isTriggered = true;
