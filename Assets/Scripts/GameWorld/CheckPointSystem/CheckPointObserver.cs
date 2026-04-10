@@ -30,10 +30,12 @@ public class CheckPointObserver : IInitializable, IDisposable
     {
         _position = position;
         _soundBus.Play(SoundType.CheckPointReached);
+        Debug.Log($"CheckPoint!!! {position.x} + {position.y}");
     }
     private void MoveToCheckPoint()
     {
         _movementComponent.MoveToCheckPoint(_position+_offset);
+        Debug.Log("CheckPoint Move!!!");
         _soundBus.Play(SoundType.CheckPointUse);
     }
 

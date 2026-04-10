@@ -75,15 +75,15 @@ public class PlayerAnimator
 
     public void PlayDeath()
     {
-        if (_isDead) return;
+        //if (_isDead) return;
 
         _isDead = true;
+        _animator.ResetTrigger(HitTrigger);
+        _animator.ResetTrigger(AttackTrigger);
         _animator.SetBool(IsDeadBool, true);
         _animator.SetFloat(SpeedHash, 0f);
         _animator.SetTrigger(DieTrigger);
 
-        _animator.ResetTrigger(HitTrigger);
-        _animator.ResetTrigger(AttackTrigger);
     }
 
     public void ResetToIdle()
@@ -96,7 +96,6 @@ public class PlayerAnimator
 
     private async Task FlashRoutine()
     {
-        Debug.Log("Flash Started");
         if (_meshRenderer == null) return;
 
         _meshRenderer.GetPropertyBlock(_propBlock);
@@ -120,5 +119,7 @@ public class PlayerAnimator
         _isHurt = false;
         _animator.ResetTrigger(HitTrigger);
     }
+
+
 }
     

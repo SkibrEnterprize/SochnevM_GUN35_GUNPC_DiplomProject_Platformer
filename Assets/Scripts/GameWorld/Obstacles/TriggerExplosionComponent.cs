@@ -60,6 +60,7 @@ public class TriggerExplosionComponent : MonoBehaviour, IHealthAffected
     {
         if (!_isTriggered && other.TryGetComponent<CharacterController>(out _))
         {
+            _vfxBus.Play(VFXType.FlameUp, transform.position);
             ActivateTrapAsync().Forget();
         }
     }
@@ -67,7 +68,7 @@ public class TriggerExplosionComponent : MonoBehaviour, IHealthAffected
     private async UniTaskVoid ActivateTrapAsync()
     {
         _isTriggered = true;
-        var ct = this.GetCancellationTokenOnDestroy();             
+        var ct = this.GetCancellationTokenOnDestroy();
 
         float elapsed = 0;
         while (elapsed < _activationDelay)
@@ -84,7 +85,7 @@ public class TriggerExplosionComponent : MonoBehaviour, IHealthAffected
         }
 
         Explode();
-           
+
 
         if (_renderer != null)
             _renderer.material.color = _originalColor;
@@ -119,7 +120,7 @@ public class TriggerExplosionComponent : MonoBehaviour, IHealthAffected
                     health.ApplyHealthChange(-_damage);
                 }
             }
-            
+
         }
     }
 
@@ -131,7 +132,7 @@ public class TriggerExplosionComponent : MonoBehaviour, IHealthAffected
         direction.y = _knockupForce;
 
         _movementComponent.ApplyImpulse(direction * _knockbackForce);
-        _healthModel.ApplyHealthChange(-_damage, 
+        _healthModel.ApplyHealthChange(-_damage,
             transform.position,
             DamageType.Default,
             _knockbackForce);

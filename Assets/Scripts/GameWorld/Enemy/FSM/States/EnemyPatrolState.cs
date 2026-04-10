@@ -8,7 +8,7 @@ public class EnemyPatrolState : IEnemyState
 
     public EnemyPatrolState(Enemy enemy) => _enemy = enemy;
 
-    public void Enter() => Debug.Log("Патрулирование начато");
+    public void Enter() {}
     public void Exit() { }
 
     public void Update()
@@ -43,12 +43,10 @@ public class EnemyPatrolState : IEnemyState
             if (_enemy.EnemyTypeAttack == EnemyTypeAttack.CloseAttack)
             {
                 _enemy.ChangeState(new EnemyChaseState(_enemy));
-                Debug.Log("Игрока вижу, не могу достать - поджидаю...");
             }
             else if (_enemy.EnemyTypeAttack == EnemyTypeAttack.RangeAttack)
             {
                 _enemy.ChangeState(new EnemyRangedAttackState(_enemy));
-                Debug.Log("Переход в Дальнюю атаку");
             }
         }
     }

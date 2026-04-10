@@ -3,6 +3,7 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 using Zenject;
 
 namespace Player
@@ -112,6 +113,7 @@ namespace Player
 
         public void FixedTick()
         {
+            
             ApplyMovement();
             UpdateFallState();
         }
@@ -309,6 +311,8 @@ namespace Player
         }
         private void ApplyMovement()
         {
+            if (_controller == null || !_controller.enabled || !_controller.gameObject.activeInHierarchy)
+                return;
             bool isGrounded = IsGrounded();
             Vector2 effectiveInput = IsMovementFrozen ? Vector2.zero : _moveInput;
             bool isTryingToMove = Mathf.Abs(effectiveInput.x) > 0.01f;
@@ -414,7 +418,7 @@ namespace Player
 
                         OnFallDistanceEvent?.Invoke(_fallDistance);
 
-                        Debug.Log($"Fall Distance Success: {_fallDistance}");
+                        //Debug.Log($"Fall Distance Success: {_fallDistance}");
                     }
                     _isFalling = false;
                 }
@@ -459,10 +463,12 @@ namespace Player
         }
 
 
-        public void MoveToCheckPoint(Vector3 positoin)
+        public void MoveToCheckPoint(Vector3 position)
         {
-            _controller.transform.position = positoin;
+
+            _controller.transform.position = position;
             _controller.transform.rotation = _faceRight;
+            Physics.SyncTransforms();
         }
 
         public void ApplyImpulse(Vector3 impulse)
@@ -483,7 +489,7 @@ namespace Player
 
         public async void ApplyKnockback(Vector3 sourcePosition, float force)
         {
-            //IsMovementFrozen = true;
+            IsMovementFrozen = true;
 
             float diffX = _controller.transform.position.x - sourcePosition.x;
             float direction = (diffX == 0) ? 1 : Mathf.Sign(diffX);
@@ -493,7 +499,8 @@ namespace Player
 
             await System.Threading.Tasks.Task.Delay(250);
 
-            //IsMovementFrozen = false;
+            if (_controller == null || !_controller.enabled) return;
+            IsMovementFrozen = false;
             
         }
     }

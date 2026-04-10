@@ -66,6 +66,7 @@ namespace Player
             }
         }
 
+
         public void ApplyHealthChange(int delta, Vector3 sourcePosition = default,
                       DamageType type = DamageType.Default, float knockbackForce = 0f)
         {
@@ -94,7 +95,7 @@ namespace Player
             _healthEventBus.HealthUpdated(delta);
             CheckHealthValue();
         }
-       
+
         private void TakeDamage(int value) => Health += value;
         private void TakeHealing(int value) => Health += value;
 

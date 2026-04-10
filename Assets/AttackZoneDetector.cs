@@ -10,7 +10,6 @@ public class AttackZoneDetector : MonoBehaviour
         if (other.TryGetComponent<IHealthAffected>(out var target))
         {
             _targetsInRange.Add(target);
-            Debug.Log($"Цель {other.name} добавлена в зону атаки");
         }
     }
 

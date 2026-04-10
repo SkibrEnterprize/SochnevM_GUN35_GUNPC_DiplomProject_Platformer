@@ -19,3 +19,5 @@ MonoBehaviour:
     vfxEvent: {fileID: 11400000, guid: 7fb5b6940e9a96f48a353a631088308a, type: 2}
   - type: 5
     vfxEvent: {fileID: 11400000, guid: 13c45b087f8adb740a049f105a3911d9, type: 2}
+  - type: 6
+    vfxEvent: {fileID: 11400000, guid: d2c9ae92ef830f94f99a969698a09d1b, type: 2}

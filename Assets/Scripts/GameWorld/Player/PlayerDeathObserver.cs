@@ -44,7 +44,6 @@ public class PlayerDeathObserver : IInitializable, IDisposable
     {
         _controller.enabled = false;
         _playerMovementSystem.StopImmediately();
-        Debug.Log("Plaer Died activate");
         _playerAnimator.PlayDeath();
         _soundEventBus.Play(SoundType.Die);
     }
@@ -52,10 +51,12 @@ public class PlayerDeathObserver : IInitializable, IDisposable
     private void FinalizeDeath()
     {
         MoveToLastCheckPoint();
+        _playerMovementSystem.StopImmediately();
         HealthRepair();
         ResetAnimation();
         _controller.enabled = true;
         _playerMovementSystem.IsMovementFrozen = false;
+        Debug.Log("FINALIZE");
     }
 
     private void HealthRepair() => _healthModel.HealthAllRepair();

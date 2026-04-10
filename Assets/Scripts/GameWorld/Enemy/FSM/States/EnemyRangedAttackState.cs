@@ -13,7 +13,6 @@ public class EnemyRangedAttackState : IEnemyState
 
     public void Enter()
     {
-        Debug.Log("Переход в дальний бой!");
         _enemy.SetTrigger("RangeAttack");
     }
 

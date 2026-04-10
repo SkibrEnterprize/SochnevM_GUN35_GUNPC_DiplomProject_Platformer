@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tracks:
   - BuildIndex: 0
-    Clip: {fileID: 8300000, guid: 7c1b7bbc412834d24b0900b6768572e6, type: 3}
+    Clip: {fileID: 8300000, guid: 3aa8f1d7601a19d4c88dcaaa262c2e06, type: 3}
     Description: "\u041C\u0443\u0437\u044B\u043A\u0430 \u041C\u0435\u043D\u044E "
   - BuildIndex: 1
-    Clip: {fileID: 8300000, guid: b6891bf38a3df44b29d9271a7acfea03, type: 3}
+    Clip: {fileID: 8300000, guid: f7c94b00546f2484ea827051a05081a4, type: 3}
     Description: "\u041C\u0443\u0437\u044B\u043A\u0430 \u0423\u0440\u043E\u0432\u0435\u043D\u044C
       1"
