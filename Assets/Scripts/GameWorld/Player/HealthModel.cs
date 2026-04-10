@@ -71,21 +71,15 @@ namespace Player
         {
             if (delta < 0)
             {
-                // 1. Проверяем, стоит ли игрок на земле (нужно вызвать метод из контроллера)
                 bool isGrounded = _movementComponent.IsGrounded();
 
-                // 2. Решаем, играть ли анимацию тела (Hit Trigger)
-                // Не играем, если это урон от падения ИЛИ если игрок в воздухе
                 bool playFullAnimation = (type != DamageType.Fall) && isGrounded;
 
-                // Вызываем PlayHit. Внутри него FlashRoutine сработает всегда, 
-                // а анимация и блокировка _isHurt — только если playFullAnimation == true.
                 _playerAnimator.PlayHit(playFullAnimation);
 
                 TakeDamage(delta);
                 _soundBus.Play(SoundType.Hit, _controller.transform.position);
 
-                // 3. Применяем отброс (теперь он работает и в воздухе благодаря правкам выше)
                 if (sourcePosition != default && type != DamageType.Fall)
                 {
                     _movementComponent.ApplyKnockback(sourcePosition, knockbackForce);
@@ -100,35 +94,8 @@ namespace Player
             _healthEventBus.HealthUpdated(delta);
             CheckHealthValue();
         }
-        //public void ApplyHealthChange(int delta, Vector3 sourcePosition = default,
-        //                      DamageType type = DamageType.Default, float knockbackForce = 0f)
-        //{
-        //    //Health += delta;
-
-        //    if (delta < 0)
-        //    {
-        //        bool shouldAnimate = (type != DamageType.Fall);
-        //        _playerAnimator.PlayHit(shouldAnimate);
-        //        TakeDamage(delta);
-        //        _soundBus.Play(SoundType.Hit, _controller.transform.position);
-        //        if (sourcePosition != default && type != DamageType.Fall)
-        //        {
-        //            _movementComponent.ApplyKnockback(sourcePosition, knockbackForce);
-        //        }
-        //    }
-        //    else if (delta > 0)
-        //    {
-        //        TakeHealing(delta); 
-        //        _soundBus.Play(SoundType.Healing, _controller.transform.position);
-        //    }
-        //        _healthEventBus.HealthUpdated(delta);
-
-        //    CheckHealthValue();
-        //}
-
-
-
-        private void TakeDamage(int value) => Health -= value;
+       
+        private void TakeDamage(int value) => Health += value;
         private void TakeHealing(int value) => Health += value;
 
         private void CheckHealthValue()

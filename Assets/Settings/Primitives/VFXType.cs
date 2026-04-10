@@ -4,5 +4,6 @@ public enum VFXType
     HeavyAttack,
     Hit,
     HeavyHit,
-    JumpDust 
+    JumpDust,
+    Explode
 }

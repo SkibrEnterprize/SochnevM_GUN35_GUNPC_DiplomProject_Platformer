@@ -5,7 +5,7 @@ using Zenject;
 public class TriggerChangeSpeed : MonoBehaviour
 {
 
-    [Range(0.05f, 1f)]
+    [Range(0.05f, 2f)]
     [SerializeField] float _speedModifire = 1f;
     [Range(0.05f, 1f)]
     [SerializeField] float _traction = 0.2f;

@@ -253,16 +253,22 @@ namespace Player
             if (_controller.isGrounded)
             {
                 _jumpCount = 0;
-                return true;
+                 return true;
             }
-            return false;
+
+            float extraHeight = 0.3f;
+            bool nearGround = Physics.Raycast(_controller.transform.position, 
+                Vector3.down, 
+                (_controller.height / 2) + extraHeight, 
+                _playerConfig.LayerMaskForWall);
+
+            return nearGround;
         }
 
         private bool IsWallAtSide(float directionX)
         {
             Vector3 origin = _controller.bounds.center;
 
-            // направление (влево или вправо)
             Vector3 dir = Vector3.right * directionX;
 
             float dynamicDistance = _controller.bounds.extents.x + 0.1f;
@@ -303,148 +309,69 @@ namespace Player
         }
         private void ApplyMovement()
         {
-            //Vector2 effectiveInput = IsMovementFrozen ? Vector2.zero : _moveInput;
-
-            //float walkSpeed = _playerConfig.MoveSpeedGround;
-            //float sprintSpeed = walkSpeed * _playerConfig.SprintSpeedMultiplayer;
-            //float speedLimit = IsGrounded() ? (_isSprinting ? sprintSpeed : walkSpeed) : _playerConfig.MoveSpeedAir;
-
-            //float targetMaxSpeed = effectiveInput.x * speedLimit * _externalSpeedModifier;
-
-            //if (!IsMovementFrozen)
-            //{
-            //    bool isTryingToMove = Mathf.Abs(effectiveInput.x) > 0.01f;
-            //    float currentForce = isTryingToMove ? (_acceleration * _currentTraction) : (_deceleration * _currentTraction);
-
-            //    if (!isTryingToMove && _externalSpeedModifier < 0.9f) currentForce *= 2f;
-
-            //    _velocity.x = Mathf.MoveTowards(_velocity.x, targetMaxSpeed, currentForce * Time.fixedDeltaTime);
-
-            //    if ((IsWallAtSide(-1) && _velocity.x < 0) || (IsWallAtSide(1) && _velocity.x > 0))
-            //    {
-            //        _velocity.x = 0;
-            //    }
-
-            //    if (!isTryingToMove && Mathf.Abs(_velocity.x) < 0.1f)
-            //    {
-            //        _velocity.x = 0f;
-            //    }
-            //}
-            //else
-            //{
-            //    Debug.Log($"FROZEN! Velocity X is: {_velocity.x}");
-            //}
-
-            //if (IsWallClinging() && _velocity.y < _playerConfig.WallSlideSpeed)
-            //{
-            //    _velocity.y = Mathf.Lerp(_velocity.y, _playerConfig.WallSlideSpeed, _playerConfig.SlowClingFallSpeed);
-            //}
-            //else if (_flyPressed && _velocity.y < 0 && !IsMovementFrozen)
-            //{
-            //    _velocity.y = Mathf.Lerp(_velocity.y - _flyAdvancedSpeed, -_playerConfig.JumpHoldFallAirSpeed, _playerConfig.SlowFallAirSpeed);
-
-            //    _velocity.x += effectiveInput.x * _moveAdvancedSpeed * Time.fixedDeltaTime;
-            //}
-            //else
-            //{
-            //    _velocity.y -= _playerConfig.Gravity * Time.fixedDeltaTime;
-            //}
-
-            //if (IsWallAtHead() && _velocity.y > 0)
-            //{
-            //    _velocity.y = -0.1f;
-            //}
-
-            //// затухание скорости по X
-            //if (IsMovementFrozen || !IsGrounded())
-            //{                
-            //    _velocity.x = Mathf.Lerp(_velocity.x, 0, Time.fixedDeltaTime * 2f);
-            //}
-
-            //Vector3 move = new Vector3(_velocity.x, _velocity.y, 0) * Time.fixedDeltaTime;
-
-            //CollisionFlags flags = _controller.Move(move);
-
-            //if ((flags & CollisionFlags.Above) != 0)
-            //{
-            //    if (_velocity.y > 0)
-            //    {
-            //        _velocity.y = -0.1f; // Гасим вертикальную инерцию
-            //    }
-            //}
-
-            //if ((flags & CollisionFlags.Sides) != 0)
-            //{
-            //    _velocity.x = 0;
-            //}
-
-            //if ((flags & CollisionFlags.Below) != 0)
-            //{
-            //    _jumpCount = 0;
-            //    if (_velocity.y < 0)
-            //    {
-            //        _velocity.y = -1f; // "прижимное" усилие
-            //    }
-
-            //}
-            // 1. Считаем целевую скорость от кнопок
+            bool isGrounded = IsGrounded();
             Vector2 effectiveInput = IsMovementFrozen ? Vector2.zero : _moveInput;
-            float walkSpeed = _playerConfig.MoveSpeedGround;
-            float sprintSpeed = walkSpeed * _playerConfig.SprintSpeedMultiplayer;
-            float speedLimit = IsGrounded() ? (_isSprinting ? sprintSpeed : walkSpeed) : _playerConfig.MoveSpeedAir;
-
-            float targetMaxSpeed = effectiveInput.x * speedLimit * _externalSpeedModifier;
-
-            // 2. Горизонтальная логика (X)
             bool isTryingToMove = Mathf.Abs(effectiveInput.x) > 0.01f;
 
-            // Если управление заблокировано, используем пониженное трение (сопротивление воздуха)
-            float accelRate = isTryingToMove ? (_acceleration * _currentTraction) : (_deceleration * _currentTraction);
+            float walkSpeed = _playerConfig.MoveSpeedGround;
+            float sprintSpeed = walkSpeed * _playerConfig.SprintSpeedMultiplayer;
 
-            // Если мы в воздухе или заморожены, гасим инерцию медленнее (воздушный drag)
-            if (!IsGrounded() || IsMovementFrozen)
+            float speedLimit = isGrounded ? (_isSprinting ? sprintSpeed : walkSpeed) : _playerConfig.MoveSpeedAir;
+            float targetMaxSpeed = effectiveInput.x * speedLimit * _externalSpeedModifier;
+
+            float accelRate;
+
+            if (isGrounded)
             {
-                accelRate = _deceleration * 0.5f;
+                accelRate = isTryingToMove ? (_acceleration * _currentTraction) : (_deceleration * _currentTraction);
+
+                if (IsMovementFrozen) accelRate = _deceleration;
+            }
+            else
+            {
+                if (isTryingToMove && Mathf.Abs(_velocity.x) > Mathf.Abs(targetMaxSpeed) && Mathf.Sign(effectiveInput.x) == Mathf.Sign(_velocity.x))
+                {
+                    accelRate = 0; // MoveTowards не изменит скорость, инерция сохранится
+                }
+                else if (isTryingToMove)
+                {
+                    accelRate = _acceleration * 0.5f; // Небольшой контроль в воздухе
+                }
+                else
+                {
+                    accelRate = _deceleration * 0.1f;
+                }
             }
 
-            // Плавно приближаем текущую скорость к целевой
             _velocity.x = Mathf.MoveTowards(_velocity.x, targetMaxSpeed, accelRate * Time.fixedDeltaTime);
 
-            // Столкновения со стенами
             if ((IsWallAtSide(-1) && _velocity.x < 0) || (IsWallAtSide(1) && _velocity.x > 0))
             {
                 _velocity.x = 0;
             }
 
-            // 3. Вертикальная логика (Y)
             if (IsWallClinging() && _velocity.y < _playerConfig.WallSlideSpeed)
             {
                 _velocity.y = Mathf.Lerp(_velocity.y, _playerConfig.WallSlideSpeed, _playerConfig.SlowClingFallSpeed);
             }
             else if (_flyPressed && _velocity.y < 0 && !IsMovementFrozen)
             {
-                // Полет (плавное падение)
                 _velocity.y = Mathf.Lerp(_velocity.y - _flyAdvancedSpeed, -_playerConfig.JumpHoldFallAirSpeed, _playerConfig.SlowFallAirSpeed);
-                // Добавляем импульс по X при полете
                 _velocity.x += effectiveInput.x * _moveAdvancedSpeed * Time.fixedDeltaTime;
             }
             else
             {
-                // Обычная гравитация
                 _velocity.y -= _playerConfig.Gravity * Time.fixedDeltaTime;
             }
 
-            // Удар головой об потолок
             if (IsWallAtHead() && _velocity.y > 0)
             {
                 _velocity.y = -0.1f;
             }
 
-            // 4. Применяем движение
             Vector3 move = _velocity * Time.fixedDeltaTime;
             CollisionFlags flags = _controller.Move(move);
 
-            // Обработка столкновений через флаги
             if ((flags & CollisionFlags.Above) != 0 && _velocity.y > 0)
                 _velocity.y = -0.1f;
 
@@ -454,8 +381,8 @@ namespace Player
             if ((flags & CollisionFlags.Below) != 0)
             {
                 _jumpCount = 0;
-                if (_velocity.y < 0) _velocity.y = -1f; // Прижим к земле
-            }
+                if (_velocity.y < 0) _velocity.y = -1f; // Прижим к земле, чтобы не "дрожать" на склонах
+            }            
         }
         private void ApplyRotation()
         {

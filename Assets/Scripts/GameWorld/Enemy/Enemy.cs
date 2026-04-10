@@ -126,7 +126,9 @@ public class Enemy : MonoBehaviour
         if (_impactVelocity.magnitude > 0.2f)
         {
             velocity += _impactVelocity;
-            _impactVelocity = Vector3.Lerp(_impactVelocity, Vector3.zero, _knockbackResistance * Time.deltaTime);
+            _impactVelocity = Vector3.Lerp(_impactVelocity, 
+                Vector3.zero, 
+                _knockbackResistance * Time.deltaTime);
         }
         else
         {
@@ -213,31 +215,7 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        return false;
-        //if (_player == null || _enemyEyes == null) return false;
-
-        //float distance = Vector3.Distance(_enemyEyes.position, _player.position);
-
-        //if (distance <= _closeAwarenessRange)
-        //{
-        //    return true;
-        //}
-
-        //Vector3 dirToPlayer = (_player.position - _enemyEyes.position).normalized;
-        //if (distance <= _detectionRange)
-        //{
-        //    if (Vector3.Angle(_enemyEyes.right, dirToPlayer) < _viewAngle / 2f)
-        //    {
-        //        if (Physics.Raycast(_enemyEyes.position, dirToPlayer, out RaycastHit hit, _detectionRange))
-        //        {
-        //            if (hit.collider.TryGetComponent<PlayerHealth>(out _))
-        //            {
-        //                return true;
-        //            }
-        //        }
-        //    }
-        //}
-        //return false;
+        return false;        
     }
 
     public void RotateTowards(Vector3 targetPosition)

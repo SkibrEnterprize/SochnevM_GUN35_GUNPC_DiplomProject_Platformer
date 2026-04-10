@@ -135,9 +135,12 @@ namespace Player
 
             foreach (var target in targets)
             {
-                if (target != null && target is MonoBehaviour mb && mb != null)
+                // Ищем интерфейс IHealthAffected у цели
+                if (target is IHealthAffected healthTarget)
                 {
-                    target.ApplyHealthChange(-data.Damage, _controller.transform.position);
+                    // Вызываем метод через интерфейс
+                    healthTarget.ApplyHealthChange(-data.Damage, _controller.transform.position);
+                    Debug.Log($"[HIT] Попал по xtven");
                 }
             }
         }
