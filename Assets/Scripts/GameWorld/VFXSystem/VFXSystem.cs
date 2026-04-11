@@ -49,8 +49,7 @@ namespace VFX
         }
         
         public void Play(VFXType type,
-            Vector3 position, 
-            float scaleMultiplier,
+            Vector3 position,             
             Quaternion rotation,
             Transform parent)
         {
@@ -70,11 +69,10 @@ namespace VFX
             }
             instance.SetActive(false);
 
-            // применяем логику из vfxEvent (позиция, поворот, родитель)
             vfxEvent.Play(instance, position, rotation, parent);
 
-            // после смены родителя возвращаем масштаб префаба
-            instance.transform.localScale = vfxEvent.effectPrefab.transform.localScale * scaleMultiplier;
+            
+            instance.transform.localScale = vfxEvent.effectPrefab.transform.localScale;
 
             instance.SetActive(true);
             StartCoroutine(ReturnToPoolAfterTime(instance, vfxEvent.lifetime));

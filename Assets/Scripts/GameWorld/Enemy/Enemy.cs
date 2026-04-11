@@ -227,6 +227,8 @@ public class Enemy : MonoBehaviour
     }
 
     public bool CanAttackReady() => Time.time >= _lastAttackTime + _attackCooldown;
+
+
     public bool CanAttackPlayer()
     {
         if (_player == null) return false;

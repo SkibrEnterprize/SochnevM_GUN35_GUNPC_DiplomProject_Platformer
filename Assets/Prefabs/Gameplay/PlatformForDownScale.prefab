@@ -471,8 +471,8 @@ GameObject:
   - component: {fileID: 2597006976086563382}
   - component: {fileID: 5905087412889532466}
   - component: {fileID: 6590054327436634700}
-  - component: {fileID: 3510264948817585608}
   - component: {fileID: 7755797188231749448}
+  - component: {fileID: 8743699976369523390}
   m_Layer: 0
   m_Name: hieroglyph_012 (1)
   m_TagString: Untagged
@@ -545,8 +545,22 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &3510264948817585608
-BoxCollider:
+--- !u!114 &7755797188231749448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7159701842998368507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18498832c5e650943b2e07e359681e96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TargetObjectScale: 0.5
+  ResetToDefaultScale: 0
+--- !u!135 &8743699976369523390
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -564,19 +578,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.5213918, y: 0.08664274, z: 0.5213918}
-  m_Center: {x: 0.0000009298325, y: -0.0054244148, z: -0.0000022888185}
---- !u!114 &7755797188231749448
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7159701842998368507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18498832c5e650943b2e07e359681e96, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TargetObjectScale: 0.5
-  ResetToDefaultScale: 0
+  m_Radius: 0.26
+  m_Center: {x: 0, y: 0, z: 0}

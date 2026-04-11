@@ -38,6 +38,7 @@ public class MusicManager : MonoBehaviour
     public void PlayMusic(AudioClip clip)
     {
         if (_audioSource.clip == clip && _audioSource.isPlaying) return;
+        _audioSource.loop = true;
 
         if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
         _fadeCoroutine = StartCoroutine(FadeTo(clip));

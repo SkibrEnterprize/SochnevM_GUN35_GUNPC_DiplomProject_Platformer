@@ -16,14 +16,11 @@ public class VFXObserver : IInitializable, System.IDisposable
     public void Dispose() => _bus.OnVFXRequested -= Notify;
 
     private void Notify(VFXType type, 
-        Vector3 pos,
-        float scaleMultiplier, 
+        Vector3 pos,       
         Quaternion rot, 
         Transform parent) =>
             _vfxSystem.Play(type, 
-                pos,
-                scaleMultiplier,
+                pos,                
                 rot, 
                 parent);
-
 }

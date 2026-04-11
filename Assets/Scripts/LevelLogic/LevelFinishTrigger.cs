@@ -1,6 +1,7 @@
 using UnityEngine;
 using Zenject;
 
+[RequireComponent(typeof(BoxCollider))]
 public class LevelFinishTrigger : MonoBehaviour
 {
     private LevelFinishSystem _levelSystem;

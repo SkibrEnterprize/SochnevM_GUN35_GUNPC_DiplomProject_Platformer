@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 871230304620332454}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.6, y: 1.2, z: 0}
+  m_LocalPosition: {x: 0.261, y: 1.303, z: 0}
   m_LocalScale: {x: 0.65, y: 0.65, z: 0.65}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -313,7 +313,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 3
   m_Height: 1.4
-  m_Radius: 0.5
+  m_Radius: 0.3
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -358,15 +358,15 @@ MonoBehaviour:
   _checkDistance: 0.5
   _turnSpeed: 10
   _knockbackResistance: 5
-  _enemyEyesForDebug: {fileID: 2322688249355123116}
-  _detectionRange: 19.8
+  _enemyEyesForDebug: {fileID: 0}
+  _detectionRange: 4.5
   _lostRange: 20
-  _closeAwarenessRange: 6.27
-  _attackRange: 1.83
-  _obstacleLayer:
+  _closeAwarenessRange: 5
+  _attackRange: 1
+  _layersForVision:
     serializedVersion: 2
-    m_Bits: 576
-  _viewAngle: 23.6
+    m_Bits: 584
+  _viewAngle: 26
   _enemyTypeAttack: 0
   _health: 10
   _attackDamage: 1
@@ -374,8 +374,9 @@ MonoBehaviour:
   _attackMask:
     serializedVersion: 2
     m_Bits: 8
-  _projectilePrefab: {fileID: 2463057493673292024, guid: ce15e5206eb2fa049bc77f6780f71b4d, type: 3}
-  _showGizmos: 0
+  _projectilePrefab: {fileID: 1959240556077027061, guid: 7833b2cb53a109d45828165e21e6370c, type: 3}
+  _baseStepInterval: 0.5
+  _showGizmos: 1
   _showDetectRadius: 1
   _showAttackRadius: 1
   _showEyeVision: 1
