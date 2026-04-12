@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8531747477793324286}
   - component: {fileID: 8740798317582507805}
   - component: {fileID: 1452746763699006539}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: DamageObject_Trap_Round
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -105,8 +105,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3885193, y: 0.27839112, z: 1.2946584}
-  m_Center: {x: 0.010879517, y: 0.008959413, z: -0.032881737}
+  m_Size: {x: 1.3885193, y: 0.40558228, z: 1.2946584}
+  m_Center: {x: 0.010879517, y: 0.22851078, z: -0.032881737}
 --- !u!54 &8740798317582507805
 Rigidbody:
   m_ObjectHideFlags: 0

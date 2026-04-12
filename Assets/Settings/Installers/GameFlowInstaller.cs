@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Zenject;
 
 public class GameFlowInstaller : MonoInstaller
@@ -11,5 +12,7 @@ public class GameFlowInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<GameManager>().AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<PauseController>().AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<SceneLoader>().AsSingle().NonLazy();
+
+        DOTween.SetTweensCapacity(1000, 100);
     }
 }

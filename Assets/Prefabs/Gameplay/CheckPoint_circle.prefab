@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isActivate: 0
-  _targetIntensity: 5
+  _targetIntensity: 3
   _fadeDuration: 1.5
 --- !u!65 &6517378809573645198
 BoxCollider:
@@ -224,8 +224,8 @@ Light:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_Range: 30
-  m_SpotAngle: 50.7
-  m_InnerSpotAngle: 21.5
+  m_SpotAngle: 50
+  m_InnerSpotAngle: 5
   m_CookieSize: 10
   m_Shadows:
     m_Type: 0

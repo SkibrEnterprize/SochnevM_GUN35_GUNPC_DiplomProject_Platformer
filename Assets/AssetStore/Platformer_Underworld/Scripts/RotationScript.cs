@@ -1,38 +1,33 @@
 using UnityEngine;
+using DG.Tweening;
 
-namespace ithappy
+public class RotationScript : MonoBehaviour
 {
-    public class RotationScript : MonoBehaviour
+    public enum RotationAxis { X, Y, Z }
+
+    public RotationAxis rotationAxis = RotationAxis.Y;
+    public float rotationSpeed = 50.0f; // Градусов в секунду
+
+    private void Start()
     {
-        public enum RotationAxis
+        // Определяем вектор оси
+        Vector3 axisVector = rotationAxis switch
         {
-            X,
-            Y,
-            Z
-        }
+            RotationAxis.X => Vector3.right,
+            RotationAxis.Y => Vector3.up,
+            RotationAxis.Z => Vector3.forward,
+            _ => Vector3.up
+        };
 
-        public RotationAxis rotationAxis = RotationAxis.Y;
-        public float rotationSpeed = 50.0f;
+        float duration = 360f / rotationSpeed;
 
-        void Update()
-        {
-            float rotationValue = rotationSpeed * Time.deltaTime;
+        transform.DORotate(axisVector * 360f, duration, RotateMode.FastBeyond360)
+            .SetEase(Ease.Linear)        
+            .SetLoops(-1, LoopType.Incremental); 
+    }
 
-            Vector3 axis = Vector3.zero;
-            switch (rotationAxis)
-            {
-                case RotationAxis.X:
-                    axis = Vector3.right;
-                    break;
-                case RotationAxis.Y:
-                    axis = Vector3.up;
-                    break;
-                case RotationAxis.Z:
-                    axis = Vector3.forward;
-                    break;
-            }
-
-            transform.Rotate(axis, rotationValue);
-        }
+    private void OnDestroy()
+    {
+        transform.DOKill();
     }
 }

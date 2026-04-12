@@ -13,7 +13,6 @@ public class EnemyHitState : IEnemyState
         _timer = _stunDuration;
         _enemy.SetTrigger("Hit");
         _enemy.ApplyKnockback(Vector3.up + (-_enemy.transform.right), 5f); // импульс
-        Debug.Log("Враг в ступоре!");
     }
 
     public void Update()

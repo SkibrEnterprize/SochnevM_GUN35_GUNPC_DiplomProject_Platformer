@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 8503875752314707631}
   - component: {fileID: 1033618107115284034}
   - component: {fileID: 4954058990787069878}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Collectable_diamond
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31,7 +31,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2061697111077640507}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 120.4, y: 3.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -100,8 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2dc36e53b7d4cf4ab44fbe7e3718645, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scaleAxis: {x: 1, y: 1, z: 1}
-  scaleFactor: 0.5
+  scaleFactor: 0.9
   duration: 1
   useRandomDelay: 1
   maxRandomDelay: 1

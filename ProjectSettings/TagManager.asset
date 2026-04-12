@@ -21,8 +21,8 @@ TagManager:
   - PlayerAttack
   - EnemyProjectile
   - DestructibleObjects
-  - 
-  - 
+  - CollectiableObjects
+  - Trap
   - 
   - 
   - 

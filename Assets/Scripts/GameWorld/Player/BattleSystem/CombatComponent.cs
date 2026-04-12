@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -25,7 +24,7 @@ namespace Player
         private float _nextAttackTime;
 
 
-        private bool _isCharging;      // Флаг процесса зажатия
+        private bool _isCharging;      
         private float _currentChargeTimer;
 
         public CombatComponent(CharacterController controller,
@@ -124,7 +123,7 @@ namespace Player
             _playerAnimator.PlayAttack(isHeavy);
             _soundBus.Play(sound, _controller.transform.position);
             var vfxPoint = isHeavy? _heavyAttackVFXPoint : _attackVFXPoint;
-            // VFX...
+            
             _vfxBus.Play(vfxType,
                 vfxPoint.position,
                 default,
@@ -136,12 +135,10 @@ namespace Player
 
             foreach (var target in targets)
             {
-                // Ищем интерфейс IHealthAffected у цели
                 if (target is IHealthAffected healthTarget)
                 {
-                    // Вызываем метод через интерфейс
                     healthTarget.ApplyHealthChange(-data.Damage, _controller.transform.position);
-                    Debug.Log($"[HIT] Попал по xtven");
+                    //Debug.Log($"[HIT] Попал по xtven");
                 }
             }
         }

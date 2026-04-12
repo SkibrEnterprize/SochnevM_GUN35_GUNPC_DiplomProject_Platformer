@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6710489204392493456}
   - component: {fileID: 4508654122054958964}
   - component: {fileID: 2180435338958372922}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: DamageObject_Trap_Grid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -105,8 +105,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3885193, y: 0.27839112, z: 1.2946584}
-  m_Center: {x: 0.010879517, y: 0.008959413, z: -0.032881737}
+  m_Size: {x: 1.3885193, y: 0.33531117, z: 1.2946584}
+  m_Center: {x: 0.010879517, y: 0.193102, z: -0.032881737}
 --- !u!54 &4508654122054958964
 Rigidbody:
   m_ObjectHideFlags: 0

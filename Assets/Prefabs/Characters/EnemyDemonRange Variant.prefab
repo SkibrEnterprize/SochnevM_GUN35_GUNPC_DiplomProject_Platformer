@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2744839494992475943, guid: 84f1340a02d15af4f9c5af9c25b48f32, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 163.83026
+      value: 61.33
       objectReference: {fileID: 0}
     - target: {fileID: 2744839494992475943, guid: 84f1340a02d15af4f9c5af9c25b48f32, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 12.510913
+      value: 24.66
       objectReference: {fileID: 0}
     - target: {fileID: 2744839494992475943, guid: 84f1340a02d15af4f9c5af9c25b48f32, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.49811554
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2744839494992475943, guid: 84f1340a02d15af4f9c5af9c25b48f32, type: 3}
       propertyPath: m_LocalRotation.w
@@ -47,6 +47,38 @@ PrefabInstance:
     - target: {fileID: 2744839494992475943, guid: 84f1340a02d15af4f9c5af9c25b48f32, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139966326211337279, guid: 84f1340a02d15af4f9c5af9c25b48f32, type: 3}
+      propertyPath: _viewAngle
+      value: 93.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139966326211337279, guid: 84f1340a02d15af4f9c5af9c25b48f32, type: 3}
+      propertyPath: _showGizmos
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139966326211337279, guid: 84f1340a02d15af4f9c5af9c25b48f32, type: 3}
+      propertyPath: _showEyeVision
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139966326211337279, guid: 84f1340a02d15af4f9c5af9c25b48f32, type: 3}
+      propertyPath: _detectionRange
+      value: 25.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139966326211337279, guid: 84f1340a02d15af4f9c5af9c25b48f32, type: 3}
+      propertyPath: _enemyTypeAttack
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139966326211337279, guid: 84f1340a02d15af4f9c5af9c25b48f32, type: 3}
+      propertyPath: _showAttackRadius
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139966326211337279, guid: 84f1340a02d15af4f9c5af9c25b48f32, type: 3}
+      propertyPath: _showDetectRadius
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139966326211337279, guid: 84f1340a02d15af4f9c5af9c25b48f32, type: 3}
+      propertyPath: _showAwarenessRange
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8674479959816358333, guid: 84f1340a02d15af4f9c5af9c25b48f32, type: 3}
       propertyPath: m_Name

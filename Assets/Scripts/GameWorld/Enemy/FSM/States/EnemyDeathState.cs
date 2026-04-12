@@ -9,7 +9,6 @@ public class EnemyDeathState : IEnemyState
 
     public void Enter()
     {
-        Debug.Log("Враг: Смерть...");
         _enemy.StartDespawn(_despawnDelay);
         _enemy.SetBool("IsDead", true);
 

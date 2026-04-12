@@ -13,7 +13,6 @@ public class EnemyHealth : MonoBehaviour, IHealthAffected
     public void ApplyHealthChange(int delta, Vector3 sourcePosition = default,
                               DamageType type = DamageType.Default, float knockbackForce = 0f)
     {
-        Debug.Log($"{gameObject.name} получил урон ({type}). Осталось: {_currentHealth}");
         if (_currentHealth <= 0) return;
 
         _currentHealth += delta;

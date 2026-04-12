@@ -8,7 +8,6 @@ public class Enemy : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float _moveSpeed = 2f;
-    [SerializeField] private float _runSpeed = 4f;
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private LayerMask _wallLayer;
     [SerializeField] private LayerMask _enemyLayer;
@@ -30,7 +29,6 @@ public class Enemy : MonoBehaviour
     [SerializeField] private EnemyTypeAttack _enemyTypeAttack;
 
     [Header("Combat Settings")]
-    [SerializeField] private int _health = 100;
     [SerializeField] private int _attackDamage = 15;
     [SerializeField] private float _attackCooldown = 1.2f;
     [SerializeField] private LayerMask _attackMask;

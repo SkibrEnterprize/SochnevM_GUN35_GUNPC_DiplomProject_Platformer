@@ -62,7 +62,7 @@ namespace Player
             {
                 ApplyHealthChange(-_playerConfig.DamageOfFall, type: DamageType.Fall);
 
-                Debug.Log($"Health = {Health} (Fall damage: {fallDistance}m)");
+                //Debug.Log($"Health = {Health} (Fall damage: {fallDistance}m)");
             }
         }
 
