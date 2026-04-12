@@ -316,7 +316,7 @@ CharacterController:
   m_Radius: 0.3
   m_SlopeLimit: 45
   m_StepOffset: 0.3
-  m_SkinWidth: 0.08
+  m_SkinWidth: 0.15
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.7, z: 0}
 --- !u!114 &4761528418733653110
@@ -358,7 +358,7 @@ MonoBehaviour:
   _checkDistance: 0.5
   _turnSpeed: 10
   _knockbackResistance: 5
-  _enemyEyesForDebug: {fileID: 0}
+  _enemyEyesForDebug: {fileID: 2322688249355123116}
   _detectionRange: 4.5
   _lostRange: 20
   _closeAwarenessRange: 5
@@ -366,7 +366,7 @@ MonoBehaviour:
   _layersForVision:
     serializedVersion: 2
     m_Bits: 584
-  _viewAngle: 26
+  _viewAngle: 67.1
   _enemyTypeAttack: 0
   _health: 10
   _attackDamage: 1

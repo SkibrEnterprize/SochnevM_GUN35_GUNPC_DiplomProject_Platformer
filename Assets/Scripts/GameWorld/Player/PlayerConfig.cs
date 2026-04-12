@@ -9,6 +9,7 @@ public class PlayerConfig : ScriptableObject
     public float MoveSpeedAir = 0.5f;
     public float SprintSpeedMultiplayer = 2f;
     public float SmoothTime = 0.5f;
+    public float RatationSpeed = 15f;
 
 
     [field: SerializeField, Range(0, 1)]

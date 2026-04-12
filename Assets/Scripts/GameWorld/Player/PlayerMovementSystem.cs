@@ -27,6 +27,7 @@ namespace Player
         private float _moveAdvancedSpeed;
         private bool _isSprinting;
         private Vector2 _moveInput = Vector2.zero;
+        private Quaternion _targetRotation;
 
         private Vector3 _velocity = Vector3.zero;
         private float _externalSpeedModifier = 1f;
@@ -47,8 +48,8 @@ namespace Player
 
         private float _animSpeedVelocity;
 
-        private float _stepTimer;
         [SerializeField] private float _stepInterval = 0.4f; // Базовая задержка между шагами
+        private float _stepTimer;
 
         private PlayerStartParameters _startParameters;
         public PlayerMovementSystem(
@@ -84,6 +85,7 @@ namespace Player
 
             _controls.Player.Fly.started += OnFlyStarted;
             _controls.Player.Fly.canceled += OnFlyCanceled;
+            _targetRotation = _startParameters.ViewTransform.localRotation;
         }
 
         public void Dispose()
@@ -233,17 +235,17 @@ namespace Player
             bool wallOnRight = IsWallAtSide(1);
             bool wallOnLeft = IsWallAtSide(-1);
 
-            float horizontalForce = 0f;
             if (wallOnRight)
             {
-                horizontalForce = -_playerConfig.WallJumpForceX;
+                _velocity.x = -_playerConfig.WallJumpForceX;
+                _targetRotation = Quaternion.Euler(0, 270f, 0); //влево
             }
             else if (wallOnLeft)
             {
-                horizontalForce = _playerConfig.WallJumpForceX;
+                _velocity.x = _playerConfig.WallJumpForceX;
+                _targetRotation = Quaternion.Euler(0, 90f, 0); //вправо
             }
 
-            _velocity.x = horizontalForce;
             _velocity.y = _playerConfig.WallJumpForceY;
 
             _jumpCount++;
@@ -401,8 +403,15 @@ namespace Player
             if (Mathf.Abs(_moveInput.x) > 0.1f)
             {
                 float targetY = (_moveInput.x > 0) ? 90f : 270f;
-                _startParameters.ViewTransform.localRotation = Quaternion.Euler(0, targetY, 0);
+                _targetRotation = Quaternion.Euler(0, targetY, 0);
             }
+                       
+            _startParameters.ViewTransform.localRotation = Quaternion.Slerp(
+                _startParameters.ViewTransform.localRotation,
+                _targetRotation,
+                Time.deltaTime * 15f
+            );
+
         }
 
         private void UpdateFallState()

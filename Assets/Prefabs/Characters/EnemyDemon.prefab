@@ -315,7 +315,7 @@ CharacterController:
   m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.3
-  m_SkinWidth: 0.08
+  m_SkinWidth: 0.15
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &-8387378897418458615
@@ -354,19 +354,19 @@ MonoBehaviour:
   _enemyLayer:
     serializedVersion: 2
     m_Bits: 1024
-  _checkDistance: 0.5
+  _checkDistance: 0.6
   _turnSpeed: 10
   _knockbackResistance: 5
   _enemyEyesForDebug: {fileID: 9030474338808393671}
-  _detectionRange: 19.8
+  _detectionRange: 4.5
   _lostRange: 20
-  _closeAwarenessRange: 1.9
-  _attackRange: 8.13
+  _closeAwarenessRange: 5
+  _attackRange: 1
   _layersForVision:
     serializedVersion: 2
-    m_Bits: 8
-  _viewAngle: 128.9
-  _enemyTypeAttack: 1
+    m_Bits: 584
+  _viewAngle: 26
+  _enemyTypeAttack: 0
   _health: 10
   _attackDamage: 1
   _attackCooldown: 1
@@ -375,11 +375,11 @@ MonoBehaviour:
     m_Bits: 8
   _projectilePrefab: {fileID: 1959240556077027061, guid: 7833b2cb53a109d45828165e21e6370c, type: 3}
   _baseStepInterval: 0.5
-  _showGizmos: 1
-  _showDetectRadius: 1
-  _showAttackRadius: 1
-  _showEyeVision: 1
-  _showAwarenessRange: 1
+  _showGizmos: 0
+  _showDetectRadius: 0
+  _showAttackRadius: 0
+  _showEyeVision: 0
+  _showAwarenessRange: 0
 --- !u!95 &2127266552028857135
 Animator:
   serializedVersion: 5
