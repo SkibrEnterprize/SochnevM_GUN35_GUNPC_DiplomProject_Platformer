@@ -5,7 +5,7 @@ public class EnemySearchState : IEnemyState
     private readonly Enemy _enemy;
     private readonly Vector3 _targetPos;
 
-    private float _searchTimer = 2.5f; // Âðåìÿ îæèäàíèÿ íà òî÷êå
+    private float _searchTimer = 2.5f; 
     private bool _hasReachedDestination = false;
 
     public EnemySearchState(Enemy enemy, Vector3 targetPos)
@@ -16,7 +16,7 @@ public class EnemySearchState : IEnemyState
 
     public void Enter()
     {
-        Debug.Log("Враг: Потерял цель, проверяю последнюю позицию...");
+        //Debug.Log("Враг: Потерял цель, проверяю последнюю позицию...");
     }
 
     public void Update()

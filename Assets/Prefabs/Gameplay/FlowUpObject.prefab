@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5350195692957682531}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRays
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50,7 +50,7 @@ GameObject:
   - component: {fileID: 1304246824635412461}
   - component: {fileID: 3218157139276324844}
   - component: {fileID: 4852677820759199493}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -131,7 +131,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 793802458020409413}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -164,7 +164,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1570823175324320481}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -197,7 +197,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9127917847685166815}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -230,7 +230,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1710734029714941596}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -265,7 +265,7 @@ GameObject:
   - component: {fileID: 4222886579675211307}
   - component: {fileID: 9105482404753099037}
   - component: {fileID: 8949359367737613374}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -348,7 +348,7 @@ GameObject:
   - component: {fileID: 7597256162617896377}
   - component: {fileID: 7360378539130244712}
   - component: {fileID: 6031736943603709536}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -431,7 +431,7 @@ GameObject:
   - component: {fileID: 3580672110382391453}
   - component: {fileID: 2818741242319572500}
   - component: {fileID: 570092487361777968}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -512,7 +512,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7628231958090311815}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -547,7 +547,7 @@ GameObject:
   - component: {fileID: 3677401683794638683}
   - component: {fileID: 774098353576162009}
   - component: {fileID: 2263099265336533523}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -628,7 +628,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3903032037860544550}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -663,7 +663,7 @@ GameObject:
   - component: {fileID: 5049355038449174527}
   - component: {fileID: 8584226146692665779}
   - component: {fileID: 5814745127885066868}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -746,7 +746,7 @@ GameObject:
   - component: {fileID: 8366247720606415533}
   - component: {fileID: 6017174779170428402}
   - component: {fileID: 7805495575888597035}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -829,7 +829,7 @@ GameObject:
   - component: {fileID: 4708319825690990317}
   - component: {fileID: 1313725075530923919}
   - component: {fileID: 1213787337141869358}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -912,7 +912,7 @@ GameObject:
   - component: {fileID: 1720860554158296948}
   - component: {fileID: 442976820379591769}
   - component: {fileID: 3225358881566478803}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -995,7 +995,7 @@ GameObject:
   - component: {fileID: 6220964306110637008}
   - component: {fileID: 8513696740067974323}
   - component: {fileID: 2449664432074036830}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1076,7 +1076,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4490063432292739531}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1109,7 +1109,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6195982973119982765}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1142,7 +1142,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3133072299776988685}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRays
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1181,7 +1181,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5670160099729911703}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1216,7 +1216,7 @@ GameObject:
   - component: {fileID: 8240797937962950099}
   - component: {fileID: 9013550656309512644}
   - component: {fileID: 8180554718319662026}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1299,7 +1299,7 @@ GameObject:
   - component: {fileID: 6757713198542757917}
   - component: {fileID: 4671708904385929336}
   - component: {fileID: 3991631485294468502}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1380,7 +1380,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6641844304675163828}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1413,7 +1413,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7334286076042522224}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1448,7 +1448,7 @@ GameObject:
   - component: {fileID: 1153132436847944976}
   - component: {fileID: 6119236833152597699}
   - component: {fileID: 2152744819923064139}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FlowUpObjectLimit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1484,7 +1484,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _typeZoneOfForce: 0
-  _advancedFlyForce: 0
+  _advancedFlyForce: -4
 --- !u!65 &2152744819923064139
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1515,7 +1515,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2961787036228363823}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1550,7 +1550,7 @@ GameObject:
   - component: {fileID: 1781205944611430954}
   - component: {fileID: 5763081153527495618}
   - component: {fileID: 4596917969475161320}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1631,7 +1631,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8397504048878993234}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1664,7 +1664,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7107998446289267184}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1699,7 +1699,7 @@ GameObject:
   - component: {fileID: 2044892383286922479}
   - component: {fileID: 1523982296587261220}
   - component: {fileID: 1422223021945289121}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1782,7 +1782,7 @@ GameObject:
   - component: {fileID: 4164704234831515868}
   - component: {fileID: 6683046332812313687}
   - component: {fileID: 7302574531207019742}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1865,7 +1865,7 @@ GameObject:
   - component: {fileID: 7827304829266640630}
   - component: {fileID: 9100260976697658069}
   - component: {fileID: 8270332372720966489}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FlowUpObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1935,7 +1935,7 @@ GameObject:
   - component: {fileID: 6524626538707833391}
   - component: {fileID: 8258213260088227975}
   - component: {fileID: 9027226984747059120}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2018,7 +2018,7 @@ GameObject:
   - component: {fileID: 3422399327167562036}
   - component: {fileID: 3167004862828207603}
   - component: {fileID: 8329680301412046140}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2101,7 +2101,7 @@ GameObject:
   - component: {fileID: 7359018184677072953}
   - component: {fileID: 7135638264890084848}
   - component: {fileID: 9065907602634843525}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2182,7 +2182,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3434514168832816108}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2217,7 +2217,7 @@ GameObject:
   - component: {fileID: 196948759605687132}
   - component: {fileID: 2923532325089319345}
   - component: {fileID: 2425259602766744952}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2298,7 +2298,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9038222041754300266}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GodRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2333,7 +2333,7 @@ GameObject:
   - component: {fileID: 2886547273610281004}
   - component: {fileID: 7597890971279119905}
   - component: {fileID: 1259110132042242909}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2416,7 +2416,7 @@ GameObject:
   - component: {fileID: 6423209348355874172}
   - component: {fileID: 2839777659513912597}
   - component: {fileID: 835456644085173462}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2499,7 +2499,7 @@ GameObject:
   - component: {fileID: 4187131973742681264}
   - component: {fileID: 5252573906172710727}
   - component: {fileID: 1037804067041718636}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2582,7 +2582,7 @@ GameObject:
   - component: {fileID: 7050623697203373611}
   - component: {fileID: 6469299194506551492}
   - component: {fileID: 6156492815196407395}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2665,7 +2665,7 @@ GameObject:
   - component: {fileID: 4108936597180622407}
   - component: {fileID: 6235982429388017833}
   - component: {fileID: 5752063132690695890}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2748,7 +2748,7 @@ GameObject:
   - component: {fileID: 3493072037109246834}
   - component: {fileID: 4916280404725163666}
   - component: {fileID: 8991992567611435465}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2831,7 +2831,7 @@ GameObject:
   - component: {fileID: 4623634415058049811}
   - component: {fileID: 6389269413543658033}
   - component: {fileID: 1956816595907826918}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2914,7 +2914,7 @@ GameObject:
   - component: {fileID: 2491019860680401210}
   - component: {fileID: 7342610782024312524}
   - component: {fileID: 6284135325695952293}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2997,7 +2997,7 @@ GameObject:
   - component: {fileID: 2485792710556671321}
   - component: {fileID: 2317624542266611414}
   - component: {fileID: 3808463249119638642}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3080,7 +3080,7 @@ GameObject:
   - component: {fileID: 8883481717626250830}
   - component: {fileID: 5661844272637578951}
   - component: {fileID: 8964544571391525983}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3163,7 +3163,7 @@ GameObject:
   - component: {fileID: 831720889020977566}
   - component: {fileID: 5534834284992731184}
   - component: {fileID: 5341067177910035056}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3246,7 +3246,7 @@ GameObject:
   - component: {fileID: 798965055245390023}
   - component: {fileID: 975847840540637004}
   - component: {fileID: 7682251348439580506}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3329,7 +3329,7 @@ GameObject:
   - component: {fileID: 3169515996553317987}
   - component: {fileID: 6891605814160881487}
   - component: {fileID: 5600192629815273413}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GR
   m_TagString: Untagged
   m_Icon: {fileID: 0}

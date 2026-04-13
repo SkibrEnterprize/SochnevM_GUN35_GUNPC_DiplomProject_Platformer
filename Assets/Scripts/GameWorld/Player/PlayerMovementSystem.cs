@@ -1,9 +1,6 @@
-﻿
-using System;
-using System.Threading.Tasks;
+﻿using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 using Zenject;
 
 namespace Player
@@ -115,7 +112,7 @@ namespace Player
 
         public void FixedTick()
         {
-            
+
             ApplyMovement();
             UpdateFallState();
         }
@@ -257,13 +254,13 @@ namespace Player
             if (_controller.isGrounded)
             {
                 _jumpCount = 0;
-                 return true;
+                return true;
             }
 
             float extraHeight = 0.3f;
-            bool nearGround = Physics.Raycast(_controller.transform.position, 
-                Vector3.down, 
-                (_controller.height / 2) + extraHeight, 
+            bool nearGround = Physics.Raycast(_controller.transform.position,
+                Vector3.down,
+                (_controller.height / 2) + extraHeight,
                 _playerConfig.LayerMaskForWall);
 
             return nearGround;
@@ -275,7 +272,7 @@ namespace Player
 
             Vector3 dir = Vector3.right * directionX;
 
-            float dynamicDistance = _controller.bounds.extents.x + 0.1f;
+            float dynamicDistance = _controller.bounds.extents.x + 0.2f;
 
             Debug.DrawRay(origin, dir * dynamicDistance, Color.red);
 
@@ -360,16 +357,16 @@ namespace Player
 
             if (IsWallClinging() && _velocity.y < _playerConfig.WallSlideSpeed)
             {
-                _velocity.y = Mathf.Lerp(_velocity.y, 
-                    _playerConfig.WallSlideSpeed, 
+                _velocity.y = Mathf.Lerp(_velocity.y,
+                    _playerConfig.WallSlideSpeed,
                     _playerConfig.SlowClingFallSpeed);
             }
 
             else if (_flyPressed && !IsMovementFrozen /*&& (_velocity.y < 0 || _flyAdvancedSpeed > 0)*/)
             //else if (_flyPressed && _velocity.y < 0 && !IsMovementFrozen)
             {
-                _velocity.y = Mathf.Lerp(_velocity.y - _flyAdvancedSpeed, 
-                    -_playerConfig.JumpHoldFallAirSpeed, 
+                _velocity.y = Mathf.Lerp(_velocity.y + _flyAdvancedSpeed,
+                    -_playerConfig.JumpHoldFallAirSpeed,
                     _playerConfig.SlowFallAirSpeed);
                 _velocity.x += effectiveInput.x * _moveAdvancedSpeed * Time.fixedDeltaTime;
             }
@@ -405,7 +402,7 @@ namespace Player
                 float targetY = (_moveInput.x > 0) ? 90f : 270f;
                 _targetRotation = Quaternion.Euler(0, targetY, 0);
             }
-                       
+
             _startParameters.ViewTransform.localRotation = Quaternion.Slerp(
                 _startParameters.ViewTransform.localRotation,
                 _targetRotation,
@@ -467,15 +464,15 @@ namespace Player
 
         public void SetMovementLock(bool isLocked)
         {
-            
-               IsMovementFrozen = isLocked;
-            
+
+            IsMovementFrozen = isLocked;
+
         }
         public void StopImmediately()
         {
-            _velocity = Vector3.zero;     
-            _moveInput = Vector2.zero;  
-            IsMovementFrozen = true;     
+            _velocity = Vector3.zero;
+            _moveInput = Vector2.zero;
+            IsMovementFrozen = true;
         }
 
 
@@ -517,8 +514,7 @@ namespace Player
 
             if (_controller == null || !_controller.enabled) return;
             IsMovementFrozen = false;
-            
+
         }
     }
 }
-

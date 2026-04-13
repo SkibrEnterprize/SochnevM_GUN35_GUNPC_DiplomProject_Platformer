@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 9195617310458018944}
   - component: {fileID: 1710470407246257401}
   - component: {fileID: 3824907200389692099}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: DamageObject_dynamite_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,6 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 508ecafe732eaad46b0e9dc87bbd3314, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isActivatedOfContact: 1
   _activationDelay: 1.5
   _warningColor: {r: 1, g: 0, b: 0, a: 1}
   _scaleMultiplier: 1.2

@@ -21,9 +21,11 @@ public class RotationScript : MonoBehaviour
 
         float duration = 360f / rotationSpeed;
 
-        transform.DORotate(axisVector * 360f, duration, RotateMode.FastBeyond360)
-            .SetEase(Ease.Linear)        
-            .SetLoops(-1, LoopType.Incremental); 
+        transform
+    .DOLocalRotate(axisVector * 360f, duration, RotateMode.LocalAxisAdd)
+    .SetEase(Ease.Linear)
+    .SetLoops(-1, LoopType.Incremental)
+    .SetLink(gameObject);
     }
 
     private void OnDestroy()

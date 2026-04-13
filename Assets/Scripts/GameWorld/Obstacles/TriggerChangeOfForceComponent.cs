@@ -8,7 +8,7 @@ public class TriggerChangeOfForceComponent : MonoBehaviour
 
     [SerializeField] private float _advancedFlyForce;
 
-    private bool _isAddForce;
+    //private bool _isAddForce;
     private IChangeOfForceHandler _movementComponent;
 
 
@@ -22,7 +22,7 @@ public class TriggerChangeOfForceComponent : MonoBehaviour
     {
         if (IsCharacter(other))
         {
-            ChangeForceByZone(_isAddForce);
+            ChangeForceByZone(true); // Всегда добавляем силу при входе
         }
     }
 
@@ -30,10 +30,9 @@ public class TriggerChangeOfForceComponent : MonoBehaviour
     {
         if (IsCharacter(other))
         {
-            ChangeForceByZone(!_isAddForce);
+            ChangeForceByZone(false); // Всегда убираем силу при выходе
         }
-    }
-
+    }    
     private bool IsCharacter(Collider collider)
     {
         return collider.gameObject.TryGetComponent<CharacterController>(out CharacterController controller);

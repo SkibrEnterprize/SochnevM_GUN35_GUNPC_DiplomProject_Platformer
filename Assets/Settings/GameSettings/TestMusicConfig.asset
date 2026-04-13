@@ -20,3 +20,7 @@ MonoBehaviour:
     Clip: {fileID: 8300000, guid: f7c94b00546f2484ea827051a05081a4, type: 3}
     Description: "\u041C\u0443\u0437\u044B\u043A\u0430 \u0423\u0440\u043E\u0432\u0435\u043D\u044C
       1"
+  - BuildIndex: 1
+    Clip: {fileID: 8300000, guid: 826bb8ea4939f9340ba3d55e1120eb1f, type: 3}
+    Description: "\u041C\u0443\u0437\u044B\u043A\u0430 \u0423\u0440\u043E\u0432\u0435\u043D\u044C
+      2"

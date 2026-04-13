@@ -15,6 +15,5 @@ public class PlayerHealth : MonoBehaviour, IHealthAffected
                               DamageType type = DamageType.Default, float knockbackForce = 0f)
     {
         _healthComponent.ApplyHealthChange(delta, sourcePosition, type, knockbackForce);
-        Debug.Log("HEalth isHealing!!!!");
     }
 }

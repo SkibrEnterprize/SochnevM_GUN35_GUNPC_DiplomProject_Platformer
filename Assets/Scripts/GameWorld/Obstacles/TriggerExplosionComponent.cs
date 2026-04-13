@@ -1,6 +1,6 @@
-
-using Cysharp.Threading.Tasks;
+п»їusing Cysharp.Threading.Tasks;
 using Player;
+using System.Collections;
 using UnityEngine;
 using Zenject;
 
@@ -12,7 +12,7 @@ public class TriggerExplosionComponent : MonoBehaviour, IHealthAffected
     [Header("Config Delay for Explode")]
     [SerializeField] private float _activationDelay = 1.5f;
     [SerializeField] private Color _warningColor = Color.red;
-    [SerializeField] float _scaleMultiplier = 1.2f;
+    [SerializeField] private float _scaleMultiplier = 1.2f;
 
     [Header("Config Damage and Force")]
     [SerializeField] private int _damage = 20;
@@ -21,48 +21,55 @@ public class TriggerExplosionComponent : MonoBehaviour, IHealthAffected
     [SerializeField] private float _explosionRadius = 2f;
     [SerializeField] private bool _showGizmos = true;
 
-    private PlayerMovementSystem _movementComponent;
-    private HealthModel _healthModel;
     private ISoundEventBus _soundBus;
     private VFXEventBus _vfxBus;
+
     private MeshRenderer _renderer;
     private Color _originalColor;
-    private bool _isTriggered = false;
     private Vector3 _originalScale;
 
+    private bool _isTriggered;
+
     [Inject]
-    private void Construct(PlayerMovementSystem movementComponent,
-        HealthModel healthModel,
-        ISoundEventBus soundEventBus,
-        VFXEventBus vFXEventBus)
+    private void Construct(ISoundEventBus soundBus, VFXEventBus vfxBus)
     {
-        _movementComponent = movementComponent;
-        _healthModel = healthModel;
-        _soundBus = soundEventBus;
-        _vfxBus = vFXEventBus;
+        _soundBus = soundBus;
+        _vfxBus = vfxBus;
     }
 
     private void Awake()
     {
         _renderer = GetComponent<MeshRenderer>();
+
         if (_renderer != null)
             _originalColor = _renderer.material.color;
+
         _originalScale = transform.localScale;
     }
 
-    public void ApplyHealthChange(int delta, Vector3 sourcePosition = default,
-                                 DamageType type = DamageType.Default, float knockbackForce = 0f)
+    
+    public void ApplyHealthChange(
+    int delta,
+    Vector3 sourcePosition = default,
+    DamageType type = DamageType.Default,
+    float knockbackForce = 0f)
     {
-        if (delta < 0 && !_isTriggered)
-        {
+        if (_isTriggered)
+            return;
+
+        if (delta < 0)
             ActivateExplosionWithDelay();
-        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!_isActivatedOfContact) return;
-        if (!_isTriggered && other.TryGetComponent<CharacterController>(out _))
+        if (!_isActivatedOfContact)
+            return;
+
+        if (_isTriggered)
+            return;
+
+        if (other.TryGetComponent<IHealthAffected>(out _))
         {
             ActivateExplosionWithDelay();
         }
@@ -70,15 +77,21 @@ public class TriggerExplosionComponent : MonoBehaviour, IHealthAffected
 
     private void ActivateExplosionWithDelay()
     {
-        _vfxBus.Play(VFXType.FlameUp, transform.position);
-        ActivateTrapAsync().Forget();
-    }
-    private async UniTaskVoid ActivateTrapAsync()
-    {
-        _isTriggered = true;
-        var ct = this.GetCancellationTokenOnDestroy();
+        if (_isTriggered)
+            return;
 
-        float elapsed = 0;
+        _isTriggered = true;
+
+        StopAllCoroutines(); 
+
+        _vfxBus.Play(VFXType.FlameUp, transform.position);
+        StartCoroutine(ActivateTrapCoroutine());
+    }
+
+    private IEnumerator ActivateTrapCoroutine()
+    {
+        float elapsed = 0f;
+
         while (elapsed < _activationDelay)
         {
             float t = elapsed / _activationDelay;
@@ -86,74 +99,67 @@ public class TriggerExplosionComponent : MonoBehaviour, IHealthAffected
             if (_renderer != null)
                 _renderer.material.color = Color.Lerp(_originalColor, _warningColor, t);
 
-            transform.localScale = Vector3.Lerp(_originalScale, _originalScale * _scaleMultiplier, t);
+            transform.localScale =
+                Vector3.Lerp(_originalScale, _originalScale * _scaleMultiplier, t);
 
             elapsed += Time.deltaTime;
-            await UniTask.Yield(PlayerLoopTiming.Update, ct);
+            yield return null;
         }
 
         Explode();
 
+        ResetVisuals();
 
-        if (_renderer != null)
-            _renderer.material.color = _originalColor;
-
-        transform.localScale = _originalScale;
-
-        _isTriggered = false;
         Destroy(gameObject);
     }
 
+   
     private void Explode()
     {
         _soundBus.Play(SoundType.Explode, transform.position);
         _vfxBus.Play(VFXType.Explode, transform.position);
-        Collider[] targets = Physics.OverlapSphere(transform.position, _explosionRadius);
 
-        foreach (var target in targets)
+        Collider[] hits = Physics.OverlapSphere(transform.position, _explosionRadius);
+
+        foreach (var hit in hits)
         {
-            var controller = target.GetComponent<CharacterController>();
+            if (hit.gameObject == gameObject)
+                continue;
 
-            if (controller != null)
+            if (hit.TryGetComponent<IHealthAffected>(out var health))
             {
-                Debug.Log("Игрок в зоне взрыва, толкаю!");
-                ApplyEffects(controller);
-                continue; // Чтобы не наносить урон дважды через интерфейс ниже
+                health.ApplyHealthChange(-_damage, transform.position);
             }
 
-            if (target.TryGetComponent<IHealthAffected>(out var health))
+            if (hit.TryGetComponent<IKnockbackReceiver>(out var knockback))
             {
-                if (target.gameObject != this.gameObject)
-                {
-                    health.ApplyHealthChange(-_damage);
-                }
-            }
+                Vector3 dir = (hit.transform.position - transform.position).normalized;
+                dir.z = 0f;
+                dir.Normalize();
+                dir.y = _knockupForce;
 
+                knockback.ApplyImpulse(dir * _knockbackForce);
+            }
         }
     }
 
-    private void ApplyEffects(CharacterController controller)
+    private void ResetVisuals()
     {
-        Vector3 direction = controller.transform.position - transform.position;
-        direction.z = 0;
-        direction = direction.normalized;
-        direction.y = _knockupForce;
+        if (_renderer != null)
+            _renderer.material.color = _originalColor;
 
-        _movementComponent.ApplyImpulse(direction * _knockbackForce);
-        _healthModel.ApplyHealthChange(-_damage,
-            transform.position,
-            DamageType.Default,
-            _knockbackForce);
+        transform.localScale = _originalScale;
     }
 
+   
     private void OnDrawGizmosSelected()
     {
-        if (_showGizmos)
-        {
-            Gizmos.color = new Color(1, 0, 0, 0.2f);
-            Gizmos.DrawSphere(transform.position, _explosionRadius);
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, _explosionRadius);
-        }
+        if (!_showGizmos) return;
+
+        Gizmos.color = new Color(1, 0, 0, 0.2f);
+        Gizmos.DrawSphere(transform.position, _explosionRadius);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, _explosionRadius);
     }
 }

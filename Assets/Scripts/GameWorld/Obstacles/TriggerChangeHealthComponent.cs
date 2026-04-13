@@ -16,7 +16,7 @@ public class TriggerChangeHealthComponent : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (_isUsed) return;
-            Debug.Log($"Triggerred by {other.name}");
+            //Debug.Log($"Triggerred by {other.name}");
 
         if (other.gameObject.TryGetComponent<IHealthAffected>(out IHealthAffected healthAffected))
         {
