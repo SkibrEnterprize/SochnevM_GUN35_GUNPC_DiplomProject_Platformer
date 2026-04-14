@@ -9,8 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f7ec1fe7d0ae9444983b4477a6568d3, type: 3}
-  m_Name: FinishConfig_Level1
+  m_Script: {fileID: 11500000, guid: 867f67bb11b32c54f8a22aca47aa2de5, type: 3}
+  m_Name: ProjectileExplode
   m_EditorClassIdentifier: 
-  _collectObjectsForGoal: 1
-  _nextSceneName: MainMenu
+  effectPrefab: {fileID: 100014, guid: 1f34ec95edf98b041bfeebcb94e22588, type: 3}
+  lifetime: 4
+  offset: {x: 0, y: 0, z: 0}
+  followPlayer: 0
+  poolSize: 5

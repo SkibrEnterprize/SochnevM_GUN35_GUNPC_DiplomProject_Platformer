@@ -1,6 +1,4 @@
-﻿using Cysharp.Threading.Tasks;
-using Player;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using Zenject;
 

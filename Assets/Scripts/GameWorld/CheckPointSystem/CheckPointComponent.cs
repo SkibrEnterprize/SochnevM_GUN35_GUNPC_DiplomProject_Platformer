@@ -37,7 +37,7 @@ public class CheckPointComponent : MonoBehaviour
     {
         if (_isActivate) return;
 
-        if (other.gameObject.TryGetComponent<CharacterController>(out _))
+        if (other.gameObject.TryGetComponent<ViewTransform>(out _))
         {
             ActivateCheckpointAsync();
         }

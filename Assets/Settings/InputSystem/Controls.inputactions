@@ -24,6 +24,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "Sprint",
+                    "type": "Button",
+                    "id": "e93d3b3f-6871-4e40-9074-88b115207fd5",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Fly",
                     "type": "Button",
                     "id": "4490f55e-99ed-43c9-a23c-21bfe864c3a6",
@@ -66,15 +75,6 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "Hold(duration=2.5)",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Sprint",
-                    "type": "Button",
-                    "id": "e93d3b3f-6871-4e40-9074-88b115207fd5",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
                     "initialStateCheck": false
                 }
             ],
@@ -148,7 +148,7 @@
                 {
                     "name": "",
                     "id": "eabc4551-acdb-472a-a6cd-3859275fb3a9",
-                    "path": "<Keyboard>/f",
+                    "path": "<Keyboard>/rightCtrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -159,7 +159,7 @@
                 {
                     "name": "",
                     "id": "bd9ef792-742a-4504-a6a1-1ed3e876f662",
-                    "path": "<Keyboard>/ctrl",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -203,7 +203,7 @@
                 {
                     "name": "",
                     "id": "32461815-82ef-4ff0-a4f0-dd64f5acaed0",
-                    "path": "<Keyboard>/leftAlt",
+                    "path": "<Keyboard>/leftCtrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

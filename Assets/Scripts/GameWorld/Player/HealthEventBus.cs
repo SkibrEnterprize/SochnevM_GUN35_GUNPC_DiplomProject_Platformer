@@ -1,5 +1,4 @@
 using System;
-using Zenject;
 
 public class HealthEventBus : IHealthEventBus
 {

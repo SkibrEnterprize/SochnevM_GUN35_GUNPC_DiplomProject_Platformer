@@ -12,7 +12,6 @@ public class FeaturesObject : MonoBehaviour
         _meshRenderer = GetComponent<MeshRenderer>();
         _originalColor = _meshRenderer.material.color;
     }
-
     public void SomeActions()
     {
         if (!_isOnceActivate)
@@ -27,15 +26,12 @@ public class FeaturesObject : MonoBehaviour
         }
 
     }
-
     private void ChangeColorRandomly()
     {       
             _meshRenderer.material.color = Random.ColorHSV();       
     }
-
     private void ResetColor()
     {
         _meshRenderer.material.color= _originalColor;
     }
-
 }

@@ -1,6 +1,5 @@
 using System;
 using Zenject;
-using UnityEngine;
 
 public class LevelNavigationController : IInitializable, IDisposable
 {
@@ -20,7 +19,6 @@ public class LevelNavigationController : IInitializable, IDisposable
 
     private void HandleFinish()
     {
-        // Проверяем, вписано ли имя следующей сцены в конфиг
         if (!string.IsNullOrEmpty(_config.NextSceneName))
         {
             _sceneLoader.LoadLevel(_config.NextSceneName);

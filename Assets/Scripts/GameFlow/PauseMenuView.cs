@@ -5,7 +5,7 @@ using Zenject;
 public class PauseMenuView : MonoBehaviour
 {
     [SerializeField] private GameObject _pausePanel;
-    [SerializeField] private GameObject _settingsPanel; // Ссылка на вложенную панель настроек
+    [SerializeField] private GameObject _settingsPanel;
 
     [Header("Audio Sliders")]
     [SerializeField] private Slider _musicSlider;
@@ -13,7 +13,7 @@ public class PauseMenuView : MonoBehaviour
 
     private GameManager _gameManager;
     private SceneLoader _sceneLoader;
-    private SettingsManager _settingsManager; // Глобальный менеджер из ProjectContext
+    private SettingsManager _settingsManager;
 
     public Slider SfxSlider { get => _sfxSlider; set => _sfxSlider = value; }
 
@@ -30,7 +30,6 @@ public class PauseMenuView : MonoBehaviour
         _musicSlider.value = _settingsManager.GetMusicVolume();
         _sfxSlider.value = _settingsManager.GetSFXVolume();
 
-        // Подписываем слайдеры на изменения
         _musicSlider.onValueChanged.AddListener(val => _settingsManager.SetMusicVolume(val));
         SfxSlider.onValueChanged.AddListener(val => _settingsManager.SetSFXVolume(val));
                 
@@ -44,14 +43,12 @@ public class PauseMenuView : MonoBehaviour
         bool isPaused = (state == GameState.Paused);
         _pausePanel.SetActive(isPaused);
 
-        // Если выходим из паузы, закрываем и настройки тоже
         if (!isPaused) _settingsPanel.SetActive(false);
 
         Cursor.lockState = isPaused ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = isPaused;
     }
 
-    // Методы для переключения между основным меню паузы и настройками
     public void OpenSettings()
     {
         _pausePanel.SetActive(false);
@@ -68,7 +65,7 @@ public class PauseMenuView : MonoBehaviour
 
     public void OnExitToMenuClicked()
     {
-        Time.timeScale = 1f; // Важно: возвращаем время в норму перед выходом
+        Time.timeScale = 1f;
         _sceneLoader.LoadLevel("MainMenu");
     }
 }

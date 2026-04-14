@@ -2,7 +2,6 @@ using Player;
 using System;
 using Zenject;
 
-
 public class PlayerEventObserver : IInitializable, IDisposable
 {
     private HealthModel _healthModel;
@@ -19,7 +18,6 @@ public class PlayerEventObserver : IInitializable, IDisposable
     {
         _movementComponent.OnFallDistanceEvent += TakeDamageWhenFalling;
     }
-
 
     public void Dispose()
     {

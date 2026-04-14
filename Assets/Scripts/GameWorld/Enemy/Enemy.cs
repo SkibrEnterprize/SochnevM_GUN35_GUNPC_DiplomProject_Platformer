@@ -48,7 +48,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] private bool _showEyeVision = true;
     [SerializeField] private bool _showAwarenessRange = true;
 
-    //VFX config
+    private float _underground = 1f;
+
     private Transform _combatVFXPoint;
     private VFXEventBus _vfxBus;
     private SoundEventBus _soundBus;
@@ -149,7 +150,6 @@ public class Enemy : MonoBehaviour
         {
             _stepTimer = 0;
         }
-        // -------------------------------------
 
         if (_animator != null)
         {
@@ -258,7 +258,11 @@ public class Enemy : MonoBehaviour
 
                 Vector3 vfxPosition = _combatVFXPoint.position;
                 Quaternion vfxRotation = _combatVFXPoint.rotation * Quaternion.Euler(25, -90, 45);
-                _vfxBus.Play(VFXType.Attack, vfxPosition, default, vfxRotation, _controller.gameObject.transform);
+                _vfxBus.Play(VFXType.Attack, 
+                    vfxPosition, 
+                    default, 
+                    vfxRotation, 
+                    _controller.gameObject.transform);
                 _soundBus.Play(SoundType.EnemyAttack);
             }
         }
@@ -268,7 +272,9 @@ public class Enemy : MonoBehaviour
         if (_player == null) return;
         _lastAttackTime = Time.time;
 
-        GameObject bullet = Instantiate(_projectilePrefab, _firePoint.position, Quaternion.identity);
+        GameObject bullet = Instantiate(_projectilePrefab, 
+            _firePoint.position, 
+            Quaternion.identity);
         Vector3 direction = (_player.position - _firePoint.position).normalized;
 
         if (bullet.TryGetComponent(out EnemyProjectile projectile))
@@ -284,7 +290,7 @@ public class Enemy : MonoBehaviour
 
     private void FadeOut()
     {
-        transform.DOMoveY(transform.position.y - 0.5f, 1f).OnComplete(() => Destroy(gameObject));
+        transform.DOMoveY(transform.position.y - _underground, 1f).OnComplete(() => Destroy(gameObject));
     }
     public void SetTrigger(string name) => _animator.SetTrigger(name);
     public void SetBool(string name, bool value) => _animator.SetBool(name, value);
@@ -296,7 +302,11 @@ public class Enemy : MonoBehaviour
         Vector3 direction = (_player.position - _enemyEyes.position).normalized;
         float distance = Vector3.Distance(_enemyEyes.position, _player.position);
 
-        if (Physics.Raycast(_enemyEyes.position, direction, out RaycastHit hit, distance, _layersForVision | _groundLayer | _wallLayer))
+        if (Physics.Raycast(_enemyEyes.position, 
+            direction, 
+            out RaycastHit hit, 
+            distance, 
+            _layersForVision | _groundLayer | _wallLayer))
         {
             if (!hit.collider.CompareTag("Player"))
             {

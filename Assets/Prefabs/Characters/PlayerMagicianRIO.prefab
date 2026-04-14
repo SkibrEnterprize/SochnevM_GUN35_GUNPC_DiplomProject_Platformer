@@ -241,7 +241,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1972324810053065825}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.36036095, w: 0.932813}
+  m_LocalRotation: {x: -0.5720544, y: 0.6890321, z: -0.109804034, w: 0.431198}
   m_LocalPosition: {x: 1.4210855e-14, y: -0.009999514, z: 0.5600005}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -508,6 +508,7 @@ GameObject:
   - component: {fileID: 3802504301160950583}
   - component: {fileID: 7173154467168301935}
   - component: {fileID: 6297926578675307460}
+  - component: {fileID: 2220269447339126703}
   m_Layer: 3
   m_Name: PlayerMagicianRIO
   m_TagString: Player
@@ -597,6 +598,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d89b6a84604c5f7479041c1a6f281fa2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2220269447339126703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7940719953895527930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6e4100c2ed4a7f46ba1fc44d98d5cfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &8122019676649769679

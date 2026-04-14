@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 705dbf6ebab3e5449bc342fea2a2c7b8, type: 3}
+  m_Name: SO_Spring
+  m_EditorClassIdentifier: 
+  clips:
+  - {fileID: 8300000, guid: 4e349dc959014a845b9aa317d1c2b7f0, type: 3}
+  - {fileID: 8300000, guid: e21b39e07fa70d746b3ffc2ecb47fe5f, type: 3}
+  - {fileID: 8300000, guid: 2794a6e3440ebaf4aae5fc6ae298bce1, type: 3}
+  volume: 0.5
+  pitch: 1.1

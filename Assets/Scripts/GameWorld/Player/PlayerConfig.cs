@@ -24,8 +24,6 @@ public class PlayerConfig : ScriptableObject
     [field: SerializeField, Range(0, 1)]
     public float SlowClingFallSpeed = 0.5f;
 
-    //[field: SerializeField, Range(0, 1)]    
-
     [Header("Jump Configuration")]
     public float JumpForce = 500;
     public float WallJumpForceX = 1f;
@@ -41,11 +39,11 @@ public class PlayerConfig : ScriptableObject
     public float ForceAtFlyByTrigger = 2f;
 
     [Header("Health")]
-    public int MaxHealth = 100;               // максимальное здоровье
+    public int MaxHealth = 100;              
     public int CriticalHealth = 20;
 
     [Header("Damage")]
     public int DamageOfFall = 10; // сколько урона при падении
-    public float MinHeightForDamage = 5f;   // ниже этой скорости не будет уронов
+    public float MinHeightForDamage = 5f;   // ниже этой высоты не будет урона от падения
 
 }

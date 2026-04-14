@@ -18,7 +18,7 @@ public class SpringTrigger : MonoBehaviour
 
     [Header("Визуал")]
     [SerializeField] private float _animationDuration = 0.1f;
-    private Transform _visualModel; // Ссылка на меш пружины
+    private Transform _visualModel; 
 
     [Inject]
     public void Construct(PlayerMovementSystem movementComponent,

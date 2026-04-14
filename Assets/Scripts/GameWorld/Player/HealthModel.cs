@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
 using Zenject;
 
 namespace Player
@@ -61,8 +60,6 @@ namespace Player
             if (fallDistance > _playerConfig.MinHeightForDamage)
             {
                 ApplyHealthChange(-_playerConfig.DamageOfFall, type: DamageType.Fall);
-
-                //Debug.Log($"Health = {Health} (Fall damage: {fallDistance}m)");
             }
         }
 

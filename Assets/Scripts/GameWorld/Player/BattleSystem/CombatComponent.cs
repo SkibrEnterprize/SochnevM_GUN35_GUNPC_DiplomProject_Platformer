@@ -75,7 +75,6 @@ namespace Player
             {
                 _isCharged = true;
                 _combatUI.SetChargedColor(true); 
-                Debug.Log("Удар ПОЛНОСТЬЮ ЗАРЯЖЕН (из скрипта)");
             }
         }
 
@@ -138,7 +137,6 @@ namespace Player
                 if (target is IHealthAffected healthTarget)
                 {
                     healthTarget.ApplyHealthChange(-data.Damage, _controller.transform.position);
-                    //Debug.Log($"[HIT] Попал по xtven");
                 }
             }
         }

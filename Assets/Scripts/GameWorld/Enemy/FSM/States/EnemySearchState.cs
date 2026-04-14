@@ -52,7 +52,6 @@ public class EnemySearchState : IEnemyState
 
             if (_searchTimer <= 0)
             {
-                // Время вышло, игрок не найден — возвращаемся к патрулю
                 _enemy.ChangeState(new EnemyPatrolState(_enemy));
             }
         }

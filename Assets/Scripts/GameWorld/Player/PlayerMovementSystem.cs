@@ -40,6 +40,7 @@ namespace Player
         private float _deceleration = 25f;    // Скорость торможения (инерция)
         private float _currentTraction = 1f; // 1.0 — асфальт, 0.2 — лед, 0.05 — супер-лед
         private float _defaultModifire = 1f;
+        private float _knockUpForce = 0.6f;
         private Quaternion _faceRight = Quaternion.Euler(0, 90, 0);
         public bool IsMovementFrozen { get; set; }
 
@@ -148,7 +149,7 @@ namespace Player
                 if (_airTime > _landThreshold)
                 {
                     _playerAnimator.PlayLanding();
-                    _soundBus.Play(SoundType.Landing, _controller.transform.position); // Проигрываем звук приземления
+                    _soundBus.Play(SoundType.Landing, _controller.transform.position); 
                 }
                 _airTime = 0;
 
@@ -158,19 +159,19 @@ namespace Player
 
                     if (_stepTimer <= 0)
                     {
-                        _soundBus.Play(SoundType.Step, _controller.transform.position); // Проигрываем звук шага
-                        _stepTimer = _stepInterval;     // Сброс таймера
+                        _soundBus.Play(SoundType.Step, _controller.transform.position); 
+                        _stepTimer = _stepInterval;    
                     }
                 }
                 else
                 {
-                    _stepTimer = 0; // Сброс таймера при остановке
+                    _stepTimer = 0; 
                 }
             }
             else
             {
                 _airTime += Time.deltaTime;
-                _stepTimer = 0; // Не шагаем в воздухе
+                _stepTimer = 0; 
             }
 
             _playerAnimator.UpdateMovementStates(normalizedSpeed, grounded, wallSliding, _flyPressed);
@@ -178,7 +179,7 @@ namespace Player
 
         private void OnJumpStarted(InputAction.CallbackContext context)
         {
-            if (IsWallClinging()) // Прыжок от стены
+            if (IsWallClinging()) 
             {
                 WallJump();
                 return;
@@ -336,11 +337,11 @@ namespace Player
             {
                 if (isTryingToMove && Mathf.Abs(_velocity.x) > Mathf.Abs(targetMaxSpeed) && Mathf.Sign(effectiveInput.x) == Mathf.Sign(_velocity.x))
                 {
-                    accelRate = 0; // MoveTowards не изменит скорость, инерция сохранится
+                    accelRate = 0;
                 }
                 else if (isTryingToMove)
                 {
-                    accelRate = _acceleration * 0.5f; // Небольшой контроль в воздухе
+                    accelRate = _acceleration * 0.5f; 
                 }
                 else
                 {
@@ -415,7 +416,10 @@ namespace Player
         {
             bool grounded = IsGrounded();
             bool wallClinging = IsWallClinging();
-            bool isHeightControlled = grounded || wallClinging || (_flyPressed && _velocity.y < 0) || _velocity.y > 0;
+            bool isHeightControlled = grounded || 
+                wallClinging || 
+                (_flyPressed && _velocity.y < 0) || 
+                _velocity.y > 0;
 
             if (isHeightControlled)
             {
@@ -508,7 +512,7 @@ namespace Player
             float direction = (diffX == 0) ? 1 : Mathf.Sign(diffX);
 
             _velocity.x = direction * force;
-            _velocity.y = force * 0.6f; // Подброс
+            _velocity.y = force * _knockUpForce; 
 
             await System.Threading.Tasks.Task.Delay(250);
 

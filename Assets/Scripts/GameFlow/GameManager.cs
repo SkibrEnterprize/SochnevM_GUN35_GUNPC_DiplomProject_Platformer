@@ -9,7 +9,6 @@ public class GameManager:  IInitializable
     public GameState CurrentState { get; private set; }
     public void Initialize()
     {
-        // Проверяем, какая сцена сейчас активна
         string sceneName = SceneManager.GetActiveScene().name;
 
         if (sceneName == "MainMenu")
@@ -37,11 +36,11 @@ public class GameManager:  IInitializable
                 Cursor.visible = false;
                 break;
             case GameState.Paused:
-                Time.timeScale = 0f; // Останавливаем всё движение
+                Time.timeScale = 0f; 
                 Cursor.visible = true;
                 break;
             case GameState.GameOver:
-                Time.timeScale = 0.5f; // Слоу-мо при смерти
+                Time.timeScale = 0.5f; 
                 Cursor.visible = true;
                 break;
         }

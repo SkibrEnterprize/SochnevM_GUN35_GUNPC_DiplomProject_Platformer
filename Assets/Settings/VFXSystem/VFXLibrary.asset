@@ -19,7 +19,9 @@ MonoBehaviour:
     vfxEvent: {fileID: 11400000, guid: 7fb5b6940e9a96f48a353a631088308a, type: 2}
   - type: 5
     vfxEvent: {fileID: 11400000, guid: 13c45b087f8adb740a049f105a3911d9, type: 2}
-  - type: 6
-    vfxEvent: {fileID: 11400000, guid: d2c9ae92ef830f94f99a969698a09d1b, type: 2}
   - type: 7
+    vfxEvent: {fileID: 11400000, guid: d2c9ae92ef830f94f99a969698a09d1b, type: 2}
+  - type: 8
     vfxEvent: {fileID: 11400000, guid: d48e8e16bbc52b547ab9df84364865d4, type: 2}
+  - type: 9
+    vfxEvent: {fileID: 11400000, guid: ddf3d7ac560214343b7004e4ddaab326, type: 2}

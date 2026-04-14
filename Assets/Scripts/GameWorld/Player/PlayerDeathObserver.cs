@@ -56,7 +56,6 @@ public class PlayerDeathObserver : IInitializable, IDisposable
         ResetAnimation();
         _controller.enabled = true;
         _playerMovementSystem.IsMovementFrozen = false;
-        Debug.Log("FINALIZE");
     }
 
     private void HealthRepair() => _healthModel.HealthAllRepair();

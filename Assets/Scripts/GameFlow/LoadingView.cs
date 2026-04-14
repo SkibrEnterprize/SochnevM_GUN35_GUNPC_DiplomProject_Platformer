@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 public class LoadingView : MonoBehaviour
 {
-    [SerializeField] private GameObject _canvasRoot; // Весь Canvas загрузки
+    [SerializeField] private GameObject _canvasRoot; 
     [SerializeField] private Slider _progressBar;
-    [SerializeField] private CanvasGroup _canvasGroup; // Добавь ссылку в инспекторе
+    [SerializeField] private CanvasGroup _canvasGroup;
     [SerializeField] private TextMeshProUGUI _progressText;
     [SerializeField] float _fadeDuration = 0.5f;
 
@@ -34,8 +34,7 @@ public class LoadingView : MonoBehaviour
 
     public void UpdateProgress(float progress)
     {
-        // Можно добавить плавное движение ползунка через Mathf.MoveTowards
-        StopAllCoroutines(); // Чтобы не было конфликтов
+        StopAllCoroutines(); 
         StartCoroutine(SmoothProgress(progress));
     }
 
@@ -52,13 +51,4 @@ public class LoadingView : MonoBehaviour
         _canvasGroup.alpha = 0;
         _canvasRoot.SetActive(false);
     }
-    //public void Show() => _canvasRoot.SetActive(true);
-    //public void Hide() => _canvasRoot.SetActive(false);
-
-    //public void UpdateProgress(float progress)
-    //{
-    //    _progressBar.value = progress;
-    //    if (_progressText != null)
-    //        _progressText.text = $"Загрузка: {Mathf.RoundToInt(progress * 100)}%";
-    //}
 }

@@ -8,7 +8,6 @@ public class PlayerAnimator
     private readonly SkinnedMeshRenderer _meshRenderer;
     private MaterialPropertyBlock _propBlock;
 
-    // Хеши параметров для оптимизации (быстрее, чем строки)
     private static readonly int SpeedHash = Animator.StringToHash("Speed");
     private static readonly int IsGroundedHash = Animator.StringToHash("IsGrounded");
     private static readonly int IsWallSlidingHash = Animator.StringToHash("IsWallSliding");
@@ -32,12 +31,10 @@ public class PlayerAnimator
         _meshRenderer = meshRenderer;
         _propBlock = new MaterialPropertyBlock();
     }
-
-    /// <summary>
-    /// Основной метод обновления анимаций перемещения. 
-    /// Вызывается из PlayerMovementSystem.ApplyAnimation()
-    /// </summary>
-    public void UpdateMovementStates(float normalizedSpeed, bool isGrounded, bool isWallSliding, bool isFlying)
+    public void UpdateMovementStates(float normalizedSpeed, 
+        bool isGrounded, 
+        bool isWallSliding, 
+        bool isFlying)
     {
         if (_isDead) return;
 
@@ -75,8 +72,6 @@ public class PlayerAnimator
 
     public void PlayDeath()
     {
-        //if (_isDead) return;
-
         _isDead = true;
         _animator.ResetTrigger(HitTrigger);
         _animator.ResetTrigger(AttackTrigger);

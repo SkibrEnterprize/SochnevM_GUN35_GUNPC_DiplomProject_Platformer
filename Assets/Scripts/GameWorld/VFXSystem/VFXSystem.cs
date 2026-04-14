@@ -8,6 +8,8 @@ namespace VFX
 {
     public class VFXSystem : MonoBehaviour, IVFXSystem
     {
+        [SerializeField] private Transform _poolParent;
+
         private VFXLibrary _library;
 
         private readonly Dictionary<GameObject, List<GameObject>> _pools =
@@ -20,6 +22,10 @@ namespace VFX
             PrewarmPools();
         }
 
+        private void Awake()
+        {
+            if (_poolParent == null) _poolParent = transform;
+        }
         private void PrewarmPools()
         {
             foreach (var mapping in _library.effects)
@@ -40,7 +46,7 @@ namespace VFX
 
         private GameObject CreateNewInstance(GameObject prefab)
         {
-            var instance = Instantiate(prefab, transform);
+            var instance = Instantiate(prefab, _poolParent);
 
             instance.transform.localScale = prefab.transform.localScale;
             instance.SetActive(false);

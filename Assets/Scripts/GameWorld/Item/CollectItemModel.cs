@@ -12,10 +12,10 @@ public class CollectItemModel : ICollectItemModel
         _collectEventBus = collectEventBus;
     }
 
-    public void CollectItem(int value)
+    public void CollectItem(int value, Transform transform)
     {
         _score += value;
-        _collectEventBus.CollectItem(_score);
-        Debug.Log("CollectItem!!!");
+        _collectEventBus.CollectItem(_score, transform);
+        //Debug.Log("CollectItem!!!");
     }
 }

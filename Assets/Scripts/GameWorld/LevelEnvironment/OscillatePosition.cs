@@ -24,7 +24,6 @@
                 tween.SetDelay(delay);
             }
         }
-
         private void OnDestroy()
         {
             transform.DOKill();

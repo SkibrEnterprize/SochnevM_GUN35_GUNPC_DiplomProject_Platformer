@@ -25,6 +25,5 @@ public class EnemyHitState : IEnemyState
             _enemy.ChangeState(new EnemyChaseState(_enemy));
         }
     }
-
     public void Exit() { }
 }

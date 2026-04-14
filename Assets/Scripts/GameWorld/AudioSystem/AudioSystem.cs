@@ -5,6 +5,7 @@ public class AudioSystem : MonoBehaviour, IAudioSystem
 {
     [Header("Pool Settings")]
     [SerializeField] private int poolSize = 10;
+    [SerializeField] private Transform _poolParent;
     private List<AudioSource> _pool = new List<AudioSource>();
 
     [Header("Audio Settings")]
@@ -18,10 +19,11 @@ public class AudioSystem : MonoBehaviour, IAudioSystem
 
     void Awake()
     {
+        if (_poolParent == null) _poolParent = transform;
         for (int i = 0; i < poolSize; i++)
         {
             var go = new GameObject("Source_" + i);
-            go.transform.SetParent(transform);
+            go.transform.SetParent(_poolParent);
 
             var s = go.AddComponent<AudioSource>();
             s.outputAudioMixerGroup = _sfxGroup;

@@ -16,7 +16,6 @@ public class AttackState : IEnemyState
         _enemy.PerformAttack();
         Debug.Log("Враг атакует!");
     }
-
     public void Update()
     {
         _timer -= Time.deltaTime;
@@ -26,7 +25,5 @@ public class AttackState : IEnemyState
             _enemy.ChangeState(new EnemyChaseState(_enemy));
         }
     }
-
     public void Exit() { }
-   
 }

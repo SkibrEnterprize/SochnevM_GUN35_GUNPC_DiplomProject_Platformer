@@ -1,6 +1,5 @@
 using System;
 using Zenject;
-using UnityEngine;
 
 public class LevelFinishObserver : IInitializable, IDisposable
 {
@@ -24,6 +23,4 @@ public class LevelFinishObserver : IInitializable, IDisposable
     {
         _soundBus.Play(SoundType.Finish);
     }
-
-
 }

@@ -5,5 +5,5 @@ public struct AttackData
 {
     public int Damage;
     public float Cooldown;
-    public float KnockbackForce; // Сила отталкивания
+    public float KnockbackForce; 
 }

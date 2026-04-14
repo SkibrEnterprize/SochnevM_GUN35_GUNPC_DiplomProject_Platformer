@@ -4,9 +4,9 @@ using UnityEngine;
 public sealed class HealthConfig : ScriptableObject
 {
     [Header("General")]
-    public int MaxHealth = 100;               // максимальное здоровье
+    public int MaxHealth = 100;            
 
     [Header("Fall damage")]
-    public float DamageofFall = 10f; // сколько урона при падении
-    public float MinHeightForDamage = 5f;   // ниже этой скорости не будет уронов
+    public float DamageofFall = 10f;
+    public float MinHeightForDamage = 5f;   
 }
